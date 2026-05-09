@@ -253,7 +253,10 @@ function renderPage(){
             ${GRADES.map(g=>`<option value="${g}" ${course.finalGrade===g?'selected':''}>${g}</option>`).join('')}
           </select>
         </div>
-        ${!course.archived?`<div style="margin-left:auto"><button class="btn btn-red" onclick="archiveCourse()">Archive Course</button></div>`:''}
+        <div style="margin-left:auto;display:flex;gap:8px">
+          ${!course.archived?`<button class="btn btn-red" onclick="archiveCourse()">Archive</button>`:''}
+          <button class="btn" style="background:var(--red-bg);color:var(--red-txt);border-color:var(--red);opacity:.7" onclick="deleteCourse()">Delete</button>
+        </div>
       </div>
     </div>
 
@@ -406,6 +409,12 @@ function archiveCourse(){
 function unarchive(){
   course.archived = false;
   saveCourses(); renderPage();
+}
+function deleteCourse(){
+  if(!confirm(`Permanently delete "${course.name}"? This cannot be undone.`)) return;
+  courses = courses.filter(c => parseInt(c.id,10) !== classId);
+  localStorage.setItem('acad_courses', JSON.stringify(courses));
+  window.location.href = 'academic_planner.html';
 }
 
 function toggleSec(id){
