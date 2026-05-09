@@ -138,24 +138,6 @@ let course    = courses.find(c => parseInt(c.id, 10) === classId);
 const savedTheme = localStorage.getItem('acad_theme');
 if(savedTheme==='dark') document.body.classList.add('dark');
 
-if(!course){
-  document.getElementById('app').innerHTML = `
-    <div class="not-found">
-      <h2>Course not found</h2>
-      <p>This course may have been deleted.</p>
-      <br>
-      <a href="academic_planner.html" class="btn">← Back to Planner</a>
-    </div>`;
-} else {
-  document.title = (course.code||course.name) + ' — Class';
-  renderPage();
-}
-
-function saveCourses(){
-  courses = courses.map(c => parseInt(c.id,10)===classId ? course : c);
-  localStorage.setItem('acad_courses', JSON.stringify(courses));
-}
-
 // ── GRADE HELPERS ───────────────────────────────────────
 const GRADES = ['A+','A','A-','B+','B','B-','C+','C','C-','D+','D','F','—'];
 function gradeColor(letter){
@@ -173,6 +155,24 @@ function pctToLetter(p){
   if(p>=87) return 'B+'; if(p>=83) return 'B'; if(p>=80) return 'B-';
   if(p>=77) return 'C+'; if(p>=73) return 'C'; if(p>=70) return 'C-';
   if(p>=67) return 'D+'; if(p>=60) return 'D'; return 'F';
+}
+
+function saveCourses(){
+  courses = courses.map(c => parseInt(c.id,10)===classId ? course : c);
+  localStorage.setItem('acad_courses', JSON.stringify(courses));
+}
+
+if(!course){
+  document.getElementById('app').innerHTML = `
+    <div class="not-found">
+      <h2>Course not found</h2>
+      <p>This course may have been deleted.</p>
+      <br>
+      <a href="academic_planner.html" class="btn">← Back to Planner</a>
+    </div>`;
+} else {
+  document.title = (course.code||course.name) + ' — Class';
+  renderPage();
 }
 
 // ── MAIN RENDER ─────────────────────────────────────────
