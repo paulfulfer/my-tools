@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Summer 2026 — Financial Planner</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0f0f0f;--bg2:#181818;--bg3:#222;--bg4:#2a2a2a;
+  --border:#2e2e2e;--border2:#3a3a3a;
+  --text:#e8e8e8;--text2:#a0a0a0;--text3:#555;--text4:#333;
+  --green:#1fbd8a;--green-bg:#0d2e22;--green-txt:#1fbd8a;
+  --amber:#e6a020;--amber-bg:#2c1f06;--amber-txt:#e6a020;
+  --blue:#4a9eff;--blue-bg:#0a1e35;--blue-txt:#4a9eff;
+  --red:#f05050;--red-bg:#2a0f0f;--red-txt:#f05050;
+  --purple:#9b87f5;--purple-bg:#1a1530;
+  --r:8px;--rl:12px;
+}
+.light{
+  --bg:#f4f4f2;--bg2:#ffffff;--bg3:#ebebea;--bg4:#e0e0de;
+  --border:#d8d8d6;--border2:#c8c8c6;
+  --text:#1a1a1a;--text2:#555;--text3:#999;--text4:#bbb;
+  --green:#0e9e70;--green-bg:#e0f5ec;--green-txt:#0e9e70;
+  --amber:#c27d08;--amber-bg:#fdf0d5;--amber-txt:#c27d08;
+  --blue:#2a7de1;--blue-bg:#deeafa;--blue-txt:#2a7de1;
+  --red:#d03030;--red-bg:#fce8e8;--red-txt:#d03030;
+  --purple:#6c5bbf;--purple-bg:#eae8fa;
+}
+body{background:var(--bg);color:var(--text);font-family:'SF Mono','Fira Code','Cascadia Code',monospace;font-size:13px;line-height:1.6;padding:1.5rem 1rem;transition:background .2s,color .2s}
+.container{max-width:820px;margin:0 auto}
+
+/* Header */
+.header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1.75rem}
+.page-title{font-size:17px;font-weight:600;letter-spacing:.02em;margin-bottom:2px}
+.page-sub{font-size:11px;color:var(--text3);letter-spacing:.03em}
+.header-actions{display:flex;gap:8px;align-items:center;flex-shrink:0}
+.btn{font-family:inherit;font-size:11px;font-weight:600;padding:5px 13px;border-radius:20px;border:1px solid var(--border2);background:var(--bg3);color:var(--text2);cursor:pointer;letter-spacing:.04em;text-transform:uppercase;transition:all .15s}
+.btn:hover{background:var(--bg4);color:var(--text)}
+.btn-primary{background:var(--blue-bg);color:var(--blue-txt);border-color:var(--blue)}
+.btn-primary:hover{opacity:.85}
+
+/* Section headers */
+.sec-header{display:flex;align-items:center;justify-content:space-between;margin:1.6rem 0 .55rem;padding-bottom:5px;border-bottom:1px solid var(--border);cursor:pointer;user-select:none}
+.sec-label{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.12em}
+.sec-toggle{font-size:14px;color:var(--text3);transition:transform .2s;line-height:1}
+.sec-toggle.open{transform:rotate(180deg)}
+.sec-body{overflow:hidden;transition:opacity .2s}
+.sec-body.collapsed{display:none}
+
+hr{border:none;border-top:1px solid var(--border);margin:1.4rem 0}
+
+/* Cards grid */
+.cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px;margin-bottom:.5rem}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:12px 14px;position:relative}
+.card-title{font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:9px;padding-right:20px}
+.card-title input.title-input{background:transparent;border:none;color:var(--text2);font:inherit;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;width:100%;outline:none;padding:0}
+.card-title input.title-input:focus{border-bottom:1px solid var(--border2)}
+.irow{display:flex;align-items:center;justify-content:space-between;margin-bottom:5px}
+.irow label{font-size:12px;color:var(--text3)}
+.irow input[type=number]{width:72px;font-size:12px;padding:3px 7px;border-radius:5px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);font-family:inherit;text-align:right}
+.irow input[type=number]:focus{outline:1px solid var(--blue);outline-offset:1px}
+.card-foot{font-size:11px;color:var(--text3);margin-top:8px;padding-top:7px;border-top:1px solid var(--border);display:flex;justify-content:space-between}
+.card-foot span.val{font-weight:600;color:var(--text)}
+.card-foot span.val.amber{color:var(--amber)}
+.remove-btn{position:absolute;top:9px;right:9px;width:18px;height:18px;border-radius:50%;background:var(--bg4);border:1px solid var(--border2);color:var(--text3);font-size:12px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.remove-btn:hover{background:var(--red-bg);color:var(--red-txt);border-color:var(--red)}
+.add-card{background:transparent;border:1px dashed var(--border2);border-radius:var(--r);padding:12px 14px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text3);font-size:12px;gap:6px;transition:all .15s;min-height:80px}
+.add-card:hover{border-color:var(--blue);color:var(--blue)}
+.add-icon{font-size:18px;font-weight:300;line-height:1}
+
+/* Completed expenses */
+.completed-list{margin-top:.5rem}
+.completed-item{display:flex;align-items:center;justify-content:space-between;padding:6px 10px;background:var(--bg3);border-radius:6px;margin-bottom:4px;opacity:.55}
+.completed-item span{font-size:12px;color:var(--text3);text-decoration:line-through}
+.completed-item .restore-btn{font-size:10px;color:var(--text3);cursor:pointer;border:none;background:none;font-family:inherit;padding:2px 6px;border-radius:4px}
+.completed-item .restore-btn:hover{color:var(--green)}
+
+/* Metrics */
+.pgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(118px,1fr));gap:8px;margin:.5rem 0}
+.met{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:11px 13px}
+.met-label{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:3px}
+.met-val{font-size:19px;font-weight:600;color:var(--text);letter-spacing:-.01em}
+.met-val.green{color:var(--green)}
+.met-val.amber{color:var(--amber)}
+.met-val.red{color:var(--red)}
+.met-val.blue{color:var(--blue)}
+.met-val.purple{color:var(--purple)}
+.met-sub{font-size:10px;color:var(--text3);margin-top:2px}
+
+/* Goals */
+.goals-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px;margin:.5rem 0}
+.gcard{background:var(--bg2);border:1px solid var(--border);border-radius:var(--rl);padding:13px 15px}
+.gc-label{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:2px}
+.gc-val{font-size:20px;font-weight:600;color:var(--text);margin:2px 0 2px;letter-spacing:-.01em}
+.gc-sub{font-size:11px;color:var(--text3);min-height:15px}
+.track{height:5px;background:var(--bg4);border-radius:3px;margin-top:9px;overflow:hidden}
+.fill{height:100%;border-radius:3px;transition:width .3s ease}
+.pill{display:inline-block;font-size:10px;font-weight:600;padding:2px 9px;border-radius:20px;margin-top:5px;letter-spacing:.04em;text-transform:uppercase}
+.pill-g{background:var(--green-bg);color:var(--green-txt)}
+.pill-a{background:var(--amber-bg);color:var(--amber-txt)}
+.pill-r{background:var(--red-bg);color:var(--red-txt)}
+.pill-b{background:var(--blue-bg);color:var(--blue-txt)}
+.pill-p{background:var(--purple-bg);color:var(--purple)}
+
+/* IRA manual deposit log */
+.deposit-row{display:flex;gap:8px;margin-bottom:.5rem}
+.deposit-row input{flex:1;font-size:12px;padding:4px 8px;border-radius:5px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);font-family:inherit}
+.deposit-list{margin-top:.4rem}
+.deposit-item{display:flex;justify-content:space-between;align-items:center;padding:5px 8px;background:var(--bg3);border-radius:5px;margin-bottom:3px;font-size:12px}
+.deposit-item .d-label{color:var(--text2)}
+.deposit-item .d-amt{color:var(--green);font-weight:600}
+.deposit-item .d-del{background:none;border:none;color:var(--text3);cursor:pointer;font-size:13px;padding:0 2px}
+.deposit-item .d-del:hover{color:var(--red)}
+
+/* Shift log */
+.shift-row{display:flex;gap:8px;margin-bottom:.5rem;flex-wrap:wrap}
+.shift-row input,.shift-row select{font-size:12px;padding:4px 8px;border-radius:5px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);font-family:inherit}
+.shift-row select{flex:1.2}
+.shift-row input{flex:1}
+.shift-list{margin-top:.4rem}
+.shift-item{display:flex;justify-content:space-between;align-items:center;padding:5px 8px;background:var(--bg3);border-radius:5px;margin-bottom:3px;font-size:12px}
+.shift-item .s-label{color:var(--text2)}
+.shift-item .s-amt{color:var(--blue);font-weight:600}
+.shift-item .s-del{background:none;border:none;color:var(--text3);cursor:pointer;font-size:13px;padding:0 2px}
+.shift-item .s-del:hover{color:var(--red)}
+
+/* Expense log */
+.exp-log-row{display:flex;gap:8px;margin-bottom:.5rem;flex-wrap:wrap}
+.exp-log-row input,.exp-log-row select{font-size:12px;padding:4px 8px;border-radius:5px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);font-family:inherit}
+.exp-log-row select{flex:1.5}
+.exp-log-row input{flex:1}
+.exp-log-list{margin-top:.4rem}
+.exp-log-item{display:flex;justify-content:space-between;align-items:center;padding:5px 8px;background:var(--bg3);border-radius:5px;margin-bottom:3px;font-size:12px}
+.exp-log-item .el-label{color:var(--text2);flex:1}
+.exp-log-item .el-cat{color:var(--text3);font-size:10px;margin:0 8px}
+.exp-log-item .el-amt{color:var(--amber);font-weight:600}
+.exp-log-item .el-del{background:none;border:none;color:var(--text3);cursor:pointer;font-size:13px;padding:0 2px;margin-left:8px}
+.exp-log-item .el-del:hover{color:var(--red)}
+.exp-log-summary{display:flex;gap:10px;flex-wrap:wrap;margin-top:.5rem}
+.exp-cat-badge{font-size:11px;padding:3px 9px;border-radius:12px;background:var(--bg4);color:var(--text2)}
+
+/* Repayment table */
+.rep-table{width:100%;border-collapse:collapse;font-size:12px;margin-top:.5rem}
+.rep-table th{text-align:left;padding:6px 8px;font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;border-bottom:1px solid var(--border)}
+.rep-table td{padding:6px 8px;border-bottom:1px solid var(--border);color:var(--text)}
+.rep-table td:not(:first-child){text-align:right}
+.rep-table tr.current td{background:var(--blue-bg);color:var(--blue-txt)}
+.rep-table tr:last-child td{border-bottom:none}
+.rep-controls{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:.75rem}
+.rep-controls .irow{margin:0}
+
+/* Bar chart */
+.bar-row{display:flex;align-items:center;gap:10px;margin-bottom:5px}
+.bar-label{min-width:130px;font-size:11px;color:var(--text3)}
+.bar-track{flex:1;height:7px;background:var(--bg3);border-radius:3px;overflow:hidden;border:1px solid var(--border)}
+.bar-fill{height:100%;border-radius:3px}
+.bar-amt{min-width:52px;text-align:right;font-size:12px;font-weight:600;color:var(--text)}
+
+/* Brokerage / balance */
+.balance-card{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--rl);padding:15px 17px;margin-top:8px}
+.balance-note{font-size:11px;color:var(--text3);margin-top:5px;line-height:1.65}
+
+.note{font-size:11px;color:var(--text3);margin-top:.65rem;line-height:1.7}
+.tag{display:inline-block;font-size:10px;padding:1px 7px;border-radius:10px;background:var(--bg4);color:var(--text3);margin-right:4px}
+
+/* IRA progress input */
+.ira-manual{display:flex;align-items:center;gap:10px;margin-bottom:.5rem;flex-wrap:wrap}
+.ira-manual label{font-size:12px;color:var(--text3)}
+.ira-manual input{width:90px;font-size:13px;padding:4px 8px;border-radius:5px;border:1px solid var(--border2);background:var(--bg3);color:var(--green);font-family:inherit;text-align:right;font-weight:600}
+
+/* Brokerage replenishment */
+.brok-rep{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:.5rem 0}
+.brok-rep label{font-size:12px;color:var(--text3)}
+.brok-rep input{width:90px;font-size:13px;padding:4px 8px;border-radius:5px;border:1px solid var(--border2);background:var(--bg3);color:var(--blue);font-family:inherit;text-align:right;font-weight:600}
+
+@media print{
+  body{background:#fff;color:#000;padding:.5rem}
+  .btn,.remove-btn,.add-card,.deposit-row,.shift-row,.exp-log-row,.rep-controls .btn,.brok-rep,.ira-manual,.restore-btn,.d-del,.s-del,.el-del{display:none!important}
+  .sec-body.collapsed{display:block!important}
+  .container{max-width:100%}
+  .card,.met,.gcard,.balance-card{border:1px solid #ccc;background:#fff}
+  .met-val,.gc-val{color:#000}
+  .met-val.green,.gc-val.green,.s-amt,.d-amt{color:#0a7a50}
+  .met-val.amber,.amber{color:#8a5a00}
+  .met-val.blue,.blue{color:#1a4e9a}
+  .bar-track{border:1px solid #ccc;background:#eee}
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="header">
+  <div>
+    <div class="page-title">Summer 2026 — Financial Planner</div>
+    <div class="page-sub">All inputs editable · figures update instantly · data saved in browser</div>
+  </div>
+  <div class="header-actions">
+    <button class="btn" id="theme-btn">☀ Light</button>
+    <button class="btn btn-primary" onclick="window.print()">⬇ Export PDF</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════ INCOME ═══════════════════════ -->
+<div class="sec-header" onclick="toggleSec('income')">
+  <span class="sec-label">Income — Jobs</span>
+  <span class="sec-toggle open" id="income-toggle">▾</span>
+</div>
+<div class="sec-body" id="income-body">
+  <div class="cards-grid" id="jobs-grid"></div>
+  <div class="add-card" onclick="addJob()">
+    <span class="add-icon">+</span><span>Add job</span>
+  </div>
+
+  <div class="sec-label" style="margin:1rem 0 .4rem;display:block;font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.12em">Extra shifts log</div>
+  <div class="shift-row">
+    <select id="shift-job"><option value="">Select job…</option></select>
+    <input id="shift-desc" type="text" placeholder="Description (optional)">
+    <input id="shift-hrs" type="number" placeholder="Hrs or nights" step=".5" min="0">
+    <button class="btn btn-primary" onclick="addShift()">+ Log</button>
+  </div>
+  <div class="shift-list" id="shift-list"></div>
+  <div class="note" id="shift-total-note"></div>
+
+  <div class="sec-label" style="margin:1rem 0 .4rem;display:block;font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.12em">Pay periods</div>
+  <div class="pgrid">
+    <div class="met"><div class="met-label">Weekly gross</div><div class="met-val" id="wk-gross">—</div></div>
+    <div class="met"><div class="met-label">Weekly net</div><div class="met-val green" id="wk-net">—</div><div class="met-sub">FICA + PA</div></div>
+    <div class="met"><div class="met-label">Biweekly gross</div><div class="met-val" id="bw-gross">—</div></div>
+    <div class="met"><div class="met-label">Biweekly net</div><div class="met-val green" id="bw-net">—</div></div>
+    <div class="met"><div class="met-label">Monthly gross</div><div class="met-val" id="mo-gross">—</div></div>
+    <div class="met"><div class="met-label">Monthly net</div><div class="met-val green" id="mo-net">—</div></div>
+  </div>
+
+  <div class="sec-label" style="margin:1rem 0 .4rem;display:block;font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.12em">Summer totals</div>
+  <div class="pgrid">
+    <div class="met"><div class="met-label">Gross earnings</div><div class="met-val" id="tot-gross">—</div></div>
+    <div class="met"><div class="met-label">Taxes (10.72%)</div><div class="met-val amber" id="tot-tax">—</div></div>
+    <div class="met"><div class="met-label">Take-home</div><div class="met-val green" id="tot-net">—</div></div>
+    <div class="met"><div class="met-label">+ $1,100 saved</div><div class="met-val green" id="tot-avail">—</div></div>
+    <div class="met"><div class="met-label">Extra shifts (net)</div><div class="met-val blue" id="shift-net-total">—</div></div>
+    <div class="met"><div class="met-label">Grand total avail</div><div class="met-val green" id="grand-avail">—</div></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════ FIXED EXPENSES ═══════════════════════ -->
+<div class="sec-header" onclick="toggleSec('expenses')">
+  <span class="sec-label">Fixed Expenses</span>
+  <span class="sec-toggle open" id="expenses-toggle">▾</span>
+</div>
+<div class="sec-body" id="expenses-body">
+  <div class="cards-grid" id="expenses-grid"></div>
+  <div class="add-card" onclick="addExpense()">
+    <span class="add-icon">+</span><span>Add expense</span>
+  </div>
+  <div id="completed-expenses-wrap" style="margin-top:.5rem"></div>
+
+  <div class="pgrid" style="margin-top:.75rem">
+    <div class="met"><div class="met-label">Total expenses</div><div class="met-val amber" id="exp-total">—</div></div>
+    <div class="met"><div class="met-label">Equipment</div><div class="met-val purple" id="exp-equip">—</div><div class="met-sub">monitor + iPad</div></div>
+    <div class="met"><div class="met-label">Recurring / misc</div><div class="met-val" id="exp-misc">—</div></div>
+  </div>
+
+  <div class="sec-label" style="margin:1rem 0 .4rem;display:block;font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.12em">Expense breakdown</div>
+  <div id="bars"></div>
+</div>
+
+<!-- ═══════════════════════ EXPENSE LOG ═══════════════════════ -->
+<div class="sec-header" onclick="toggleSec('explog')">
+  <span class="sec-label">Expense Log — Actual Transactions</span>
+  <span class="sec-toggle" id="explog-toggle">▾</span>
+</div>
+<div class="sec-body collapsed" id="explog-body">
+  <div class="exp-log-row">
+    <input id="el-desc" type="text" placeholder="Description">
+    <select id="el-cat">
+      <option>Equipment</option><option>Golf</option><option>Gas</option>
+      <option>Food</option><option>Social</option><option>Subscriptions</option>
+      <option>Emergency</option><option>Other</option>
+    </select>
+    <input id="el-amt" type="number" placeholder="Amount" min="0">
+    <button class="btn btn-primary" onclick="addExpLog()">+ Log</button>
+  </div>
+  <div class="exp-log-list" id="exp-log-list"></div>
+  <div class="exp-log-summary" id="exp-log-summary"></div>
+  <div class="pgrid" style="margin-top:.75rem">
+    <div class="met"><div class="met-label">Total logged</div><div class="met-val amber" id="el-total">$0</div></div>
+    <div class="met"><div class="met-label">vs. budget</div><div class="met-val" id="el-vs-budget">—</div><div class="met-sub" id="el-vs-budget-sub"></div></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════ LAUNCH MONITOR REPAYMENT ═══════════════════════ -->
+<div class="sec-header" onclick="toggleSec('repay')">
+  <span class="sec-label">Launch Monitor Repayment Schedule</span>
+  <span class="sec-toggle open" id="repay-toggle">▾</span>
+</div>
+<div class="sec-body" id="repay-body">
+  <div class="rep-controls">
+    <div class="irow" style="gap:8px"><label style="color:var(--text3);font-size:12px">Total owed ($)</label><input id="rep-total" type="number" value="4750" style="width:90px;font-size:12px;padding:3px 7px;border-radius:5px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);font-family:inherit;text-align:right"></div>
+    <div class="irow" style="gap:8px"><label style="color:var(--text3);font-size:12px">From savings ($)</label><input id="rep-savings" type="number" value="1100" style="width:90px;font-size:12px;padding:3px 7px;border-radius:5px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);font-family:inherit;text-align:right"></div>
+    <div class="irow" style="gap:8px"><label style="color:var(--text3);font-size:12px">Payback months</label><input id="rep-months" type="number" value="3" min="1" max="24" style="width:70px;font-size:12px;padding:3px 7px;border-radius:5px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);font-family:inherit;text-align:right"></div>
+    <div class="irow" style="gap:8px"><label style="color:var(--text3);font-size:12px">Interest-free?</label><input id="rep-interest-free" type="checkbox" checked style="width:auto;accent-color:var(--blue)"></div>
+    <div class="irow" style="gap:8px" id="apr-row"><label style="color:var(--text3);font-size:12px">APR (%)</label><input id="rep-apr" type="number" value="22" step=".5" style="width:70px;font-size:12px;padding:3px 7px;border-radius:5px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);font-family:inherit;text-align:right"></div>
+  </div>
+  <table class="rep-table" id="rep-table"></table>
+  <div class="note" id="rep-note"></div>
+</div>
+
+<!-- ═══════════════════════ GOALS ═══════════════════════ -->
+<div class="sec-header" onclick="toggleSec('goals')">
+  <span class="sec-label">Goals & Progress</span>
+  <span class="sec-toggle open" id="goals-toggle">▾</span>
+</div>
+<div class="sec-body" id="goals-body">
+
+  <div class="goals-grid">
+    <div class="gcard">
+      <div class="gc-label">Equipment (monitor + iPad)</div>
+      <div class="gc-val" id="g-equip-val">—</div>
+      <div class="gc-sub" id="g-equip-sub">—</div>
+      <div class="track"><div class="fill" id="g-equip-bar" style="background:var(--purple)"></div></div>
+      <div id="g-equip-pill"></div>
+    </div>
+    <div class="gcard">
+      <div class="gc-label">Roth IRA (2026 — EOY)</div>
+      <div class="gc-val">$7,500</div>
+      <div class="gc-sub" id="g-ira-sub">—</div>
+      <div class="track"><div class="fill" id="g-ira-bar" style="background:var(--blue)"></div></div>
+      <div id="g-ira-pill"></div>
+    </div>
+    <div class="gcard">
+      <div class="gc-label">Truck (deferred)</div>
+      <div class="gc-val">~$1,500</div>
+      <div class="gc-sub">Fund from fall earnings</div>
+      <div class="track"><div class="fill" style="width:0;background:var(--text3)"></div></div>
+      <div><span class="pill pill-a">deferred</span></div>
+    </div>
+  </div>
+
+  <div class="sec-label" style="margin:1.1rem 0 .4rem;display:block;font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.12em">IRA — manual contribution tracker</div>
+  <div class="ira-manual">
+    <label>Log deposit ($)</label>
+    <input id="ira-deposit-amt" type="number" placeholder="0" min="0">
+    <input id="ira-deposit-label" type="text" placeholder="Note (optional)" style="flex:1;font-size:12px;padding:4px 8px;border-radius:5px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);font-family:inherit">
+    <button class="btn btn-primary" onclick="addDeposit()">+ Log</button>
+  </div>
+  <div class="deposit-list" id="deposit-list"></div>
+  <div class="pgrid" style="margin-top:.6rem">
+    <div class="met"><div class="met-label">IRA deposited</div><div class="met-val green" id="ira-deposited">$0</div></div>
+    <div class="met"><div class="met-label">IRA remaining</div><div class="met-val amber" id="ira-remaining">$7,500</div></div>
+    <div class="met"><div class="met-label">% funded</div><div class="met-val blue" id="ira-pct">0%</div></div>
+  </div>
+
+  <div class="sec-label" style="margin:1.1rem 0 .4rem;display:block;font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.12em">IRA gap — fall job calculator</div>
+  <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:.6rem">
+    <div class="irow" style="gap:8px"><label style="color:var(--text3);font-size:12px">Fall hrs/week</label><input id="fall-hrs" type="number" value="11" style="width:70px;font-size:12px;padding:3px 7px;border-radius:5px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);font-family:inherit;text-align:right"></div>
+    <div class="irow" style="gap:8px"><label style="color:var(--text3);font-size:12px">Rate ($/hr)</label><input id="fall-rate" type="number" value="13.50" step=".25" style="width:80px;font-size:12px;padding:3px 7px;border-radius:5px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);font-family:inherit;text-align:right"></div>
+    <div class="irow" style="gap:8px"><label style="color:var(--text3);font-size:12px">Fall weeks</label><input id="fall-wks" type="number" value="18" style="width:70px;font-size:12px;padding:3px 7px;border-radius:5px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);font-family:inherit;text-align:right"></div>
+  </div>
+  <div class="pgrid">
+    <div class="met"><div class="met-label">Fall gross</div><div class="met-val" id="fall-gross">—</div></div>
+    <div class="met"><div class="met-label">Fall take-home</div><div class="met-val green" id="fall-net">—</div></div>
+    <div class="met"><div class="met-label">Projected IRA gap</div><div class="met-val" id="ira-gap-proj">—</div></div>
+    <div class="met"><div class="met-label">Gap covered?</div><div class="met-val" id="fall-covers">—</div></div>
+  </div>
+  <div class="note" id="fall-note"></div>
+</div>
+
+<!-- ═══════════════════════ BROKERAGE ═══════════════════════ -->
+<div class="sec-header" onclick="toggleSec('brokerage')">
+  <span class="sec-label">Brokerage & End-of-Summer Balance</span>
+  <span class="sec-toggle open" id="brokerage-toggle">▾</span>
+</div>
+<div class="sec-body" id="brokerage-body">
+  <div class="pgrid">
+    <div class="met"><div class="met-label">Total available</div><div class="met-val" id="b-avail">—</div></div>
+    <div class="met"><div class="met-label">Total expenses</div><div class="met-val amber" id="b-exp">—</div></div>
+    <div class="met"><div class="met-label">After expenses</div><div class="met-val" id="b-after">—</div></div>
+    <div class="met"><div class="met-label">After IRA goal</div><div class="met-val" id="b-after-ira">—</div></div>
+  </div>
+
+  <div class="balance-card" style="margin-top:10px">
+    <div class="met-label">Brokerage draw needed for IRA</div>
+    <div class="met-val" id="b-ira-gap" style="font-size:21px;font-weight:600;margin:4px 0">—</div>
+    <div class="balance-note" id="b-ira-note"></div>
+  </div>
+
+  <div class="sec-label" style="margin:1rem 0 .4rem;display:block;font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.12em">Brokerage replenishment tracker</div>
+  <div class="brok-rep">
+    <label>Brokerage balance ($)</label>
+    <input id="brok-balance" type="number" value="14000">
+    <label style="margin-left:8px">Replenished so far ($)</label>
+    <input id="brok-replenished" type="number" value="0">
+  </div>
+  <div class="pgrid">
+    <div class="met"><div class="met-label">Starting balance</div><div class="met-val blue" id="brok-start">$14,000</div></div>
+    <div class="met"><div class="met-label">After IRA draw</div><div class="met-val" id="brok-after-draw">—</div></div>
+    <div class="met"><div class="met-label">Replenished</div><div class="met-val green" id="brok-rep-val">$0</div></div>
+    <div class="met"><div class="met-label">Current est. balance</div><div class="met-val" id="brok-current">—</div></div>
+  </div>
+
+  <p class="note">Tax: FICA 7.65% + PA flat 3.07% = 10.72% effective rate. Federal income tax $0 after $15,000 standard deduction. Brokerage liquidation: likely $0 federal LTCG at your income level; 3.07% PA on realized gains only. 2026 Roth IRA limit: $7,500 (under 50). Deadline: April 15, 2027.</p>
+</div>
+
+</div><!-- /container -->
+
+<script>
+// ─── STATE ──────────────────────────────────────────────
+const TAX = 0.1072;
+const SAVINGS = 1100;
+const IRA_GOAL = 7500;
+const EQUIP_LABELS = ['Monitor','iPad'];
+
+let jobs = [];
+let expenses = [];
+let completedExpenses = [];
+let shifts = [];
+let deposits = [];
+let expLog = [];
+let jobIdCounter = 0;
+let expIdCounter = 0;
+
+// ─── STORAGE ────────────────────────────────────────────
+function save(){
+  try{
+    localStorage.setItem('sp26_jobs', JSON.stringify(jobs));
+    localStorage.setItem('sp26_expenses', JSON.stringify(expenses));
+    localStorage.setItem('sp26_completedExpenses', JSON.stringify(completedExpenses));
+    localStorage.setItem('sp26_shifts', JSON.stringify(shifts));
+    localStorage.setItem('sp26_deposits', JSON.stringify(deposits));
+    localStorage.setItem('sp26_expLog', JSON.stringify(expLog));
+    localStorage.setItem('sp26_jobIdCounter', jobIdCounter);
+    localStorage.setItem('sp26_expIdCounter', expIdCounter);
+    localStorage.setItem('sp26_theme', document.body.classList.contains('light')?'light':'dark');
+  }catch(e){}
+}
+function load(){
+  try{
+    const j=localStorage.getItem('sp26_jobs');
+    const e=localStorage.getItem('sp26_expenses');
+    const ce=localStorage.getItem('sp26_completedExpenses');
+    const s=localStorage.getItem('sp26_shifts');
+    const d=localStorage.getItem('sp26_deposits');
+    const el=localStorage.getItem('sp26_expLog');
+    if(j) jobs=JSON.parse(j);
+    if(e) expenses=JSON.parse(e);
+    if(ce) completedExpenses=JSON.parse(ce);
+    if(s) shifts=JSON.parse(s);
+    if(d) deposits=JSON.parse(d);
+    if(el) expLog=JSON.parse(el);
+    jobIdCounter=parseInt(localStorage.getItem('sp26_jobIdCounter')||0);
+    expIdCounter=parseInt(localStorage.getItem('sp26_expIdCounter')||0);
+    const theme=localStorage.getItem('sp26_theme');
+    if(theme==='light'){document.body.classList.add('light');document.getElementById('theme-btn').textContent='☾ Dark';}
+  }catch(e){}
+}
+
+// ─── DEFAULTS ───────────────────────────────────────────
+function initDefaults(){
+  if(jobs.length===0){
+    jobs=[
+      {id:jobIdCounter++,name:'Honors Center',unit:'hrs',rate:10.25,qty:2,weeks:12},
+      {id:jobIdCounter++,name:'Internship',unit:'hrs',rate:15,qty:40,weeks:12},
+      {id:jobIdCounter++,name:'Summer RA',unit:'nights',rate:35,qty:2.5,weeks:12},
+    ];
+  }
+  if(expenses.length===0){
+    expenses=[
+      {id:expIdCounter++,name:'Launch Monitor',category:'Equipment',amount:4500},
+      {id:expIdCounter++,name:'iPad',category:'Equipment',amount:250},
+      {id:expIdCounter++,name:'Golf Membership',category:'Golf',amount:400},
+      {id:expIdCounter++,name:'Golf Green Fees',category:'Golf',amount:400},
+      {id:expIdCounter++,name:'Gas',category:'Gas',amount:600},
+      {id:expIdCounter++,name:'Misc Meals',category:'Food',amount:300},
+      {id:expIdCounter++,name:'Social',category:'Social',amount:60},
+      {id:expIdCounter++,name:'Claude Pro (3mo)',category:'Subscriptions',amount:60},
+      {id:expIdCounter++,name:'Emergency Buffer',category:'Emergency',amount:0},
+    ];
+  }
+}
+
+// ─── THEME ──────────────────────────────────────────────
+document.getElementById('theme-btn').onclick=function(){
+  document.body.classList.toggle('light');
+  this.textContent=document.body.classList.contains('light')?'☾ Dark':'☀ Light';
+  save();
+};
+
+// ─── SECTION TOGGLE ─────────────────────────────────────
+function toggleSec(id){
+  const body=document.getElementById(id+'-body');
+  const tog=document.getElementById(id+'-toggle');
+  body.classList.toggle('collapsed');
+  tog.classList.toggle('open');
+}
+
+// ─── FORMAT ─────────────────────────────────────────────
+function fmt(n){return '$'+Math.round(Math.abs(n)).toLocaleString();}
+function fmtD(n){return '$'+Math.abs(n).toFixed(2);}
+function fmts(n){return(n<0?'-':'')+fmt(n);}
+function pct(v,t){return t===0?'0%':Math.min(100,Math.max(0,v/t*100)).toFixed(1)+'%';}
+function pill(el,text,cls){el.innerHTML='<span class="pill '+cls+'">'+text+'</span>';}
+
+// ─── JOBS ───────────────────────────────────────────────
+function addJob(){
+  jobs.push({id:jobIdCounter++,name:'New Job',unit:'hrs',rate:15,qty:10,weeks:12});
+  renderJobs(); calc(); save();
+}
+function removeJob(id){
+  jobs=jobs.filter(j=>j.id!==id);
+  renderJobs(); calc(); save();
+}
+function renderJobs(){
+  const grid=document.getElementById('jobs-grid');
+  grid.innerHTML='';
+  const sel=document.getElementById('shift-job');
+  const prev=sel.value;
+  sel.innerHTML='<option value="">Select job…</option>';
+  jobs.forEach(j=>{
+    const card=document.createElement('div');
+    card.className='card';
+    const unitLabel=j.unit==='nights'?'Nights/wk':'Hrs/week';
+    card.innerHTML=`
+      <button class="remove-btn" title="Remove job" onclick="removeJob(${j.id})">×</button>
+      <div class="card-title"><input class="title-input" value="${j.name}" onchange="updateJob(${j.id},'name',this.value)" onblur="updateJob(${j.id},'name',this.value)"></div>
+      <div class="irow"><label>${unitLabel}</label><input type="number" value="${j.qty}" step=".5" onchange="updateJob(${j.id},'qty',+this.value)"></div>
+      <div class="irow"><label>Rate ($/unit)</label><input type="number" value="${j.rate}" step=".25" onchange="updateJob(${j.id},'rate',+this.value)"></div>
+      <div class="irow"><label>Unit</label>
+        <select style="width:72px;font-size:12px;padding:3px 6px;border-radius:5px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);font-family:inherit" onchange="updateJob(${j.id},'unit',this.value)">
+          <option value="hrs"${j.unit==='hrs'?' selected':''}>hrs</option>
+          <option value="nights"${j.unit==='nights'?' selected':''}>nights</option>
+        </select>
+      </div>
+      <div class="irow"><label>Weeks</label><input type="number" value="${j.weeks}" onchange="updateJob(${j.id},'weeks',+this.value)"></div>
+      <div class="card-foot"><span>Weekly</span><span class="val" id="wk-j${j.id}">—</span></div>
+      <div class="card-foot" style="margin-top:3px"><span>Total gross</span><span class="val" id="tot-j${j.id}">—</span></div>
+    `;
+    grid.appendChild(card);
+    const opt=document.createElement('option');
+    opt.value=j.id; opt.textContent=j.name;
+    if(String(j.id)===prev) opt.selected=true;
+    sel.appendChild(opt);
+  });
+}
+function updateJob(id,key,val){
+  const j=jobs.find(x=>x.id===id);
+  if(j){j[key]=val; calc(); save();}
+}
+
+// ─── EXPENSES ───────────────────────────────────────────
+function addExpense(){
+  expenses.push({id:expIdCounter++,name:'New Expense',category:'Other',amount:0});
+  renderExpenses(); calc(); save();
+}
+function removeExpense(id){
+  const exp=expenses.find(e=>e.id===id);
+  if(exp){
+    completedExpenses.push({...exp, completedAt: new Date().toLocaleDateString()});
+    expenses=expenses.filter(e=>e.id!==id);
+    renderExpenses(); calc(); save();
+  }
+}
+function restoreExpense(id){
+  const exp=completedExpenses.find(e=>e.id===id);
+  if(exp){
+    expenses.push({id:exp.id,name:exp.name,category:exp.category,amount:exp.amount});
+    completedExpenses=completedExpenses.filter(e=>e.id!==id);
+    renderExpenses(); calc(); save();
+  }
+}
+function renderExpenses(){
+  const grid=document.getElementById('expenses-grid');
+  grid.innerHTML='';
+  const cats=['Equipment','Golf','Gas','Food','Social','Subscriptions','Emergency','Other'];
+  expenses.forEach(e=>{
+    const card=document.createElement('div');
+    card.className='card';
+    card.innerHTML=`
+      <button class="remove-btn" title="Mark as done / remove" onclick="removeExpense(${e.id})">✓</button>
+      <div class="card-title"><input class="title-input" value="${e.name}" onchange="updateExp(${e.id},'name',this.value)"></div>
+      <div class="irow"><label>Amount ($)</label><input type="number" value="${e.amount}" step="10" onchange="updateExp(${e.id},'amount',+this.value)"></div>
+      <div class="irow"><label>Category</label>
+        <select style="width:110px;font-size:11px;padding:3px 5px;border-radius:5px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);font-family:inherit" onchange="updateExp(${e.id},'category',this.value)">
+          ${cats.map(c=>`<option${c===e.category?' selected':''}>${c}</option>`).join('')}
+        </select>
+      </div>
+      <div class="card-foot"><span class="tag">${e.category}</span><span class="val amber">${fmt(e.amount)}</span></div>
+    `;
+    grid.appendChild(card);
+  });
+  const wrap=document.getElementById('completed-expenses-wrap');
+  if(completedExpenses.length===0){wrap.innerHTML='';return;}
+  wrap.innerHTML='<div class="sec-label" style="font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.12em;margin:.75rem 0 .35rem">Completed / paid off</div><div class="completed-list" id="completed-list"></div>';
+  const cl=document.getElementById('completed-list');
+  completedExpenses.forEach(e=>{
+    const item=document.createElement('div');
+    item.className='completed-item';
+    item.innerHTML=`<span>${e.name} — ${fmt(e.amount)}</span><button class="restore-btn" onclick="restoreExpense(${e.id})">↩ restore</button>`;
+    cl.appendChild(item);
+  });
+}
+function updateExp(id,key,val){
+  const e=expenses.find(x=>x.id===id);
+  if(e){e[key]=val; calc(); save();}
+}
+
+// ─── SHIFTS ─────────────────────────────────────────────
+function addShift(){
+  const jobId=parseInt(document.getElementById('shift-job').value);
+  const desc=document.getElementById('shift-desc').value||'Extra shift';
+  const hrs=parseFloat(document.getElementById('shift-hrs').value);
+  if(isNaN(jobId)||isNaN(hrs)||hrs<=0) return;
+  const job=jobs.find(j=>j.id===jobId);
+  if(!job) return;
+  const gross=job.rate*hrs;
+  shifts.push({jobId,jobName:job.name,desc,hrs,gross,date:new Date().toLocaleDateString()});
+  document.getElementById('shift-hrs').value='';
+  document.getElementById('shift-desc').value='';
+  renderShifts(); calc(); save();
+}
+function removeShift(i){shifts.splice(i,1); renderShifts(); calc(); save();}
+function renderShifts(){
+  const list=document.getElementById('shift-list');
+  if(shifts.length===0){list.innerHTML='';return;}
+  list.innerHTML=shifts.map((s,i)=>`
+    <div class="shift-item">
+      <span class="s-label">${s.jobName} — ${s.desc} (${s.hrs} ${s.hrs===1?'unit':'units'})</span>
+      <span class="s-amt">${fmt(s.gross)} gross</span>
+      <button class="s-del" onclick="removeShift(${i})">×</button>
+    </div>
+  `).join('');
+}
+
+// ─── DEPOSITS ───────────────────────────────────────────
+function addDeposit(){
+  const amt=parseFloat(document.getElementById('ira-deposit-amt').value);
+  const label=document.getElementById('ira-deposit-label').value||'Contribution';
+  if(isNaN(amt)||amt<=0) return;
+  deposits.push({amt,label,date:new Date().toLocaleDateString()});
+  document.getElementById('ira-deposit-amt').value='';
+  document.getElementById('ira-deposit-label').value='';
+  renderDeposits(); calc(); save();
+}
+function removeDeposit(i){deposits.splice(i,1); renderDeposits(); calc(); save();}
+function renderDeposits(){
+  const list=document.getElementById('deposit-list');
+  if(deposits.length===0){list.innerHTML='';return;}
+  list.innerHTML=deposits.map((d,i)=>`
+    <div class="deposit-item">
+      <span class="d-label">${d.label} <span style="color:var(--text3);font-size:10px">${d.date}</span></span>
+      <span class="d-amt">+${fmt(d.amt)}</span>
+      <button class="d-del" onclick="removeDeposit(${i})">×</button>
+    </div>
+  `).join('');
+}
+
+// ─── EXPENSE LOG ────────────────────────────────────────
+function addExpLog(){
+  const desc=document.getElementById('el-desc').value||'Expense';
+  const cat=document.getElementById('el-cat').value;
+  const amt=parseFloat(document.getElementById('el-amt').value);
+  if(isNaN(amt)||amt<=0) return;
+  expLog.push({desc,cat,amt,date:new Date().toLocaleDateString()});
+  document.getElementById('el-amt').value='';
+  document.getElementById('el-desc').value='';
+  renderExpLog(); calc(); save();
+}
+function removeExpLog(i){expLog.splice(i,1); renderExpLog(); calc(); save();}
+function renderExpLog(){
+  const list=document.getElementById('exp-log-list');
+  list.innerHTML=expLog.map((e,i)=>`
+    <div class="exp-log-item">
+      <span class="el-label">${e.desc} <span style="color:var(--text3);font-size:10px">${e.date}</span></span>
+      <span class="el-cat">${e.cat}</span>
+      <span class="el-amt">${fmt(e.amt)}</span>
+      <button class="el-del" onclick="removeExpLog(${i})">×</button>
+    </div>
+  `).join('');
+  // Category summary
+  const cats={};
+  expLog.forEach(e=>{ cats[e.cat]=(cats[e.cat]||0)+e.amt; });
+  const sum=document.getElementById('exp-log-summary');
+  sum.innerHTML=Object.entries(cats).map(([c,v])=>`<span class="exp-cat-badge">${c}: ${fmt(v)}</span>`).join('');
+}
+
+// ─── REPAYMENT TABLE ────────────────────────────────────
+function renderRepayment(){
+  const total=parseFloat(document.getElementById('rep-total').value)||4750;
+  const fromSavings=parseFloat(document.getElementById('rep-savings').value)||0;
+  const months=parseInt(document.getElementById('rep-months').value)||3;
+  const interestFree=document.getElementById('rep-interest-free').checked;
+  const apr=parseFloat(document.getElementById('rep-apr').value)||22;
+  document.getElementById('apr-row').style.display=interestFree?'none':'flex';
+  const owed=Math.max(0,total-fromSavings);
+  function mp(p,a,m){ if(a===0) return p/m; const r=(a/100)/12; return p*r*Math.pow(1+r,m)/(Math.pow(1+r,m)-1); }
+  const rows=[2,3,4,6,8,12];
+  let html='<thead><tr><th>Months</th><th>Monthly pmt</th><th>Biweekly pmt</th><th>Total paid</th><th>Interest cost</th></tr></thead><tbody>';
+  rows.forEach(m=>{
+    const mPmt=mp(owed,interestFree?0:apr,m);
+    const tot=mPmt*m;
+    const interest=tot-owed;
+    const isCur=m===months;
+    html+=`<tr${isCur?' class="current"':''}><td>${m} mo${isCur?' ◀':''}</td><td>${fmtD(mPmt)}</td><td>${fmtD(mPmt/2)}</td><td>${fmtD(tot)}</td><td>${interest<.5?'$0.00':fmtD(interest)}</td></tr>`;
+  });
+  html+='</tbody>';
+  document.getElementById('rep-table').innerHTML=html;
+  const curMp=mp(owed,interestFree?0:apr,months);
+  document.getElementById('rep-note').textContent=
+    `At ${months} months: ${fmtD(curMp)}/month or ${fmtD(curMp/2)} biweekly. `+
+    (interestFree?`Interest-free — pay parent before statement due date each month.`:`At ${apr}% APR, total interest = ${fmtD(curMp*months-owed)}. Paying parent before due date each month avoids all interest.`);
+}
+['rep-total','rep-savings','rep-months','rep-apr','rep-interest-free'].forEach(id=>{
+  document.getElementById(id).addEventListener('change',()=>{renderRepayment();save();});
+});
+
+// ─── MAIN CALC ──────────────────────────────────────────
+function g(id){return document.getElementById(id);}
+function calc(){
+  // Jobs
+  let wkGross=0;
+  jobs.forEach(j=>{
+    const wk=j.qty*j.rate;
+    wkGross+=wk;
+    const totEl=document.getElementById('tot-j'+j.id);
+    const wkEl=document.getElementById('wk-j'+j.id);
+    if(totEl) totEl.textContent=fmt(wk*j.weeks);
+    if(wkEl) wkEl.textContent=fmt(wk);
+  });
+  const wkNet=wkGross*(1-TAX);
+  g('wk-gross').textContent=fmt(wkGross);
+  g('wk-net').textContent=fmt(wkNet);
+  g('bw-gross').textContent=fmt(wkGross*2);
+  g('bw-net').textContent=fmt(wkNet*2);
+  g('mo-gross').textContent=fmt(wkGross*(52/12));
+  g('mo-net').textContent=fmt(wkNet*(52/12));
+
+  const maxWeeks=jobs.length?Math.max(...jobs.map(j=>j.weeks)):12;
+  const totGross=jobs.reduce((a,j)=>a+j.qty*j.rate*j.weeks,0);
+  const totTax=totGross*TAX;
+  const totNet=totGross-totTax;
+  g('tot-gross').textContent=fmt(totGross);
+  g('tot-tax').textContent=fmt(totTax);
+  g('tot-net').textContent=fmt(totNet);
+  g('tot-avail').textContent=fmt(totNet+SAVINGS);
+
+  const shiftGross=shifts.reduce((a,s)=>a+s.gross,0);
+  const shiftNet=shiftGross*(1-TAX);
+  g('shift-net-total').textContent=fmt(shiftNet);
+  g('shift-total-note').textContent=shifts.length?`${shifts.length} extra shift(s) logged: ${fmt(shiftGross)} gross → ${fmt(shiftNet)} net after tax.`:'';
+  const grandAvail=totNet+SAVINGS+shiftNet;
+  g('grand-avail').textContent=fmt(grandAvail);
+
+  // Expenses
+  let expTotal=0,equipTotal=0,miscTotal=0;
+  expenses.forEach(e=>{
+    expTotal+=e.amount;
+    if(e.category==='Equipment') equipTotal+=e.amount;
+    else miscTotal+=e.amount;
+  });
+  g('exp-total').textContent=fmt(expTotal);
+  g('exp-equip').textContent=fmt(equipTotal);
+  g('exp-misc').textContent=fmt(miscTotal);
+
+  // Bars
+  const cats={};
+  expenses.forEach(e=>{ cats[e.category]=(cats[e.category]||0)+e.amount; });
+  const catColors={Equipment:'#9b87f5',Golf:'#4a9eff',Gas:'#e6a020',Food:'#1fbd8a',Social:'#f06292',Subscriptions:'#888',Emergency:'#555',Other:'#444'};
+  let barsHtml='';
+  Object.entries(cats).forEach(([cat,val])=>{
+    if(val<=0) return;
+    const p=expTotal>0?Math.min(100,(val/expTotal)*100).toFixed(1):0;
+    barsHtml+=`<div class="bar-row"><span class="bar-label">${cat}</span><div class="bar-track"><div class="bar-fill" style="width:${p}%;background:${catColors[cat]||'#666'}"></div></div><span class="bar-amt">${fmt(val)}</span></div>`;
+  });
+  g('bars').innerHTML=barsHtml;
+
+  // Expense log vs budget
+  const elTotal=expLog.reduce((a,e)=>a+e.amt,0);
+  g('el-total').textContent=fmt(elTotal);
+  const diff=elTotal-expTotal;
+  const elEl=g('el-vs-budget');
+  elEl.textContent=diff<=0?fmts(diff):'+'+(fmt(diff));
+  elEl.className='met-val '+(diff<=0?'green':'red');
+  g('el-vs-budget-sub').textContent=diff<=0?'under budget':'over budget';
+
+  // Goals
+  g('g-equip-val').textContent=fmt(equipTotal);
+  g('g-equip-bar').style.width=pct(Math.min(grandAvail,equipTotal),equipTotal);
+  pill(g('g-equip-pill'),grandAvail>=equipTotal?'fully covered':'partial',grandAvail>=equipTotal?'pill-g':'pill-a');
+
+  const afterExp=grandAvail-expTotal;
+  const iraFunded=Math.max(0,Math.min(afterExp,IRA_GOAL));
+  const iraGap=Math.max(0,IRA_GOAL-iraFunded);
+  g('g-ira-sub').textContent=iraGap===0?'Fully funded from earnings':fmt(iraFunded)+' from earnings, '+fmt(iraGap)+' gap';
+  g('g-ira-bar').style.width=pct(iraFunded,IRA_GOAL);
+  pill(g('g-ira-pill'),iraGap===0?'fully funded':'gap: '+fmt(iraGap),iraGap===0?'pill-g':'pill-a');
+
+  // IRA deposits
+  const deposited=deposits.reduce((a,d)=>a+d.amt,0);
+  const remaining=Math.max(0,IRA_GOAL-deposited);
+  const iraPct=Math.min(100,(deposited/IRA_GOAL)*100).toFixed(0);
+  g('ira-deposited').textContent=fmt(deposited);
+  g('ira-remaining').textContent=fmt(remaining);
+  g('ira-pct').textContent=iraPct+'%';
+
+  // Fall job IRA gap
+  const fallHrs=parseFloat(g('fall-hrs').value)||11;
+  const fallRate=parseFloat(g('fall-rate').value)||13.5;
+  const fallWks=parseInt(g('fall-wks').value)||18;
+  const fallGross=fallHrs*fallRate*fallWks;
+  const fallNet=fallGross*(1-TAX);
+  g('fall-gross').textContent=fmt(fallGross);
+  g('fall-net').textContent=fmt(fallNet);
+  const projGap=Math.max(0,iraGap-deposited);
+  g('ira-gap-proj').textContent=fmt(projGap);
+  const covers=fallNet>=projGap;
+  const fcEl=g('fall-covers');
+  if(projGap===0){fcEl.textContent='None needed';fcEl.className='met-val green';}
+  else if(covers){fcEl.textContent='Yes';fcEl.className='met-val green';}
+  else{fcEl.textContent='Partial';fcEl.className='met-val amber';}
+  g('fall-note').textContent=projGap===0
+    ?'IRA gap already covered — no fall income required for IRA goal.'
+    :covers
+      ?`Fall take-home of ${fmt(fallNet)} covers the ${fmt(projGap)} projected IRA gap with ${fmt(fallNet-projGap)} to spare.`
+      :`Fall take-home of ${fmt(fallNet)} covers part of the ${fmt(projGap)} IRA gap. Still short by ${fmt(projGap-fallNet)}.`;
+
+  // Brokerage & balance
+  const brokBalance=parseFloat(g('brok-balance').value)||14000;
+  const brokRep=parseFloat(g('brok-replenished').value)||0;
+  g('b-avail').textContent=fmt(grandAvail);
+  g('b-exp').textContent=fmt(expTotal);
+  const bAfter=grandAvail-expTotal;
+  const bAfterEl=g('b-after');
+  bAfterEl.textContent=fmts(bAfter);
+  bAfterEl.className='met-val '+(bAfter>=0?'green':'red');
+  const bAfterIra=bAfter-iraFunded;
+  const bAiraEl=g('b-after-ira');
+  bAiraEl.textContent=fmts(bAfterIra);
+  bAiraEl.className='met-val '+(bAfterIra>=0?'green':'amber');
+
+  const gapEl=g('b-ira-gap');
+  const noteEl=g('b-ira-note');
+  const brokAfterDraw=brokBalance-iraGap;
+  if(iraGap===0){
+    gapEl.textContent='$0 — no draw needed';
+    gapEl.className='met-val green';
+    noteEl.textContent='IRA fully funded from summer earnings alone. Brokerage untouched.';
+  } else {
+    gapEl.textContent=fmt(iraGap)+' from brokerage';
+    gapEl.className='met-val amber';
+    noteEl.textContent=`Draw ${fmt(iraGap)} from brokerage to reach the $7,500 IRA goal, leaving $${Math.round(brokAfterDraw).toLocaleString()} of $${Math.round(brokBalance).toLocaleString()}. Likely $0 federal LTCG tax at your income; 3.07% PA tax on realized gains only.`;
+  }
+  g('brok-start').textContent=fmt(brokBalance);
+  g('brok-after-draw').textContent=fmt(brokAfterDraw);
+  g('brok-rep-val').textContent=fmt(brokRep);
+  const brokCurrent=brokAfterDraw+brokRep;
+  const bcEl=g('brok-current');
+  bcEl.textContent=fmt(brokCurrent);
+  bcEl.className='met-val '+(brokCurrent>=brokBalance?'green':'amber');
+}
+
+// ─── EVENT LISTENERS ────────────────────────────────────
+['fall-hrs','fall-rate','fall-wks','brok-balance','brok-replenished'].forEach(id=>{
+  document.getElementById(id).addEventListener('input',()=>{calc();save();});
+});
+
+// ─── INIT ───────────────────────────────────────────────
+load();
+initDefaults();
+renderJobs();
+renderExpenses();
+renderShifts();
+renderDeposits();
+renderExpLog();
+renderRepayment();
+calc();
+</script>
+</body>
+</html>
