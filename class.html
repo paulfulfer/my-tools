@@ -130,9 +130,10 @@ hr{border:none;border-top:1px solid var(--border);margin:1.4rem 0}
 <script>
 // ── LOAD STATE ──────────────────────────────────────────
 const params  = new URLSearchParams(location.search);
-const classId = parseInt(params.get('id'));
+const classId = parseInt(params.get('id'), 10);
 let courses   = JSON.parse(localStorage.getItem('acad_courses') || '[]');
-let course    = courses.find(c => c.id === classId);
+// Compare as numbers — guard against IDs stored as strings
+let course    = courses.find(c => parseInt(c.id, 10) === classId);
 
 const savedTheme = localStorage.getItem('acad_theme');
 if(savedTheme==='dark') document.body.classList.add('dark');
@@ -151,7 +152,7 @@ if(!course){
 }
 
 function saveCourses(){
-  courses = courses.map(c => c.id===classId ? course : c);
+  courses = courses.map(c => parseInt(c.id,10)===classId ? course : c);
   localStorage.setItem('acad_courses', JSON.stringify(courses));
 }
 

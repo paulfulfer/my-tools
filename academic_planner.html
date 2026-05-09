@@ -157,7 +157,7 @@ const COLORS = ['#2a7de1','#0e9e70','#c27d08','#d03030','#6c5bbf','#e06030','#18
 const COLOR_NAMES = ['Blue','Green','Amber','Red','Purple','Orange','Teal','Grey'];
 
 let courses = JSON.parse(localStorage.getItem('acad_courses') || '[]');
-let idCounter = parseInt(localStorage.getItem('acad_id_counter') || '1');
+let idCounter = parseInt(localStorage.getItem('acad_id_counter') || '1', 10) || 1;
 
 function save(){
   localStorage.setItem('acad_courses', JSON.stringify(courses));
@@ -267,7 +267,7 @@ function saveAdd(){
   const name = document.getElementById('f-name').value.trim();
   if(!name){alert('Course name is required.');return;}
   const course = {
-    id: idCounter++,
+    id: Number(idCounter++),
     name,
     code:      document.getElementById('f-code').value.trim(),
     professor: document.getElementById('f-prof').value.trim(),
