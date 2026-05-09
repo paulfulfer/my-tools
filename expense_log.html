@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Expense Log</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f5f5f3;--bg2:#ffffff;--bg3:#efefed;--bg4:#e4e4e2;
+  --border:#dddddb;--border2:#c8c8c6;
+  --text:#1a1a1a;--text2:#555;--text3:#999;--text4:#bbb;
+  --green:#0e9e70;--green-bg:#e0f5ec;--green-txt:#0e9e70;
+  --amber:#c27d08;--amber-bg:#fdf0d5;--amber-txt:#c27d08;
+  --blue:#2a7de1;--blue-bg:#deeafa;--blue-txt:#2a7de1;
+  --red:#d03030;--red-bg:#fce8e8;--red-txt:#d03030;
+  --purple:#6c5bbf;--purple-bg:#eae8fa;
+  --r:8px;--rl:12px;
+}
+.dark{
+  --bg:#1e1e1e;--bg2:#272727;--bg3:#2f2f2f;--bg4:#383838;
+  --border:#3a3a3a;--border2:#484848;
+  --text:#e2e2e2;--text2:#a0a0a0;--text3:#666;--text4:#444;
+  --green:#1fbd8a;--green-bg:#0d2e22;--green-txt:#1fbd8a;
+  --amber:#e6a020;--amber-bg:#2c1f06;--amber-txt:#e6a020;
+  --blue:#4a9eff;--blue-bg:#0a1e35;--blue-txt:#4a9eff;
+  --red:#f05050;--red-bg:#2a0f0f;--red-txt:#f05050;
+  --purple:#9b87f5;--purple-bg:#1a1530;
+}
+body{background:var(--bg);color:var(--text);font-family:'SF Mono','Fira Code','Cascadia Code',monospace;font-size:13px;line-height:1.6;padding:1.5rem 1rem;transition:background .2s,color .2s;min-height:100vh}
+.container{max-width:820px;margin:0 auto}
+.header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1.75rem}
+.page-title{font-size:17px;font-weight:600;letter-spacing:.02em;margin-bottom:2px}
+.page-sub{font-size:11px;color:var(--text3);letter-spacing:.03em}
+.header-actions{display:flex;gap:8px;align-items:center;flex-shrink:0}
+.btn{font-family:inherit;font-size:11px;font-weight:600;padding:5px 13px;border-radius:20px;border:1px solid var(--border2);background:var(--bg3);color:var(--text2);cursor:pointer;letter-spacing:.04em;text-transform:uppercase;transition:all .15s;text-decoration:none;display:inline-block}
+.btn:hover{background:var(--bg4);color:var(--text)}
+.btn-amber{background:var(--amber-bg);color:var(--amber-txt);border-color:var(--amber)}
+.btn-amber:hover{opacity:.85}
+hr{border:none;border-top:1px solid var(--border);margin:1.4rem 0}
+.sec-header{display:flex;align-items:center;justify-content:space-between;margin:1.6rem 0 .55rem;padding-bottom:5px;border-bottom:1px solid var(--border);cursor:pointer;user-select:none}
+.sec-label{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.12em}
+.sec-toggle{font-size:14px;color:var(--text3);transition:transform .2s;line-height:1}
+.sec-toggle.open{transform:rotate(180deg)}
+.sec-body.collapsed{display:none}
+.pgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(118px,1fr));gap:8px;margin:.5rem 0 1rem}
+.met{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:11px 13px}
+.met-label{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:3px}
+.met-val{font-size:19px;font-weight:600;color:var(--text);letter-spacing:-.01em}
+.met-val.green{color:var(--green)}.met-val.amber{color:var(--amber)}.met-val.red{color:var(--red)}.met-val.blue{color:var(--blue)}
+.met-sub{font-size:10px;color:var(--text3);margin-top:2px}
+.entry-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--rl);padding:16px 18px;margin-bottom:1rem}
+.form-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px;align-items:flex-end}
+.form-group{display:flex;flex-direction:column;gap:3px;flex:1;min-width:120px}
+.form-group label{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.08em}
+.form-group input,.form-group select{font-family:inherit;font-size:12px;padding:5px 9px;border-radius:6px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);transition:border-color .15s}
+.form-group input:focus,.form-group select:focus{outline:none;border-color:var(--amber)}
+.form-actions{display:flex;justify-content:flex-end}
+.exp-list{display:flex;flex-direction:column;gap:5px}
+.exp-item{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:9px 13px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.exp-item:hover{border-color:var(--border2)}
+.ei-left{flex:1;min-width:0}
+.ei-top{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:2px}
+.ei-desc{font-size:12px;color:var(--text);font-weight:500}
+.ei-date{font-size:11px;color:var(--text3)}
+.ei-cat{font-size:10px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;padding:1px 7px;border-radius:10px;background:var(--bg4);color:var(--text3)}
+.ei-right{display:flex;align-items:center;gap:10px;flex-shrink:0}
+.ei-amt{font-size:13px;font-weight:600;color:var(--amber)}
+.ei-del{background:none;border:none;color:var(--text4);cursor:pointer;font-size:14px;padding:0;font-family:inherit;transition:color .15s}
+.ei-del:hover{color:var(--red)}
+.empty-state{text-align:center;padding:2rem;color:var(--text3);font-size:12px;border:1px dashed var(--border2);border-radius:var(--r)}
+.bar-row{display:flex;align-items:center;gap:10px;margin-bottom:5px}
+.bar-label{min-width:110px;font-size:11px;color:var(--text3)}
+.bar-track{flex:1;height:7px;background:var(--bg3);border-radius:3px;overflow:hidden;border:1px solid var(--border)}
+.bar-fill{height:100%;border-radius:3px}
+.bar-amt{min-width:52px;text-align:right;font-size:12px;font-weight:600;color:var(--text)}
+.cat-badges{display:flex;gap:8px;flex-wrap:wrap;margin-top:.5rem}
+.cat-badge{font-size:11px;padding:3px 9px;border-radius:12px;background:var(--bg4);color:var(--text2)}
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="header">
+    <div>
+      <div class="page-title">Expense Log</div>
+      <div class="page-sub">actual transactions · summer 2026</div>
+    </div>
+    <div class="header-actions">
+      <a href="index.html" class="btn">← home</a>
+      <button class="btn" onclick="toggleTheme()" id="theme-btn">◑ dark</button>
+    </div>
+  </div>
+
+  <div class="pgrid">
+    <div class="met"><div class="met-label">Total Logged</div><div class="met-val amber" id="met-total">$0</div><div class="met-sub">all categories</div></div>
+    <div class="met"><div class="met-label">This Month</div><div class="met-val" id="met-month">$0</div><div class="met-sub" id="met-month-sub"></div></div>
+    <div class="met"><div class="met-label">Entries</div><div class="met-val blue" id="met-count">0</div><div class="met-sub">transactions</div></div>
+    <div class="met"><div class="met-label">Largest</div><div class="met-val" id="met-largest">—</div><div class="met-sub" id="met-largest-sub"></div></div>
+  </div>
+
+  <!-- Entry form -->
+  <div class="sec-header" onclick="toggleSec('entry')">
+    <span class="sec-label">Log an Expense</span>
+    <span class="sec-toggle open" id="toggle-entry">▼</span>
+  </div>
+  <div class="sec-body" id="sec-entry">
+    <div class="entry-card">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Description</label>
+          <input type="text" id="f-desc" placeholder="e.g. Gas fillup, lunch, etc.">
+        </div>
+        <div class="form-group" style="max-width:150px">
+          <label>Category</label>
+          <select id="f-cat">
+            <option>Equipment</option><option>Golf</option><option>Gas</option>
+            <option>Food</option><option>Social</option><option>Subscriptions</option>
+            <option>Emergency</option><option>Other</option>
+          </select>
+        </div>
+        <div class="form-group" style="max-width:130px">
+          <label>Date</label>
+          <input type="date" id="f-date">
+        </div>
+        <div class="form-group" style="max-width:110px">
+          <label>Amount ($)</label>
+          <input type="number" id="f-amt" step="0.01" min="0.01" placeholder="0.00">
+        </div>
+      </div>
+      <div class="form-actions">
+        <button class="btn btn-amber" onclick="logExpense()">+ Log Expense</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Breakdown -->
+  <div class="sec-header" onclick="toggleSec('breakdown')">
+    <span class="sec-label">Category Breakdown</span>
+    <span class="sec-toggle open" id="toggle-breakdown">▼</span>
+  </div>
+  <div class="sec-body" id="sec-breakdown">
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;margin-bottom:.5rem">
+      <div id="cat-bars"></div>
+    </div>
+    <div class="cat-badges" id="cat-badges"></div>
+  </div>
+
+  <!-- Log -->
+  <div class="sec-header" onclick="toggleSec('log')">
+    <span class="sec-label">Transaction History</span>
+    <span class="sec-toggle open" id="toggle-log">▼</span>
+  </div>
+  <div class="sec-body" id="sec-log">
+    <div class="exp-list" id="exp-list"></div>
+  </div>
+
+</div>
+<script>
+const CAT_COLORS={Equipment:'#9b87f5',Golf:'#4a9eff',Gas:'#e6a020',Food:'#1fbd8a',Social:'#f06292',Subscriptions:'#888',Emergency:'#555',Other:'#aaa'};
+let log = JSON.parse(localStorage.getItem('explog_entries') || '[]');
+
+function fmt$(n){ return '$'+Math.abs(n).toFixed(2); }
+function fmt(n){ return '$'+Math.round(Math.abs(n)).toLocaleString(); }
+
+function logExpense(){
+  const desc = document.getElementById('f-desc').value.trim() || 'Expense';
+  const cat  = document.getElementById('f-cat').value;
+  const date = document.getElementById('f-date').value;
+  const amt  = parseFloat(document.getElementById('f-amt').value);
+  if(!date || isNaN(amt) || amt <= 0){ alert('Please enter a valid date and amount.'); return; }
+  log.unshift({ id: Date.now(), desc, cat, date, amt });
+  localStorage.setItem('explog_entries', JSON.stringify(log));
+  document.getElementById('f-desc').value = '';
+  document.getElementById('f-amt').value  = '';
+  renderAll();
+}
+
+function deleteEntry(id){
+  log = log.filter(e => e.id !== id);
+  localStorage.setItem('explog_entries', JSON.stringify(log));
+  renderAll();
+}
+
+function renderAll(){
+  const total = log.reduce((s,e) => s + e.amt, 0);
+  document.getElementById('met-total').textContent = fmt$(total);
+  document.getElementById('met-count').textContent = log.length;
+
+  // This month
+  const now = new Date();
+  const monthEntries = log.filter(e => {
+    const d = new Date(e.date + 'T00:00:00');
+    return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+  });
+  const monthTotal = monthEntries.reduce((s,e) => s + e.amt, 0);
+  document.getElementById('met-month').textContent = fmt$(monthTotal);
+  document.getElementById('met-month-sub').textContent = now.toLocaleString('en-US',{month:'long'});
+
+  // Largest
+  if(log.length > 0){
+    const max = log.reduce((a,b) => a.amt > b.amt ? a : b);
+    document.getElementById('met-largest').textContent = fmt$(max.amt);
+    document.getElementById('met-largest-sub').textContent = max.desc.substring(0,14);
+  } else {
+    document.getElementById('met-largest').textContent = '—';
+    document.getElementById('met-largest-sub').textContent = '';
+  }
+
+  // Cat breakdown
+  const cats = {};
+  log.forEach(e => { cats[e.cat] = (cats[e.cat]||0) + e.amt; });
+  const barsEl = document.getElementById('cat-bars');
+  const badgesEl = document.getElementById('cat-badges');
+  if(Object.keys(cats).length === 0){
+    barsEl.innerHTML = '<div style="color:var(--text3);font-size:12px;text-align:center;padding:.5rem">No entries yet.</div>';
+    badgesEl.innerHTML = '';
+  } else {
+    barsEl.innerHTML = Object.entries(cats)
+      .sort((a,b) => b[1]-a[1])
+      .map(([cat,val]) => {
+        const p = total > 0 ? Math.min(100, val/total*100).toFixed(1) : 0;
+        return `<div class="bar-row"><span class="bar-label">${cat}</span><div class="bar-track"><div class="bar-fill" style="width:${p}%;background:${CAT_COLORS[cat]||'#aaa'}"></div></div><span class="bar-amt">${fmt$(val)}</span></div>`;
+      }).join('');
+    badgesEl.innerHTML = Object.entries(cats)
+      .map(([cat,val]) => `<span class="cat-badge">${cat}: ${fmt$(val)}</span>`).join('');
+  }
+
+  // Transaction list
+  const listEl = document.getElementById('exp-list');
+  if(log.length === 0){
+    listEl.innerHTML = '<div class="empty-state">No expenses logged yet.</div>';
+    return;
+  }
+  listEl.innerHTML = '';
+  log.forEach(e => {
+    const fmtDate = new Date(e.date+'T00:00:00').toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});
+    const div = document.createElement('div');
+    div.className = 'exp-item';
+    div.innerHTML = `
+      <div class="ei-left">
+        <div class="ei-top">
+          <span class="ei-desc">${e.desc}</span>
+          <span class="ei-cat">${e.cat}</span>
+          <span class="ei-date">${fmtDate}</span>
+        </div>
+      </div>
+      <div class="ei-right">
+        <span class="ei-amt">${fmt$(e.amt)}</span>
+        <button class="ei-del" onclick="deleteEntry(${e.id})" title="Delete">✕</button>
+      </div>
+    `;
+    listEl.appendChild(div);
+  });
+}
+
+function toggleSec(name){
+  document.getElementById('sec-'+name).classList.toggle('collapsed');
+  document.getElementById('toggle-'+name).classList.toggle('open');
+}
+
+function toggleTheme(){
+  const dark = document.body.classList.toggle('dark');
+  document.getElementById('theme-btn').textContent = dark ? '◑ light' : '◑ dark';
+  localStorage.setItem('explog_theme', dark ? 'dark' : 'light');
+}
+const savedTheme = localStorage.getItem('explog_theme');
+if(savedTheme === 'dark'){ document.body.classList.add('dark'); document.getElementById('theme-btn').textContent = '◑ light'; }
+
+const today = new Date();
+document.getElementById('f-date').value = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
+renderAll();
+</script>
+</body>
+</html>

@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Class</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f5f5f3;--bg2:#ffffff;--bg3:#efefed;--bg4:#e4e4e2;
+  --border:#dddddb;--border2:#c8c8c6;
+  --text:#1a1a1a;--text2:#555;--text3:#999;--text4:#bbb;
+  --green:#0e9e70;--green-bg:#e0f5ec;--green-txt:#0e9e70;
+  --amber:#c27d08;--amber-bg:#fdf0d5;--amber-txt:#c27d08;
+  --blue:#2a7de1;--blue-bg:#deeafa;--blue-txt:#2a7de1;
+  --red:#d03030;--red-bg:#fce8e8;--red-txt:#d03030;
+  --purple:#6c5bbf;--purple-bg:#eae8fa;
+  --accent:#2a7de1;--accent-bg:#deeafa;
+  --r:8px;--rl:12px;
+}
+.dark{
+  --bg:#1e1e1e;--bg2:#272727;--bg3:#2f2f2f;--bg4:#383838;
+  --border:#3a3a3a;--border2:#484848;
+  --text:#e2e2e2;--text2:#a0a0a0;--text3:#666;--text4:#444;
+  --green:#1fbd8a;--green-bg:#0d2e22;--green-txt:#1fbd8a;
+  --amber:#e6a020;--amber-bg:#2c1f06;--amber-txt:#e6a020;
+  --blue:#4a9eff;--blue-bg:#0a1e35;--blue-txt:#4a9eff;
+  --red:#f05050;--red-bg:#2a0f0f;--red-txt:#f05050;
+  --purple:#9b87f5;--purple-bg:#1a1530;
+}
+body{background:var(--bg);color:var(--text);font-family:'SF Mono','Fira Code','Cascadia Code',monospace;font-size:13px;line-height:1.6;padding:1.5rem 1rem;transition:background .2s,color .2s;min-height:100vh}
+.container{max-width:860px;margin:0 auto}
+.header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1.75rem;gap:12px}
+.header-left{flex:1;min-width:0}
+.page-title{font-size:17px;font-weight:600;letter-spacing:.02em;margin-bottom:2px;display:flex;align-items:center;gap:10px}
+.class-dot{width:11px;height:11px;border-radius:50%;flex-shrink:0;margin-top:3px}
+.page-sub{font-size:11px;color:var(--text3);letter-spacing:.03em}
+.header-actions{display:flex;gap:8px;align-items:center;flex-shrink:0}
+.btn{font-family:inherit;font-size:11px;font-weight:600;padding:5px 13px;border-radius:20px;border:1px solid var(--border2);background:var(--bg3);color:var(--text2);cursor:pointer;letter-spacing:.04em;text-transform:uppercase;transition:all .15s;text-decoration:none;display:inline-block}
+.btn:hover{background:var(--bg4);color:var(--text)}
+.btn-accent{background:var(--accent-bg);color:var(--accent);border-color:var(--accent)}
+.btn-accent:hover{opacity:.85}
+.btn-red{background:var(--red-bg);color:var(--red-txt);border-color:var(--red)}
+
+hr{border:none;border-top:1px solid var(--border);margin:1.4rem 0}
+.sec-header{display:flex;align-items:center;justify-content:space-between;margin:1.6rem 0 .6rem;padding-bottom:5px;border-bottom:1px solid var(--border);cursor:pointer;user-select:none}
+.sec-label{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.12em}
+.sec-toggle{font-size:14px;color:var(--text3);transition:transform .2s;line-height:1}
+.sec-toggle.open{transform:rotate(180deg)}
+.sec-body.collapsed{display:none}
+.sec-actions{display:flex;align-items:center;gap:8px}
+
+/* GPA metrics */
+.pgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(118px,1fr));gap:8px;margin:.5rem 0 1rem}
+.met{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:11px 13px}
+.met-label{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:3px}
+.met-val{font-size:19px;font-weight:600;color:var(--text);letter-spacing:-.01em}
+.met-val.green{color:var(--green)}.met-val.blue{color:var(--blue)}.met-val.amber{color:var(--amber)}.met-val.red{color:var(--red)}
+.met-sub{font-size:10px;color:var(--text3);margin-top:2px}
+
+/* Grade input */
+.grade-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--rl);padding:16px 18px;margin-bottom:1rem}
+.grade-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.grade-field{display:flex;flex-direction:column;gap:3px}
+.grade-field label{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.08em}
+.grade-field select,.grade-field input{font-family:inherit;font-size:13px;font-weight:600;padding:5px 10px;border-radius:6px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);transition:border-color .15s}
+.grade-field select:focus,.grade-field input:focus{outline:none;border-color:var(--accent)}
+
+/* ASSIGNMENT TABLE */
+.assign-table{width:100%;border-collapse:collapse;font-size:12px}
+.assign-table th{text-align:left;padding:7px 10px;font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;border-bottom:1px solid var(--border)}
+.assign-table td{padding:7px 10px;border-bottom:1px solid var(--border);vertical-align:middle}
+.assign-table tr:last-child td{border-bottom:none}
+.assign-table tr:hover td{background:var(--bg3)}
+.assign-table td.done-name{text-decoration:line-through;color:var(--text3)}
+
+.type-pill{display:inline-block;font-size:10px;font-weight:600;padding:1px 8px;border-radius:10px;text-transform:uppercase;letter-spacing:.05em}
+.type-hw{background:var(--blue-bg);color:var(--blue-txt)}
+.type-quiz{background:var(--amber-bg);color:var(--amber-txt)}
+.type-exam{background:var(--red-bg);color:var(--red-txt)}
+.type-paper{background:var(--purple-bg);color:var(--purple)}
+.type-project{background:var(--green-bg);color:var(--green-txt)}
+.type-other{background:var(--bg4);color:var(--text3)}
+
+.status-btn{background:none;border:none;cursor:pointer;font-size:14px;padding:0 4px;transition:opacity .15s;color:var(--text3)}
+.status-btn:hover{opacity:.7}
+.del-btn{background:none;border:none;cursor:pointer;font-size:12px;color:var(--text4);padding:0 4px;transition:color .15s;font-family:inherit}
+.del-btn:hover{color:var(--red)}
+
+/* Grade display */
+.grade-display{font-weight:600}
+.grade-a{color:var(--green)}.grade-b{color:var(--blue)}.grade-c{color:var(--amber)}.grade-df{color:var(--red)}
+
+/* Entry form */
+.entry-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--rl);padding:14px 16px;margin-bottom:1rem}
+.form-row{display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end;margin-bottom:8px}
+.form-group{display:flex;flex-direction:column;gap:3px;flex:1;min-width:100px}
+.form-group label{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.08em}
+.form-group input,.form-group select{font-family:inherit;font-size:12px;padding:5px 9px;border-radius:6px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);transition:border-color .15s}
+.form-group input:focus,.form-group select:focus{outline:none;border-color:var(--accent)}
+.form-actions{display:flex;justify-content:flex-end}
+
+/* Notes */
+.notes-area{width:100%;font-family:inherit;font-size:12px;padding:10px 12px;border-radius:var(--r);border:1px solid var(--border2);background:var(--bg3);color:var(--text);resize:vertical;min-height:100px;line-height:1.6;transition:border-color .15s}
+.notes-area:focus{outline:none;border-color:var(--accent)}
+
+/* Not found */
+.not-found{text-align:center;padding:3rem 1rem;color:var(--text3)}
+.not-found h2{font-size:16px;margin-bottom:.5rem;color:var(--text2)}
+
+/* Archive toggle */
+.archive-bar{display:flex;align-items:center;justify-content:space-between;background:var(--amber-bg);border:1px solid var(--amber);border-radius:var(--r);padding:8px 14px;margin-bottom:1rem}
+.archive-bar-text{font-size:11px;color:var(--amber-txt);font-weight:600}
+
+/* Grade progress bar */
+.grade-track{height:6px;background:var(--bg4);border-radius:3px;overflow:hidden;margin-top:6px;border:1px solid var(--border)}
+.grade-fill{height:100%;border-radius:3px;transition:width .3s}
+
+.empty-state{text-align:center;padding:1.5rem;color:var(--text3);font-size:12px;border:1px dashed var(--border2);border-radius:var(--r)}
+
+.pill{display:inline-block;font-size:10px;font-weight:600;padding:2px 9px;border-radius:20px;letter-spacing:.04em;text-transform:uppercase}
+.pill-g{background:var(--green-bg);color:var(--green-txt)}.pill-a{background:var(--amber-bg);color:var(--amber-txt)}.pill-r{background:var(--red-bg);color:var(--red-txt)}.pill-b{background:var(--blue-bg);color:var(--blue-txt)}
+</style>
+</head>
+<body>
+<div class="container" id="app">
+  <div class="not-found"><h2>Loading...</h2></div>
+</div>
+
+<script>
+// ── LOAD STATE ──────────────────────────────────────────
+const params  = new URLSearchParams(location.search);
+const classId = parseInt(params.get('id'));
+let courses   = JSON.parse(localStorage.getItem('acad_courses') || '[]');
+let course    = courses.find(c => c.id === classId);
+
+const savedTheme = localStorage.getItem('acad_theme');
+if(savedTheme==='dark') document.body.classList.add('dark');
+
+if(!course){
+  document.getElementById('app').innerHTML = `
+    <div class="not-found">
+      <h2>Course not found</h2>
+      <p>This course may have been deleted.</p>
+      <br>
+      <a href="academic_planner.html" class="btn">← Back to Planner</a>
+    </div>`;
+} else {
+  document.title = (course.code||course.name) + ' — Class';
+  renderPage();
+}
+
+function saveCourses(){
+  courses = courses.map(c => c.id===classId ? course : c);
+  localStorage.setItem('acad_courses', JSON.stringify(courses));
+}
+
+// ── GRADE HELPERS ───────────────────────────────────────
+const GRADES = ['A+','A','A-','B+','B','B-','C+','C','C-','D+','D','F','—'];
+function gradeColor(letter){
+  if(!letter||letter==='—') return '';
+  if(letter.startsWith('A')) return 'grade-a';
+  if(letter.startsWith('B')) return 'grade-b';
+  if(letter.startsWith('C')) return 'grade-c';
+  return 'grade-df';
+}
+function pctColor(p){
+  if(p>=90) return 'green'; if(p>=80) return 'blue'; if(p>=70) return 'amber'; return 'red';
+}
+function pctToLetter(p){
+  if(p>=97) return 'A+'; if(p>=93) return 'A'; if(p>=90) return 'A-';
+  if(p>=87) return 'B+'; if(p>=83) return 'B'; if(p>=80) return 'B-';
+  if(p>=77) return 'C+'; if(p>=73) return 'C'; if(p>=70) return 'C-';
+  if(p>=67) return 'D+'; if(p>=60) return 'D'; return 'F';
+}
+
+// ── MAIN RENDER ─────────────────────────────────────────
+function renderPage(){
+  const app = document.getElementById('app');
+  const accentStyle = `--accent:${course.color||'#2a7de1'};--accent-bg:${hexToRgba(course.color||'#2a7de1',.12)}`;
+
+  // Calc current grade from assignments that have grades
+  const graded = (course.assignments||[]).filter(a=>a.pct!==''&&a.pct!==null&&a.pct!==undefined&&!isNaN(a.pct));
+  let calcPct = null, calcLetter = null;
+  if(graded.length>0){
+    calcPct = graded.reduce((s,a)=>s+parseFloat(a.pct),0)/graded.length;
+    calcLetter = pctToLetter(calcPct);
+  }
+
+  // Upcoming (incomplete, sorted by due)
+  const upcoming = (course.assignments||[])
+    .filter(a=>!a.done)
+    .sort((a,b)=> a.due&&b.due ? new Date(a.due)-new Date(b.due) : a.due?-1:1);
+  const completed = (course.assignments||[]).filter(a=>a.done);
+
+  app.style = accentStyle;
+  app.innerHTML = `
+    ${course.archived ? `<div class="archive-bar"><span class="archive-bar-text">📦 This course is archived</span><button class="btn" onclick="unarchive()">Restore to Active</button></div>` : ''}
+
+    <div class="header">
+      <div class="header-left">
+        <div class="page-title">
+          <div class="class-dot" style="background:${course.color||'#2a7de1'}"></div>
+          ${course.code ? `<span style="color:var(--text3)">${course.code}</span> — ` : ''}${course.name}
+        </div>
+        <div class="page-sub">${[course.professor, course.semester, course.credits?course.credits+' credits':''].filter(Boolean).join(' · ')}</div>
+      </div>
+      <div class="header-actions">
+        <a href="academic_planner.html" class="btn">← planner</a>
+        <button class="btn" onclick="toggleTheme()" id="theme-btn">${document.body.classList.contains('dark')?'◑ light':'◑ dark'}</button>
+      </div>
+    </div>
+
+    <!-- GRADE OVERVIEW -->
+    <div class="pgrid">
+      <div class="met">
+        <div class="met-label">Current Grade</div>
+        <div class="met-val ${calcPct!==null?pctColor(calcPct):''}" id="met-cur-grade">${calcPct!==null?calcPct.toFixed(1)+'%':'—'}</div>
+        <div class="met-sub">${calcLetter||'no grades yet'}</div>
+      </div>
+      <div class="met">
+        <div class="met-label">Final Grade</div>
+        <div class="met-val ${gradeColor(course.finalGrade)}" id="met-final">${course.finalGrade||'—'}</div>
+        <div class="met-sub" id="met-final-sub">${course.finalGrade?'recorded':'not set'}</div>
+      </div>
+      <div class="met">
+        <div class="met-label">Assignments</div>
+        <div class="met-val blue">${(course.assignments||[]).length}</div>
+        <div class="met-sub">${completed.length} completed</div>
+      </div>
+      <div class="met">
+        <div class="met-label">Upcoming</div>
+        <div class="met-val ${upcoming.length>0?'amber':''}">${upcoming.length}</div>
+        <div class="met-sub">${upcoming.length>0&&upcoming[0].due?'next: '+fmtDate(upcoming[0].due):'all clear'}</div>
+      </div>
+    </div>
+
+    ${calcPct!==null?`<div class="grade-track" style="margin-bottom:1rem"><div class="grade-fill" style="width:${Math.min(100,calcPct)}%;background:${course.color||'#2a7de1'}"></div></div>`:''}
+
+    <!-- GRADE SETTINGS -->
+    <div class="grade-card">
+      <div class="grade-row">
+        <div class="grade-field">
+          <label>Current Grade (manual)</label>
+          <select id="cur-grade-sel" onchange="setCurGrade(this.value)">
+            ${GRADES.map(g=>`<option value="${g}" ${course.currentGrade===g?'selected':''}>${g}</option>`).join('')}
+          </select>
+        </div>
+        <div class="grade-field">
+          <label>Final Grade</label>
+          <select id="final-grade-sel" onchange="setFinalGrade(this.value)">
+            ${GRADES.map(g=>`<option value="${g}" ${course.finalGrade===g?'selected':''}>${g}</option>`).join('')}
+          </select>
+        </div>
+        ${!course.archived?`<div style="margin-left:auto"><button class="btn btn-red" onclick="archiveCourse()">Archive Course</button></div>`:''}
+      </div>
+    </div>
+
+    <!-- UPCOMING ASSIGNMENTS -->
+    <div class="sec-header" onclick="toggleSec('upcoming')">
+      <span class="sec-label">Upcoming Assignments</span>
+      <div class="sec-actions" onclick="event.stopPropagation()">
+        <span class="sec-toggle open" id="toggle-upcoming">▼</span>
+      </div>
+    </div>
+    <div class="sec-body" id="sec-upcoming">
+      <div class="entry-card">
+        <div class="form-row">
+          <div class="form-group" style="flex:2">
+            <label>Assignment Name</label>
+            <input type="text" id="f-name" placeholder="e.g. Chapter 4 Reading">
+          </div>
+          <div class="form-group">
+            <label>Type</label>
+            <select id="f-type">
+              <option value="hw">HW</option>
+              <option value="quiz">Quiz</option>
+              <option value="exam">Exam</option>
+              <option value="paper">Paper</option>
+              <option value="project">Project</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Due Date</label>
+            <input type="date" id="f-due">
+          </div>
+          <div class="form-group" style="max-width:80px">
+            <label>Weight (%)</label>
+            <input type="number" id="f-weight" min="0" max="100" placeholder="—">
+          </div>
+        </div>
+        <div class="form-actions">
+          <button class="btn btn-accent" onclick="addAssignment()">+ Add Assignment</button>
+        </div>
+      </div>
+      ${upcoming.length>0 ? renderAssignTable(upcoming, false) : '<div class="empty-state">No upcoming assignments.</div>'}
+    </div>
+
+    <!-- COMPLETED -->
+    <div class="sec-header" onclick="toggleSec('completed')">
+      <span class="sec-label">Completed</span>
+      <span class="sec-toggle" id="toggle-completed">▼</span>
+    </div>
+    <div class="sec-body collapsed" id="sec-completed">
+      ${completed.length>0 ? renderAssignTable(completed, true) : '<div class="empty-state">No completed assignments yet.</div>'}
+    </div>
+
+    <!-- NOTES -->
+    <div class="sec-header" onclick="toggleSec('notes')">
+      <span class="sec-label">Notes</span>
+      <span class="sec-toggle open" id="toggle-notes">▼</span>
+    </div>
+    <div class="sec-body" id="sec-notes">
+      <textarea class="notes-area" id="notes-area" placeholder="Class notes, reminders, professor info..." oninput="saveNotes()">${course.notes||''}</textarea>
+    </div>
+
+  `;
+
+  // Default date
+  const today = new Date();
+  const dateEl = document.getElementById('f-due');
+  if(dateEl) dateEl.value = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
+}
+
+function renderAssignTable(list, isDone){
+  let html = `<table class="assign-table">
+    <thead><tr>
+      <th>Name</th><th>Type</th><th>Due</th><th>Weight</th><th>Score %</th><th>Grade</th><th></th>
+    </tr></thead><tbody>`;
+  list.forEach(a => {
+    const typeClass = 'type-'+a.type;
+    const gcls = a.pct!==''&&a.pct!==null&&!isNaN(a.pct)?gradeColor(pctToLetter(parseFloat(a.pct))):'';
+    html += `<tr>
+      <td class="${isDone?'done-name':''}">${a.name}</td>
+      <td><span class="type-pill ${typeClass}">${a.type}</span></td>
+      <td>${a.due?fmtDate(a.due):'—'}</td>
+      <td>${a.weight?a.weight+'%':'—'}</td>
+      <td>
+        <input type="number" value="${a.pct??''}" min="0" max="100" step=".5"
+          style="width:60px;font-size:12px;padding:3px 6px;border-radius:5px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);font-family:inherit;text-align:right"
+          placeholder="—"
+          onchange="setGrade(${a.id}, this.value)">
+      </td>
+      <td><span class="grade-display ${gcls}">${a.pct!==''&&a.pct!==null&&!isNaN(a.pct)?pctToLetter(parseFloat(a.pct)):'—'}</span></td>
+      <td style="display:flex;gap:4px;align-items:center">
+        <button class="status-btn" onclick="toggleDone(${a.id})" title="${isDone?'Mark incomplete':'Mark complete'}">${isDone?'↩':'✓'}</button>
+        <button class="del-btn" onclick="deleteAssign(${a.id})">✕</button>
+      </td>
+    </tr>`;
+  });
+  html += '</tbody></table>';
+  return html;
+}
+
+// ── ACTIONS ─────────────────────────────────────────────
+let assignIdCounter = Math.max(0, ...(course.assignments||[]).map(a=>a.id||0)) + 1;
+
+function addAssignment(){
+  const name = document.getElementById('f-name').value.trim();
+  if(!name){alert('Assignment name is required.');return;}
+  course.assignments = course.assignments||[];
+  course.assignments.push({
+    id:     assignIdCounter++,
+    name,
+    type:   document.getElementById('f-type').value,
+    due:    document.getElementById('f-due').value,
+    weight: document.getElementById('f-weight').value||null,
+    pct:    '',
+    done:   false,
+  });
+  saveCourses(); renderPage();
+}
+
+function toggleDone(id){
+  const a = (course.assignments||[]).find(x=>x.id===id);
+  if(a){a.done=!a.done; saveCourses(); renderPage();}
+}
+function deleteAssign(id){
+  if(!confirm('Remove this assignment?')) return;
+  course.assignments = (course.assignments||[]).filter(x=>x.id!==id);
+  saveCourses(); renderPage();
+}
+function setGrade(id, val){
+  const a = (course.assignments||[]).find(x=>x.id===id);
+  if(a){a.pct = val===''?'':parseFloat(val); saveCourses(); renderPage();}
+}
+function setCurGrade(val){
+  course.currentGrade = val==='—'?'':val;
+  saveCourses();
+}
+function setFinalGrade(val){
+  course.finalGrade = val==='—'?'':val;
+  saveCourses(); renderPage();
+}
+function saveNotes(){
+  course.notes = document.getElementById('notes-area').value;
+  saveCourses();
+}
+function archiveCourse(){
+  if(!confirm('Archive this course? You can restore it later.')) return;
+  course.archived = true;
+  saveCourses(); renderPage();
+}
+function unarchive(){
+  course.archived = false;
+  saveCourses(); renderPage();
+}
+
+function toggleSec(id){
+  document.getElementById('sec-'+id).classList.toggle('collapsed');
+  document.getElementById('toggle-'+id).classList.toggle('open');
+}
+function toggleTheme(){
+  const dark=document.body.classList.toggle('dark');
+  document.getElementById('theme-btn').textContent=dark?'◑ light':'◑ dark';
+  localStorage.setItem('acad_theme',dark?'dark':'light');
+}
+
+// ── UTILS ───────────────────────────────────────────────
+function fmtDate(str){
+  if(!str) return '—';
+  const d = new Date(str+'T00:00:00');
+  return d.toLocaleDateString('en-US',{month:'short',day:'numeric'});
+}
+function hexToRgba(hex,alpha){
+  const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);
+  return `rgba(${r},${g},${b},${alpha})`;
+}
+</script>
+</body>
+</html>

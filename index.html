@@ -27,14 +27,7 @@
   --red:#f05050;--red-bg:#2a0f0f;--red-txt:#f05050;
   --purple:#9b87f5;--purple-bg:#1a1530;
 }
-body{
-  background:var(--bg);color:var(--text);
-  font-family:'SF Mono','Fira Code','Cascadia Code',monospace;
-  font-size:13px;line-height:1.6;
-  padding:1.5rem 1rem;
-  transition:background .2s,color .2s;
-  min-height:100vh;
-}
+body{background:var(--bg);color:var(--text);font-family:'SF Mono','Fira Code','Cascadia Code',monospace;font-size:13px;line-height:1.6;padding:1.5rem 1rem;transition:background .2s,color .2s;min-height:100vh}
 .container{max-width:820px;margin:0 auto}
 .header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:2.5rem}
 .page-title{font-size:17px;font-weight:600;letter-spacing:.02em;margin-bottom:2px}
@@ -50,16 +43,15 @@ body{
 .tool-card:hover .tc-accent{opacity:.18}
 .tc-accent{position:absolute;top:-18px;right:-18px;width:72px;height:72px;border-radius:50%;opacity:.08;transition:opacity .2s}
 .tc-tag{display:inline-block;font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:2px 9px;border-radius:20px;margin-bottom:10px}
-.tag-green{background:var(--green-bg);color:var(--green-txt)}
-.tag-blue{background:var(--blue-bg);color:var(--blue-txt)}
-.tag-amber{background:var(--amber-bg);color:var(--amber-txt)}
-.tag-purple{background:var(--purple-bg);color:var(--purple)}
+.tag-green{background:var(--green-bg);color:var(--green-txt)}.tag-blue{background:var(--blue-bg);color:var(--blue-txt)}.tag-amber{background:var(--amber-bg);color:var(--amber-txt)}.tag-purple{background:var(--purple-bg);color:var(--purple)}.tag-teal{background:#e0f5f5;color:#0e8a8a}.tag-red{background:var(--red-bg);color:var(--red-txt)}
+.dark .tag-teal{background:#0d2e2e;color:#1fbd9a}
 .tc-title{font-size:13px;font-weight:600;color:var(--text);letter-spacing:.01em;margin-bottom:5px}
 .tc-desc{font-size:11px;color:var(--text3);line-height:1.55;margin-bottom:12px}
 .tc-footer{display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--border);padding-top:9px;font-size:10px;color:var(--text3);letter-spacing:.04em;text-transform:uppercase}
 .tc-arrow{font-size:13px;color:var(--text3);opacity:0;transform:translateX(-4px);transition:opacity .15s,transform .15s}
 .dot{width:6px;height:6px;border-radius:50%;display:inline-block;margin-right:5px;vertical-align:middle}
 .dot-green{background:var(--green)}
+hr{border:none;border-top:1px solid var(--border);margin:1.6rem 0}
 </style>
 </head>
 <body>
@@ -67,62 +59,72 @@ body{
   <div class="header">
     <div>
       <div class="page-title">Paul's Tools</div>
-      <div class="page-sub">personal finance & planning suite · 2026</div>
+      <div class="page-sub">Personal Finance & Planning Suite · 2026</div>
     </div>
     <div class="header-actions">
       <button class="btn" onclick="toggleTheme()" id="theme-btn">◑ dark</button>
     </div>
   </div>
 
-  <div class="sec-label">Tools</div>
-
+  <div class="sec-label">Finance</div>
   <div class="tools-grid">
     <a href="master_summer_2026_planner.html" class="tool-card">
       <div class="tc-accent" style="background:var(--green)"></div>
       <div class="tc-tag tag-green">Finance</div>
       <div class="tc-title">Summer 2026 Financial Planner</div>
-      <div class="tc-desc">Income tracking, tax modeling, Roth IRA goals, and expense logging across all jobs.</div>
-      <div class="tc-footer">
-        <span><span class="dot dot-green"></span>active</span>
-        <span class="tc-arrow">→</span>
-      </div>
+      <div class="tc-desc">Income modeling, tax projections, fixed expenses, goals, and brokerage balance.</div>
+      <div class="tc-footer"><span><span class="dot dot-green"></span>active</span><span class="tc-arrow">→</span></div>
     </a>
-
     <a href="shift_log.html" class="tool-card">
       <div class="tc-accent" style="background:var(--blue)"></div>
       <div class="tc-tag tag-blue">Tracking</div>
       <div class="tc-title">Shift Log</div>
       <div class="tc-desc">Clock in/out by job, track hours and gross earnings, view per-job breakdowns.</div>
-      <div class="tc-footer">
-        <span><span class="dot dot-green"></span>active</span>
-        <span class="tc-arrow">→</span>
-      </div>
+      <div class="tc-footer"><span><span class="dot dot-green"></span>active</span><span class="tc-arrow">→</span></div>
     </a>
-
+    <a href="expense_log.html" class="tool-card">
+      <div class="tc-accent" style="background:var(--amber)"></div>
+      <div class="tc-tag tag-amber">Spending</div>
+      <div class="tc-title">Expense Log</div>
+      <div class="tc-desc">Log actual transactions by category, track spending totals, and view breakdowns.</div>
+      <div class="tc-footer"><span><span class="dot dot-green"></span>active</span><span class="tc-arrow">→</span></div>
+    </a>
     <a href="roth_ira_tracker.html" class="tool-card">
       <div class="tc-accent" style="background:var(--purple)"></div>
       <div class="tc-tag tag-purple">Investing</div>
       <div class="tc-title">Roth IRA Tracker</div>
-      <div class="tc-desc">Log deposits, track progress toward the $7,500 limit, and monitor contribution pace.</div>
-      <div class="tc-footer">
-        <span><span class="dot dot-green"></span>active</span>
-        <span class="tc-arrow">→</span>
-      </div>
+      <div class="tc-desc">Log deposits, track progress toward the $7,500 limit, monitor pace and returns.</div>
+      <div class="tc-footer"><span><span class="dot dot-green"></span>active</span><span class="tc-arrow">→</span></div>
+    </a>
+  </div>
+
+  <div class="sec-label">Life</div>
+  <div class="tools-grid">
+    <a href="golf_equipment.html" class="tool-card">
+      <div class="tc-accent" style="background:var(--green)"></div>
+      <div class="tc-tag tag-teal">Golf</div>
+      <div class="tc-title">Golf Equipment</div>
+      <div class="tc-desc">Club inventory with full spec tracking. What's in the bag, what's on the shelf.</div>
+      <div class="tc-footer"><span><span class="dot dot-green"></span>active</span><span class="tc-arrow">→</span></div>
+    </a>
+    <a href="academic_planner.html" class="tool-card">
+      <div class="tc-accent" style="background:var(--blue)"></div>
+      <div class="tc-tag tag-blue">Academics</div>
+      <div class="tc-title">Academic Planner</div>
+      <div class="tc-desc">Course tracker with per-class assignment logs, grade tracking, and notes.</div>
+      <div class="tc-footer"><span><span class="dot dot-green"></span>active</span><span class="tc-arrow">→</span></div>
     </a>
   </div>
 </div>
 
 <script>
 function toggleTheme(){
-  const dark = document.body.classList.toggle('dark');
-  document.getElementById('theme-btn').textContent = dark ? '◑ light' : '◑ dark';
-  localStorage.setItem('index_theme', dark ? 'dark' : 'light');
+  const dark=document.body.classList.toggle('dark');
+  document.getElementById('theme-btn').textContent=dark?'◑ light':'◑ dark';
+  localStorage.setItem('index_theme',dark?'dark':'light');
 }
-const savedTheme = localStorage.getItem('index_theme');
-if(savedTheme === 'dark'){
-  document.body.classList.add('dark');
-  document.getElementById('theme-btn').textContent = '◑ light';
-}
+const savedTheme=localStorage.getItem('index_theme');
+if(savedTheme==='dark'){document.body.classList.add('dark');document.getElementById('theme-btn').textContent='◑ light';}
 </script>
 </body>
 </html>

@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Academic Planner</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f5f5f3;--bg2:#ffffff;--bg3:#efefed;--bg4:#e4e4e2;
+  --border:#dddddb;--border2:#c8c8c6;
+  --text:#1a1a1a;--text2:#555;--text3:#999;--text4:#bbb;
+  --green:#0e9e70;--green-bg:#e0f5ec;--green-txt:#0e9e70;
+  --amber:#c27d08;--amber-bg:#fdf0d5;--amber-txt:#c27d08;
+  --blue:#2a7de1;--blue-bg:#deeafa;--blue-txt:#2a7de1;
+  --red:#d03030;--red-bg:#fce8e8;--red-txt:#d03030;
+  --purple:#6c5bbf;--purple-bg:#eae8fa;
+  --r:8px;--rl:12px;
+}
+.dark{
+  --bg:#1e1e1e;--bg2:#272727;--bg3:#2f2f2f;--bg4:#383838;
+  --border:#3a3a3a;--border2:#484848;
+  --text:#e2e2e2;--text2:#a0a0a0;--text3:#666;--text4:#444;
+  --green:#1fbd8a;--green-bg:#0d2e22;--green-txt:#1fbd8a;
+  --amber:#e6a020;--amber-bg:#2c1f06;--amber-txt:#e6a020;
+  --blue:#4a9eff;--blue-bg:#0a1e35;--blue-txt:#4a9eff;
+  --red:#f05050;--red-bg:#2a0f0f;--red-txt:#f05050;
+  --purple:#9b87f5;--purple-bg:#1a1530;
+}
+body{background:var(--bg);color:var(--text);font-family:'SF Mono','Fira Code','Cascadia Code',monospace;font-size:13px;line-height:1.6;padding:1.5rem 1rem;transition:background .2s,color .2s;min-height:100vh}
+.container{max-width:860px;margin:0 auto}
+.header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1.75rem}
+.page-title{font-size:17px;font-weight:600;letter-spacing:.02em;margin-bottom:2px}
+.page-sub{font-size:11px;color:var(--text3);letter-spacing:.03em}
+.header-actions{display:flex;gap:8px;align-items:center;flex-shrink:0}
+.btn{font-family:inherit;font-size:11px;font-weight:600;padding:5px 13px;border-radius:20px;border:1px solid var(--border2);background:var(--bg3);color:var(--text2);cursor:pointer;letter-spacing:.04em;text-transform:uppercase;transition:all .15s;text-decoration:none;display:inline-block}
+.btn:hover{background:var(--bg4);color:var(--text)}
+.btn-blue{background:var(--blue-bg);color:var(--blue-txt);border-color:var(--blue)}
+.btn-blue:hover{opacity:.85}
+
+.sec-header{display:flex;align-items:center;justify-content:space-between;margin:1.6rem 0 .75rem;padding-bottom:5px;border-bottom:1px solid var(--border);cursor:pointer;user-select:none}
+.sec-label{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.12em}
+.sec-toggle{font-size:14px;color:var(--text3);transition:transform .2s;line-height:1}
+.sec-toggle.open{transform:rotate(180deg)}
+.sec-body.collapsed{display:none}
+
+/* BUBBLE */
+.bubble-grid{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:.5rem}
+.bubble{
+  background:var(--bg2);border:1.5px solid var(--border);
+  border-radius:50px;padding:9px 18px;
+  cursor:pointer;display:flex;align-items:center;gap:10px;
+  transition:all .18s;user-select:none;
+  text-decoration:none;
+}
+.bubble:hover{border-color:var(--border2);background:var(--bg3);transform:translateY(-1px);box-shadow:0 3px 10px rgba(0,0,0,.07)}
+.bubble-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.bubble-inner{min-width:0}
+.bubble-name{font-size:12px;font-weight:600;color:var(--text)}
+.bubble-sub{font-size:10px;color:var(--text3)}
+.bubble.archived{opacity:.5}
+.bubble.archived .bubble-name{text-decoration:line-through}
+
+.add-bubble{background:transparent;border:1.5px dashed var(--border2);border-radius:50px;padding:9px 18px;cursor:pointer;display:flex;align-items:center;gap:6px;color:var(--text3);font-size:12px;font-family:inherit;transition:all .15s}
+.add-bubble:hover{border-color:var(--blue);color:var(--blue)}
+
+/* GPA summary */
+.pgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(118px,1fr));gap:8px;margin:.5rem 0 1rem}
+.met{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:11px 13px}
+.met-label{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:3px}
+.met-val{font-size:19px;font-weight:600;color:var(--text);letter-spacing:-.01em}
+.met-val.green{color:var(--green)}.met-val.blue{color:var(--blue)}.met-val.amber{color:var(--amber)}
+.met-sub{font-size:10px;color:var(--text3);margin-top:2px}
+
+/* Modal */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;z-index:1000;opacity:0;pointer-events:none;transition:opacity .2s;padding:1rem}
+.modal-overlay.open{opacity:1;pointer-events:all}
+.modal{background:var(--bg2);border:1px solid var(--border2);border-radius:16px;width:100%;max-width:460px;transform:scale(.92) translateY(12px);transition:transform .22s cubic-bezier(.34,1.4,.64,1),opacity .2s;opacity:0;box-shadow:0 20px 60px rgba(0,0,0,.18)}
+.modal-overlay.open .modal{transform:scale(1) translateY(0);opacity:1}
+.modal-header{display:flex;align-items:center;justify-content:space-between;padding:18px 20px 14px;border-bottom:1px solid var(--border)}
+.modal-title{font-size:15px;font-weight:600;color:var(--text)}
+.modal-close{background:var(--bg3);border:1px solid var(--border2);color:var(--text2);width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:all .15s;font-family:inherit}
+.modal-close:hover{background:var(--red-bg);color:var(--red);border-color:var(--red)}
+.modal-body{padding:18px 20px}
+.form-group{display:flex;flex-direction:column;gap:3px;margin-bottom:10px}
+.form-group label{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.08em}
+.form-group input,.form-group select{font-family:inherit;font-size:12px;padding:6px 10px;border-radius:6px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);transition:border-color .15s}
+.form-group input:focus,.form-group select:focus{outline:none;border-color:var(--blue)}
+.modal-actions{display:flex;justify-content:space-between;align-items:center;margin-top:14px;padding-top:12px;border-top:1px solid var(--border)}
+
+/* Color swatches */
+.color-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px}
+.color-swatch{width:24px;height:24px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:transform .15s,border-color .15s}
+.color-swatch:hover{transform:scale(1.15)}
+.color-swatch.selected{border-color:var(--text)}
+
+hr{border:none;border-top:1px solid var(--border);margin:1.4rem 0}
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="header">
+  <div>
+    <div class="page-title">Paul's Academic Planner</div>
+    <div class="page-sub">Elizabethtown College · courses & grades</div>
+  </div>
+  <div class="header-actions">
+    <a href="index.html" class="btn">← home</a>
+    <button class="btn" onclick="toggleTheme()" id="theme-btn">◑ dark</button>
+  </div>
+</div>
+
+<!-- GPA OVERVIEW -->
+<div class="pgrid">
+  <div class="met"><div class="met-label">Active Courses</div><div class="met-val blue" id="met-active">0</div><div class="met-sub">this semester</div></div>
+  <div class="met"><div class="met-label">Cumulative GPA</div><div class="met-val green" id="met-gpa">—</div><div class="met-sub" id="met-gpa-sub">from graded courses</div></div>
+  <div class="met"><div class="met-label">Credits Active</div><div class="met-val" id="met-credits">0</div><div class="met-sub">credit hours</div></div>
+  <div class="met"><div class="met-label">Archived</div><div class="met-val" id="met-archived">0</div><div class="met-sub">past courses</div></div>
+</div>
+
+<!-- ACTIVE COURSES -->
+<div class="sec-header" onclick="toggleSec('active')">
+  <span class="sec-label">Active Courses</span>
+  <span class="sec-toggle open" id="toggle-active">▼</span>
+</div>
+<div class="sec-body" id="sec-active">
+  <div class="bubble-grid" id="active-bubbles"></div>
+  <button class="add-bubble" onclick="openAdd()"><span style="font-size:15px;font-weight:300">+</span> Add Course</button>
+</div>
+
+<!-- ARCHIVED -->
+<div class="sec-header" onclick="toggleSec('archived')">
+  <span class="sec-label">Archived / Completed Courses</span>
+  <span class="sec-toggle" id="toggle-archived">▼</span>
+</div>
+<div class="sec-body collapsed" id="sec-archived">
+  <div class="bubble-grid" id="archived-bubbles"></div>
+  <div id="archived-empty" style="color:var(--text4);font-size:11px;font-style:italic;display:none;padding:.25rem 0">No archived courses yet.</div>
+</div>
+
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal-overlay" onclick="handleOverlayClick(event)">
+  <div class="modal" id="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="modal-title">Add Course</span>
+      <button class="modal-close" onclick="closeModal()">×</button>
+    </div>
+    <div class="modal-body" id="modal-body"></div>
+  </div>
+</div>
+
+<script>
+const COLORS = ['#2a7de1','#0e9e70','#c27d08','#d03030','#6c5bbf','#e06030','#1899a8','#888'];
+const COLOR_NAMES = ['Blue','Green','Amber','Red','Purple','Orange','Teal','Grey'];
+
+let courses = JSON.parse(localStorage.getItem('acad_courses') || '[]');
+let idCounter = parseInt(localStorage.getItem('acad_id_counter') || '1');
+
+function save(){
+  localStorage.setItem('acad_courses', JSON.stringify(courses));
+  localStorage.setItem('acad_id_counter', idCounter);
+}
+
+function letterToGpa(letter){
+  const map={'A+':4.0,'A':4.0,'A-':3.7,'B+':3.3,'B':3.0,'B-':2.7,'C+':2.3,'C':2.0,'C-':1.7,'D+':1.3,'D':1.0,'F':0};
+  return map[letter] ?? null;
+}
+
+function renderAll(){
+  const active   = courses.filter(c=>!c.archived);
+  const archived = courses.filter(c=>c.archived);
+
+  document.getElementById('met-active').textContent   = active.length;
+  document.getElementById('met-archived').textContent = archived.length;
+  document.getElementById('met-credits').textContent  = active.reduce((s,c)=>s+(parseInt(c.credits)||0),0);
+
+  // GPA from courses with a final grade
+  const graded = courses.filter(c=>c.finalGrade && letterToGpa(c.finalGrade)!==null);
+  if(graded.length>0){
+    const totalPts   = graded.reduce((s,c)=>s+(letterToGpa(c.finalGrade)*(parseInt(c.credits)||3)),0);
+    const totalCreds = graded.reduce((s,c)=>s+(parseInt(c.credits)||3),0);
+    const gpa = (totalPts/totalCreds).toFixed(2);
+    document.getElementById('met-gpa').textContent    = gpa;
+    document.getElementById('met-gpa-sub').textContent= graded.length+' graded course'+(graded.length!==1?'s':'');
+  } else {
+    document.getElementById('met-gpa').textContent    = '—';
+    document.getElementById('met-gpa-sub').textContent= 'no graded courses yet';
+  }
+
+  // Active bubbles
+  const activeEl = document.getElementById('active-bubbles');
+  activeEl.innerHTML = '';
+  active.forEach(c => {
+    const a = document.createElement('a');
+    a.className = 'bubble';
+    a.href = `class.html?id=${c.id}`;
+    a.innerHTML = `
+      <div class="bubble-dot" style="background:${c.color||'#2a7de1'}"></div>
+      <div class="bubble-inner">
+        <div class="bubble-name">${c.code ? c.code+' — ' : ''}${c.name}</div>
+        <div class="bubble-sub">${c.professor||''} ${c.credits?'· '+c.credits+' cr':''} ${c.currentGrade?'· '+c.currentGrade:''}</div>
+      </div>
+    `;
+    activeEl.appendChild(a);
+  });
+
+  // Archived bubbles
+  const archEl   = document.getElementById('archived-bubbles');
+  const emptyEl  = document.getElementById('archived-empty');
+  archEl.innerHTML = '';
+  if(archived.length===0){ emptyEl.style.display='block'; return; }
+  emptyEl.style.display='none';
+  archived.forEach(c => {
+    const a = document.createElement('a');
+    a.className = 'bubble archived';
+    a.href = `class.html?id=${c.id}`;
+    a.innerHTML = `
+      <div class="bubble-dot" style="background:${c.color||'#888'}"></div>
+      <div class="bubble-inner">
+        <div class="bubble-name">${c.code ? c.code+' — ' : ''}${c.name}</div>
+        <div class="bubble-sub">${c.semester||''} ${c.finalGrade?'· Final: '+c.finalGrade:''}</div>
+      </div>
+    `;
+    archEl.appendChild(a);
+  });
+}
+
+let selectedColor = COLORS[0];
+function openAdd(){
+  selectedColor = COLORS[0];
+  document.getElementById('modal-title').textContent = 'Add Course';
+  document.getElementById('modal-body').innerHTML = buildAddForm();
+  document.getElementById('modal-overlay').classList.add('open');
+}
+
+function buildAddForm(vals={}){
+  const swatches = COLORS.map((c,i)=>`<div class="color-swatch${selectedColor===c?' selected':''}" style="background:${c}" title="${COLOR_NAMES[i]}" onclick="selectColor('${c}')"></div>`).join('');
+  return `
+    <div class="form-group"><label>Course Name *</label><input id="f-name" placeholder="e.g. American History" value="${vals.name||''}"></div>
+    <div class="form-group"><label>Course Code</label><input id="f-code" placeholder="e.g. HIST201" value="${vals.code||''}"></div>
+    <div class="form-group"><label>Professor</label><input id="f-prof" placeholder="e.g. Prof. Benowitz" value="${vals.professor||''}"></div>
+    <div class="form-group"><label>Semester</label><input id="f-semester" placeholder="e.g. Fall 2026" value="${vals.semester||''}"></div>
+    <div class="form-group"><label>Credit Hours</label><input id="f-credits" type="number" min="1" max="6" placeholder="3" value="${vals.credits||''}"></div>
+    <div class="form-group"><label>Color</label><div class="color-row" id="color-row">${swatches}</div></div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-blue" onclick="saveAdd()">Add Course</button>
+    </div>
+  `;
+}
+
+function selectColor(c){
+  selectedColor = c;
+  document.getElementById('modal-body').innerHTML = buildAddForm({
+    name: document.getElementById('f-name')?.value||'',
+    code: document.getElementById('f-code')?.value||'',
+    professor: document.getElementById('f-prof')?.value||'',
+    semester: document.getElementById('f-semester')?.value||'',
+    credits: document.getElementById('f-credits')?.value||'',
+  });
+}
+
+function saveAdd(){
+  const name = document.getElementById('f-name').value.trim();
+  if(!name){alert('Course name is required.');return;}
+  const course = {
+    id: idCounter++,
+    name,
+    code:      document.getElementById('f-code').value.trim(),
+    professor: document.getElementById('f-prof').value.trim(),
+    semester:  document.getElementById('f-semester').value.trim(),
+    credits:   parseInt(document.getElementById('f-credits').value)||3,
+    color:     selectedColor,
+    archived:  false,
+    currentGrade: '',
+    finalGrade:   '',
+    assignments:  [],
+  };
+  courses.push(course);
+  save(); renderAll(); closeModal();
+}
+
+function closeModal(){
+  document.getElementById('modal-overlay').classList.remove('open');
+}
+function handleOverlayClick(e){
+  if(e.target===document.getElementById('modal-overlay')) closeModal();
+}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
+
+function toggleSec(id){
+  document.getElementById('sec-'+id).classList.toggle('collapsed');
+  document.getElementById('toggle-'+id).classList.toggle('open');
+}
+function toggleTheme(){
+  const dark=document.body.classList.toggle('dark');
+  document.getElementById('theme-btn').textContent=dark?'◑ light':'◑ dark';
+  localStorage.setItem('acad_theme',dark?'dark':'light');
+}
+const savedTheme=localStorage.getItem('acad_theme');
+if(savedTheme==='dark'){document.body.classList.add('dark');document.getElementById('theme-btn').textContent='◑ light';}
+
+renderAll();
+</script>
+</body>
+</html>

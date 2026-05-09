@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Golf Equipment</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f5f5f3;--bg2:#ffffff;--bg3:#efefed;--bg4:#e4e4e2;
+  --border:#dddddb;--border2:#c8c8c6;
+  --text:#1a1a1a;--text2:#555;--text3:#999;--text4:#bbb;
+  --green:#0e9e70;--green-bg:#e0f5ec;--green-txt:#0e9e70;
+  --amber:#c27d08;--amber-bg:#fdf0d5;--amber-txt:#c27d08;
+  --blue:#2a7de1;--blue-bg:#deeafa;--blue-txt:#2a7de1;
+  --red:#d03030;--red-bg:#fce8e8;--red-txt:#d03030;
+  --purple:#6c5bbf;--purple-bg:#eae8fa;
+  --r:8px;--rl:12px;
+}
+.dark{
+  --bg:#1e1e1e;--bg2:#272727;--bg3:#2f2f2f;--bg4:#383838;
+  --border:#3a3a3a;--border2:#484848;
+  --text:#e2e2e2;--text2:#a0a0a0;--text3:#666;--text4:#444;
+  --green:#1fbd8a;--green-bg:#0d2e22;--green-txt:#1fbd8a;
+  --amber:#e6a020;--amber-bg:#2c1f06;--amber-txt:#e6a020;
+  --blue:#4a9eff;--blue-bg:#0a1e35;--blue-txt:#4a9eff;
+  --red:#f05050;--red-bg:#2a0f0f;--red-txt:#f05050;
+  --purple:#9b87f5;--purple-bg:#1a1530;
+}
+body{background:var(--bg);color:var(--text);font-family:'SF Mono','Fira Code','Cascadia Code',monospace;font-size:13px;line-height:1.6;padding:1.5rem 1rem;transition:background .2s,color .2s;min-height:100vh}
+.container{max-width:900px;margin:0 auto}
+
+/* Header */
+.header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1.75rem}
+.page-title{font-size:17px;font-weight:600;letter-spacing:.02em;margin-bottom:2px}
+.page-sub{font-size:11px;color:var(--text3);letter-spacing:.03em}
+.header-actions{display:flex;gap:8px;align-items:center;flex-shrink:0}
+.btn{font-family:inherit;font-size:11px;font-weight:600;padding:5px 13px;border-radius:20px;border:1px solid var(--border2);background:var(--bg3);color:var(--text2);cursor:pointer;letter-spacing:.04em;text-transform:uppercase;transition:all .15s;text-decoration:none;display:inline-block}
+.btn:hover{background:var(--bg4);color:var(--text)}
+.btn-green{background:var(--green-bg);color:var(--green-txt);border-color:var(--green)}
+.btn-green:hover{opacity:.85}
+
+/* Section */
+.sec-header{display:flex;align-items:center;justify-content:space-between;margin:1.6rem 0 .75rem;padding-bottom:5px;border-bottom:1px solid var(--border);cursor:pointer;user-select:none}
+.sec-label{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.12em}
+.sec-toggle{font-size:14px;color:var(--text3);transition:transform .2s;line-height:1}
+.sec-toggle.open{transform:rotate(180deg)}
+.sec-body.collapsed{display:none}
+.sec-actions{display:flex;align-items:center;gap:8px}
+
+/* BUBBLE CARDS */
+.bubble-grid{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:.5rem}
+.bubble{
+  background:var(--bg2);border:1.5px solid var(--border);
+  border-radius:50px;
+  padding:8px 16px;
+  cursor:pointer;
+  display:flex;align-items:center;gap:8px;
+  transition:all .18s;
+  user-select:none;
+  max-width:260px;
+}
+.bubble:hover{border-color:var(--border2);background:var(--bg3);transform:translateY(-1px);box-shadow:0 3px 10px rgba(0,0,0,.07)}
+.bubble.in-play{border-color:var(--green);background:var(--green-bg)}
+.bubble.in-play .bubble-name{color:var(--green-txt)}
+.bubble-icon{font-size:15px;line-height:1;flex-shrink:0}
+.bubble-inner{min-width:0}
+.bubble-name{font-size:12px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:160px}
+.bubble-sub{font-size:10px;color:var(--text3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:160px}
+.bubble-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.dot-green{background:var(--green)}.dot-dim{background:var(--text4)}
+
+/* Add bubble */
+.add-bubble{
+  background:transparent;border:1.5px dashed var(--border2);
+  border-radius:50px;padding:8px 16px;
+  cursor:pointer;display:flex;align-items:center;gap:6px;
+  color:var(--text3);font-size:12px;font-family:inherit;
+  transition:all .15s;
+}
+.add-bubble:hover{border-color:var(--blue);color:var(--blue)}
+
+/* BAG SUMMARY */
+.bag-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px;margin-bottom:.5rem}
+.bag-slot{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:10px 12px;position:relative}
+.bag-slot.filled{border-color:var(--green);background:var(--green-bg)}
+.bag-slot-cat{font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:var(--text3);margin-bottom:3px}
+.bag-slot.filled .bag-slot-cat{color:var(--green-txt);opacity:.8}
+.bag-slot-name{font-size:11px;font-weight:600;color:var(--text);line-height:1.3}
+.bag-slot.filled .bag-slot-name{color:var(--green-txt)}
+.bag-slot-sub{font-size:10px;color:var(--text3);margin-top:2px}
+.bag-slot.filled .bag-slot-sub{color:var(--green-txt);opacity:.7}
+.bag-empty-text{font-size:11px;color:var(--text4);font-style:italic}
+
+/* MODAL OVERLAY */
+.modal-overlay{
+  position:fixed;inset:0;
+  background:rgba(0,0,0,.45);
+  display:flex;align-items:center;justify-content:center;
+  z-index:1000;
+  opacity:0;pointer-events:none;
+  transition:opacity .2s;
+  padding:1rem;
+}
+.modal-overlay.open{opacity:1;pointer-events:all}
+.modal{
+  background:var(--bg2);border:1px solid var(--border2);border-radius:16px;
+  width:100%;max-width:520px;max-height:88vh;overflow-y:auto;
+  transform:scale(.92) translateY(12px);
+  transition:transform .22s cubic-bezier(.34,1.4,.64,1),opacity .2s;
+  opacity:0;
+  box-shadow:0 20px 60px rgba(0,0,0,.18);
+}
+.modal-overlay.open .modal{transform:scale(1) translateY(0);opacity:1}
+.modal-header{display:flex;align-items:center;justify-content:space-between;padding:18px 20px 14px;border-bottom:1px solid var(--border)}
+.modal-title{font-size:15px;font-weight:600;color:var(--text)}
+.modal-close{background:var(--bg3);border:1px solid var(--border2);color:var(--text2);width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:all .15s;font-family:inherit}
+.modal-close:hover{background:var(--red-bg);color:var(--red);border-color:var(--red)}
+.modal-body{padding:18px 20px}
+
+/* Form inside modal */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+@media(max-width:480px){.form-grid{grid-template-columns:1fr}}
+.form-group{display:flex;flex-direction:column;gap:3px}
+.form-group.full{grid-column:1/-1}
+.form-group label{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.08em}
+.form-group input,.form-group select,.form-group textarea{
+  font-family:inherit;font-size:12px;padding:6px 10px;border-radius:6px;
+  border:1px solid var(--border2);background:var(--bg3);color:var(--text);
+  transition:border-color .15s;
+}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{outline:none;border-color:var(--blue)}
+.form-group textarea{resize:vertical;min-height:60px;line-height:1.5}
+.modal-actions{display:flex;justify-content:space-between;align-items:center;margin-top:16px;padding-top:14px;border-top:1px solid var(--border)}
+
+/* Detail view (read mode) */
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+@media(max-width:480px){.detail-grid{grid-template-columns:1fr}}
+.detail-field{background:var(--bg3);border-radius:var(--r);padding:9px 12px}
+.detail-field.full{grid-column:1/-1}
+.df-label{font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:var(--text3);margin-bottom:2px}
+.df-val{font-size:13px;color:var(--text);font-weight:500}
+.df-val.empty{color:var(--text4);font-style:italic}
+.status-toggle{display:flex;gap:8px;margin-bottom:14px}
+.st-btn{flex:1;padding:7px;border-radius:8px;border:1.5px solid var(--border2);background:transparent;color:var(--text3);font-family:inherit;font-size:11px;font-weight:600;cursor:pointer;transition:all .15s;text-transform:uppercase;letter-spacing:.05em}
+.st-btn.active-inplay{background:var(--green-bg);color:var(--green-txt);border-color:var(--green)}
+.st-btn.active-notinplay{background:var(--bg4);color:var(--text2);border-color:var(--border2)}
+
+/* Pill */
+.pill{display:inline-block;font-size:10px;font-weight:600;padding:2px 10px;border-radius:20px;letter-spacing:.04em;text-transform:uppercase}
+.pill-g{background:var(--green-bg);color:var(--green-txt)}
+.pill-dim{background:var(--bg4);color:var(--text3)}
+
+hr{border:none;border-top:1px solid var(--border);margin:1.4rem 0}
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="header">
+  <div>
+    <div class="page-title">Paul's Golf Equipment</div>
+    <div class="page-sub">club inventory · 2026</div>
+  </div>
+  <div class="header-actions">
+    <a href="index.html" class="btn">← home</a>
+    <button class="btn" onclick="toggleTheme()" id="theme-btn">◑ dark</button>
+  </div>
+</div>
+
+<!-- WHAT'S IN THE BAG -->
+<div class="sec-header" onclick="toggleSec('bag')">
+  <span class="sec-label">What's in the Bag</span>
+  <span class="sec-toggle open" id="toggle-bag">▼</span>
+</div>
+<div class="sec-body" id="sec-bag">
+  <div class="bag-grid" id="bag-grid"></div>
+</div>
+
+<!-- SECTIONS -->
+<div id="sections-container"></div>
+
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal-overlay" onclick="handleOverlayClick(event)">
+  <div class="modal" id="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="modal-title">Club Details</span>
+      <button class="modal-close" onclick="closeModal()">×</button>
+    </div>
+    <div class="modal-body" id="modal-body"></div>
+  </div>
+</div>
+
+<script>
+const SECTIONS = [
+  {key:'driver',  label:'Drivers',           icon:'🏌️'},
+  {key:'wood',    label:'Fairway Woods',      icon:'🪵'},
+  {key:'hybrid',  label:'Hybrids',            icon:'⚡'},
+  {key:'iron',    label:'Irons',              icon:'🔩'},
+  {key:'wedge',   label:'Wedges',             icon:'✂️'},
+  {key:'putter',  label:'Putters',            icon:'🎯'},
+  {key:'ball',    label:'Balls',              icon:'⚪'},
+  {key:'training',label:'Training Aids & Launch Monitors', icon:'📡'},
+  {key:'other',   label:'Other Equipment',    icon:'🎒'},
+];
+
+const FIELDS_BY_TYPE = {
+  driver:   ['make','model','loft','lie','length','swingweight','shaft','grip','notes'],
+  wood:     ['make','model','loft','lie','length','swingweight','shaft','grip','notes'],
+  hybrid:   ['make','model','loft','lie','length','swingweight','shaft','grip','notes'],
+  iron:     ['make','model','loft','lie','length','swingweight','shaft','grip','notes'],
+  wedge:    ['make','model','loft','lie','bounce','grind','length','shaft','grip','notes'],
+  putter:   ['make','model','length','loft','lie','offset','grip','notes'],
+  ball:     ['make','model','construction','compression','notes'],
+  training: ['make','model','notes'],
+  other:    ['make','model','notes'],
+};
+
+const FIELD_LABELS = {
+  make:'Make',model:'Model',loft:'Loft (°)',lie:'Lie (°)',length:'Length (in)',
+  swingweight:'Swingweight',shaft:'Shaft',grip:'Grip',notes:'Notes',
+  bounce:'Bounce (°)',grind:'Grind',offset:'Offset',
+  construction:'Construction',compression:'Compression',
+};
+
+let equipment = JSON.parse(localStorage.getItem('golf_equipment') || '{}');
+// ensure each section key exists
+SECTIONS.forEach(s => { if(!equipment[s.key]) equipment[s.key] = []; });
+
+let idCounter = parseInt(localStorage.getItem('golf_id_counter') || '1');
+let currentModal = null; // {mode:'view'|'edit'|'add', type, id}
+
+function save(){
+  localStorage.setItem('golf_equipment', JSON.stringify(equipment));
+  localStorage.setItem('golf_id_counter', idCounter);
+}
+
+function newId(){ return idCounter++; }
+
+// ── RENDER ALL ──────────────────────────────────────────
+function renderAll(){
+  renderBag();
+  renderSections();
+}
+
+function renderBag(){
+  const bagEl = document.getElementById('bag-grid');
+  bagEl.innerHTML = '';
+  // collect all in-play items
+  const inPlay = [];
+  SECTIONS.forEach(s => {
+    if(['ball','training','other'].includes(s.key)) return;
+    equipment[s.key].filter(c=>c.status==='in-play').forEach(c=>{
+      inPlay.push({...c, sectionLabel: s.label.replace(/s$/,''), icon: s.icon});
+    });
+  });
+  if(inPlay.length === 0){
+    bagEl.innerHTML = '<div style="color:var(--text3);font-size:12px;padding:.5rem 0">No clubs marked In Play yet. Mark clubs as In Play to populate this section.</div>';
+    return;
+  }
+  inPlay.forEach(c => {
+    const div = document.createElement('div');
+    div.className = 'bag-slot filled';
+    div.innerHTML = `
+      <div class="bag-slot-cat">${c.icon} ${c.sectionLabel}</div>
+      <div class="bag-slot-name">${c.make||''} ${c.model||''}</div>
+      <div class="bag-slot-sub">${c.loft ? c.loft+'°' : c.compression || ''}</div>
+    `;
+    bagEl.appendChild(div);
+  });
+}
+
+function renderSections(){
+  const container = document.getElementById('sections-container');
+  container.innerHTML = '';
+  SECTIONS.forEach(s => {
+    const items = equipment[s.key] || [];
+    const secDiv = document.createElement('div');
+    const countBadge = items.length > 0 ? ` <span style="font-size:10px;color:var(--text4)">(${items.length})</span>` : '';
+    secDiv.innerHTML = `
+      <div class="sec-header" onclick="toggleSec('sec-${s.key}')">
+        <span class="sec-label">${s.icon} ${s.label}${countBadge}</span>
+        <div class="sec-actions" onclick="event.stopPropagation()">
+          <button class="add-bubble" onclick="openAdd('${s.key}')"><span style="font-size:15px;font-weight:300">+</span> Add</button>
+          <span class="sec-toggle open" id="toggle-sec-${s.key}">▼</span>
+        </div>
+      </div>
+      <div class="sec-body" id="sec-sec-${s.key}">
+        <div class="bubble-grid" id="bubbles-${s.key}"></div>
+      </div>
+    `;
+    container.appendChild(secDiv);
+    renderBubbles(s.key);
+  });
+}
+
+function renderBubbles(key){
+  const el = document.getElementById('bubbles-'+key);
+  if(!el) return;
+  const items = equipment[key] || [];
+  el.innerHTML = '';
+  if(items.length === 0){
+    el.innerHTML = '<div style="color:var(--text4);font-size:11px;font-style:italic;padding:.25rem 0 .75rem">No items yet.</div>';
+    return;
+  }
+  items.forEach(item => {
+    const inPlay = item.status === 'in-play';
+    const div = document.createElement('div');
+    div.className = 'bubble' + (inPlay ? ' in-play' : '');
+    div.onclick = () => openView(key, item.id);
+    const name = [item.make, item.model].filter(Boolean).join(' ') || 'Unnamed';
+    const sub  = item.loft ? item.loft+'°' : item.compression || item.shaft || '';
+    div.innerHTML = `
+      <div class="bubble-dot ${inPlay?'dot-green':'dot-dim'}"></div>
+      <div class="bubble-inner">
+        <div class="bubble-name">${name}</div>
+        ${sub ? `<div class="bubble-sub">${sub}</div>` : ''}
+      </div>
+    `;
+    el.appendChild(div);
+  });
+}
+
+// ── MODAL ───────────────────────────────────────────────
+function openModal(title, bodyHtml){
+  document.getElementById('modal-title').textContent = title;
+  document.getElementById('modal-body').innerHTML = bodyHtml;
+  document.getElementById('modal-overlay').classList.add('open');
+}
+function closeModal(){
+  document.getElementById('modal-overlay').classList.remove('open');
+  currentModal = null;
+}
+function handleOverlayClick(e){
+  if(e.target === document.getElementById('modal-overlay')) closeModal();
+}
+document.addEventListener('keydown', e => { if(e.key==='Escape') closeModal(); });
+
+// ── VIEW MODE ───────────────────────────────────────────
+function openView(type, id){
+  const item = (equipment[type]||[]).find(x=>x.id===id);
+  if(!item) return;
+  currentModal = {mode:'view', type, id};
+  const sec = SECTIONS.find(s=>s.key===type);
+  const name = [item.make, item.model].filter(Boolean).join(' ') || 'Unnamed';
+  const fields = FIELDS_BY_TYPE[type] || [];
+  const inPlay = item.status === 'in-play';
+
+  let detailHtml = `
+    <div class="status-toggle">
+      <button class="st-btn ${inPlay?'active-inplay':''}" onclick="toggleStatus('${type}',${id},true)">✓ In Play</button>
+      <button class="st-btn ${!inPlay?'active-notinplay':''}" onclick="toggleStatus('${type}',${id},false)">Not In Play</button>
+    </div>
+    <div class="detail-grid">
+  `;
+  fields.filter(f=>f!=='notes').forEach(f => {
+    const val = item[f];
+    detailHtml += `
+      <div class="detail-field">
+        <div class="df-label">${FIELD_LABELS[f]||f}</div>
+        <div class="df-val ${!val?'empty':''}">${val||'—'}</div>
+      </div>
+    `;
+  });
+  if(item.notes){
+    detailHtml += `
+      <div class="detail-field full">
+        <div class="df-label">Notes</div>
+        <div class="df-val">${item.notes}</div>
+      </div>
+    `;
+  }
+  detailHtml += `</div>`;
+  detailHtml += `
+    <div class="modal-actions">
+      <button class="btn" style="background:var(--red-bg);color:var(--red-txt);border-color:var(--red)" onclick="deleteItem('${type}',${id})">Delete</button>
+      <button class="btn btn-green" onclick="openEdit('${type}',${id})">Edit</button>
+    </div>
+  `;
+  openModal(`${sec.icon} ${name}`, detailHtml);
+}
+
+function toggleStatus(type, id, inPlay){
+  const item = (equipment[type]||[]).find(x=>x.id===id);
+  if(!item) return;
+  item.status = inPlay ? 'in-play' : 'not-in-play';
+  save(); renderAll();
+  openView(type, id);
+}
+
+// ── EDIT MODE ───────────────────────────────────────────
+function openEdit(type, id){
+  const item = (equipment[type]||[]).find(x=>x.id===id);
+  if(!item) return;
+  currentModal = {mode:'edit', type, id};
+  const sec = SECTIONS.find(s=>s.key===type);
+  const fields = FIELDS_BY_TYPE[type] || [];
+  openModal(`Edit — ${[item.make,item.model].filter(Boolean).join(' ')||'Item'}`, buildForm(type, fields, item, `saveEdit('${type}',${id})`, 'Save Changes'));
+}
+
+// ── ADD MODE ────────────────────────────────────────────
+function openAdd(type){
+  currentModal = {mode:'add', type};
+  const sec = SECTIONS.find(s=>s.key===type);
+  const fields = FIELDS_BY_TYPE[type] || [];
+  openModal(`${sec.icon} Add ${sec.label.replace(/s$/,'')}`, buildForm(type, fields, {}, `saveAdd('${type}')`, 'Add to Inventory'));
+}
+
+function buildForm(type, fields, values, onSave, btnLabel){
+  let html = `<div class="form-grid">`;
+  fields.filter(f=>f!=='notes').forEach(f => {
+    html += `
+      <div class="form-group">
+        <label>${FIELD_LABELS[f]||f}</label>
+        <input type="text" id="f-${f}" placeholder="${FIELD_LABELS[f]||f}" value="${values[f]||''}">
+      </div>
+    `;
+  });
+  html += `</div>`;
+  if(fields.includes('notes')){
+    html += `
+      <div class="form-group" style="margin-bottom:12px">
+        <label>Notes</label>
+        <textarea id="f-notes" placeholder="Any additional notes...">${values.notes||''}</textarea>
+      </div>
+    `;
+  }
+  html += `
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-green" onclick="${onSave}">${btnLabel}</button>
+    </div>
+  `;
+  return html;
+}
+
+function saveAdd(type){
+  const fields = FIELDS_BY_TYPE[type] || [];
+  const item = { id: newId(), status: 'not-in-play' };
+  fields.forEach(f => {
+    const el = document.getElementById('f-'+f);
+    if(el) item[f] = el.value.trim();
+  });
+  if(!item.make && !item.model){ alert('Please enter at least a Make or Model.'); return; }
+  equipment[type].push(item);
+  save(); renderAll(); closeModal();
+}
+
+function saveEdit(type, id){
+  const item = (equipment[type]||[]).find(x=>x.id===id);
+  if(!item) return;
+  const fields = FIELDS_BY_TYPE[type] || [];
+  fields.forEach(f => {
+    const el = document.getElementById('f-'+f);
+    if(el) item[f] = el.value.trim();
+  });
+  save(); renderAll(); closeModal();
+}
+
+function deleteItem(type, id){
+  if(!confirm('Remove this item from your inventory?')) return;
+  equipment[type] = (equipment[type]||[]).filter(x=>x.id!==id);
+  save(); renderAll(); closeModal();
+}
+
+// ── UTILS ───────────────────────────────────────────────
+function toggleSec(id){
+  const body = document.getElementById('sec-'+id);
+  const tog  = document.getElementById('toggle-'+id);
+  if(!body||!tog) return;
+  body.classList.toggle('collapsed');
+  tog.classList.toggle('open');
+}
+function toggleTheme(){
+  const dark = document.body.classList.toggle('dark');
+  document.getElementById('theme-btn').textContent = dark?'◑ light':'◑ dark';
+  localStorage.setItem('golf_theme', dark?'dark':'light');
+}
+
+// Init
+const savedTheme = localStorage.getItem('golf_theme');
+if(savedTheme==='dark'){document.body.classList.add('dark');document.getElementById('theme-btn').textContent='◑ light';}
+renderAll();
+</script>
+</body>
+</html>
