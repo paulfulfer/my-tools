@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Summer 2026 — Financial Planner</title>
+<title>Financial Planner</title>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -37,13 +37,17 @@ body{background:var(--bg);color:var(--text);font-family:'SF Mono','Fira Code','C
 .btn:hover{background:var(--bg4);color:var(--text)}
 .btn-primary{background:var(--blue-bg);color:var(--blue-txt);border-color:var(--blue)}
 .btn-primary:hover{opacity:.85}
+.btn-green{background:var(--green-bg);color:var(--green-txt);border-color:var(--green)}
+.btn-green:hover{opacity:.85}
+/* Section */
 .sec-header{display:flex;align-items:center;justify-content:space-between;margin:1.6rem 0 .55rem;padding-bottom:5px;border-bottom:1px solid var(--border);cursor:pointer;user-select:none}
 .sec-label{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.12em}
+.sec-right{display:flex;align-items:center;gap:8px}
 .sec-toggle{font-size:14px;color:var(--text3);transition:transform .2s;line-height:1}
 .sec-toggle.open{transform:rotate(180deg)}
-.sec-body{overflow:hidden;transition:opacity .2s}
 .sec-body.collapsed{display:none}
 hr{border:none;border-top:1px solid var(--border);margin:1.4rem 0}
+/* Job cards */
 .cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px;margin-bottom:.5rem}
 .card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:12px 14px;position:relative}
 .card-title{font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:9px;padding-right:20px}
@@ -55,40 +59,64 @@ hr{border:none;border-top:1px solid var(--border);margin:1.4rem 0}
 .irow input[type=number]:focus{outline:1px solid var(--blue);outline-offset:1px}
 .card-foot{font-size:11px;color:var(--text3);margin-top:8px;padding-top:7px;border-top:1px solid var(--border);display:flex;justify-content:space-between}
 .card-foot span.val{font-weight:600;color:var(--text)}
-.card-foot span.val.amber{color:var(--amber)}
 .remove-btn{position:absolute;top:9px;right:9px;width:18px;height:18px;border-radius:50%;background:var(--bg4);border:1px solid var(--border2);color:var(--text3);font-size:12px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s}
 .remove-btn:hover{background:var(--red-bg);color:var(--red-txt);border-color:var(--red)}
 .add-card{background:transparent;border:1px dashed var(--border2);border-radius:var(--r);padding:12px 14px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text3);font-size:12px;gap:6px;transition:all .15s;min-height:80px}
 .add-card:hover{border-color:var(--blue);color:var(--blue)}
 .add-icon{font-size:18px;font-weight:300;line-height:1}
+/* Completed expenses */
 .completed-list{margin-top:.5rem}
 .completed-item{display:flex;align-items:center;justify-content:space-between;padding:6px 10px;background:var(--bg3);border-radius:6px;margin-bottom:4px;opacity:.55}
 .completed-item span{font-size:12px;color:var(--text3);text-decoration:line-through}
 .completed-item .restore-btn{font-size:10px;color:var(--text3);cursor:pointer;border:none;background:none;font-family:inherit;padding:2px 6px;border-radius:4px}
 .completed-item .restore-btn:hover{color:var(--green)}
+/* Metrics */
 .pgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(118px,1fr));gap:8px;margin:.5rem 0}
 .met{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:11px 13px}
 .met-label{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:3px}
 .met-val{font-size:19px;font-weight:600;color:var(--text);letter-spacing:-.01em}
 .met-val.green{color:var(--green)}.met-val.amber{color:var(--amber)}.met-val.red{color:var(--red)}.met-val.blue{color:var(--blue)}.met-val.purple{color:var(--purple)}
 .met-sub{font-size:10px;color:var(--text3);margin-top:2px}
+/* Period total block — dismissable */
+.period-block{background:var(--bg2);border:1px solid var(--border);border-radius:var(--rl);padding:14px 16px;margin-top:.75rem;position:relative}
+.period-block-title{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.12em;margin-bottom:.6rem;display:flex;align-items:center;justify-content:space-between}
+.dismiss-btn{background:none;border:none;color:var(--text4);cursor:pointer;font-size:14px;padding:0;font-family:inherit;transition:color .15s;line-height:1}
+.dismiss-btn:hover{color:var(--red)}
+/* Date range projection */
+.proj-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--rl);padding:16px 18px;margin-top:.75rem}
+.proj-inputs{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;margin-bottom:12px}
+.proj-field{display:flex;flex-direction:column;gap:3px}
+.proj-field label{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.08em}
+.proj-field input{font-family:inherit;font-size:12px;padding:5px 9px;border-radius:6px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);transition:border-color .15s}
+.proj-field input:focus{outline:none;border-color:var(--blue)}
+/* Goals */
 .goals-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px;margin:.5rem 0}
-.gcard{background:var(--bg2);border:1px solid var(--border);border-radius:var(--rl);padding:13px 15px}
-.gc-label{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:2px}
-.gc-val{font-size:20px;font-weight:600;color:var(--text);margin:2px 0 2px;letter-spacing:-.01em}
+.gcard{background:var(--bg2);border:1px solid var(--border);border-radius:var(--rl);padding:13px 15px;position:relative}
+.gc-label{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:2px;padding-right:20px}
+.gc-label input.gl-input{background:transparent;border:none;color:var(--text3);font:inherit;font-size:10px;text-transform:uppercase;letter-spacing:.08em;width:100%;outline:none;padding:0}
+.gc-label input.gl-input:focus{border-bottom:1px solid var(--border2)}
+.gc-val{font-size:20px;font-weight:600;color:var(--text);margin:2px 0;letter-spacing:-.01em}
 .gc-sub{font-size:11px;color:var(--text3);min-height:15px}
 .track{height:5px;background:var(--bg4);border-radius:3px;margin-top:9px;overflow:hidden}
 .fill{height:100%;border-radius:3px;transition:width .3s ease}
 .pill{display:inline-block;font-size:10px;font-weight:600;padding:2px 9px;border-radius:20px;margin-top:5px;letter-spacing:.04em;text-transform:uppercase}
 .pill-g{background:var(--green-bg);color:var(--green-txt)}.pill-a{background:var(--amber-bg);color:var(--amber-txt)}.pill-r{background:var(--red-bg);color:var(--red-txt)}.pill-b{background:var(--blue-bg);color:var(--blue-txt)}.pill-p{background:var(--purple-bg);color:var(--purple)}
-.deposit-row{display:flex;gap:8px;margin-bottom:.5rem}
-.deposit-row input{flex:1;font-size:12px;padding:4px 8px;border-radius:5px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);font-family:inherit}
-.deposit-list{margin-top:.4rem}
-.deposit-item{display:flex;justify-content:space-between;align-items:center;padding:5px 8px;background:var(--bg3);border-radius:5px;margin-bottom:3px;font-size:12px}
-.deposit-item .d-label{color:var(--text2)}
-.deposit-item .d-amt{color:var(--green);font-weight:600}
-.deposit-item .d-del{background:none;border:none;color:var(--text3);cursor:pointer;font-size:13px;padding:0 2px}
-.deposit-item .d-del:hover{color:var(--red)}
+.gcard .remove-btn{top:9px;right:9px}
+/* Goal amount input inline */
+.gc-amt-row{display:flex;align-items:center;gap:6px;margin:4px 0}
+.gc-amt-row label{font-size:11px;color:var(--text3)}
+.gc-amt-row input{width:90px;font-size:14px;font-weight:600;padding:2px 7px;border-radius:5px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);font-family:inherit;text-align:right}
+.gc-amt-row input:focus{outline:1px solid var(--blue);outline-offset:1px}
+.goal-current-row{display:flex;align-items:center;gap:6px;margin:3px 0}
+.goal-current-row label{font-size:11px;color:var(--text3)}
+.goal-current-row input{width:90px;font-size:12px;padding:2px 7px;border-radius:5px;border:1px solid var(--border2);background:var(--bg3);color:var(--green);font-family:inherit;text-align:right}
+.goal-current-row input:focus{outline:1px solid var(--green);outline-offset:1px}
+.defer-toggle{display:flex;align-items:center;gap:5px;margin-top:6px;cursor:pointer;user-select:none}
+.defer-toggle input{accent-color:var(--amber);cursor:pointer}
+.defer-toggle label{font-size:11px;color:var(--text3);cursor:pointer}
+/* Add goal button */
+.add-goal-btn{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;padding:10px;border:1px dashed var(--border2);border-radius:var(--r);background:transparent;color:var(--text3);font-family:inherit;font-size:12px;cursor:pointer;transition:all .15s;margin-top:4px}
+.add-goal-btn:hover{border-color:var(--green);color:var(--green)}
 /* Purchase schedules */
 .purchase-schedule{background:var(--bg2);border:1px solid var(--border);border-radius:var(--rl);padding:14px 16px;margin-bottom:10px}
 .ps-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
@@ -110,22 +138,15 @@ hr{border:none;border-top:1px solid var(--border);margin:1.4rem 0}
 .ps-note{font-size:11px;color:var(--text3);margin-top:8px;line-height:1.65}
 .add-schedule-btn{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;padding:10px;border:1px dashed var(--border2);border-radius:var(--r);background:transparent;color:var(--text3);font-family:inherit;font-size:12px;cursor:pointer;transition:all .15s;margin-top:4px}
 .add-schedule-btn:hover{border-color:var(--blue);color:var(--blue)}
+/* Bars */
 .bar-row{display:flex;align-items:center;gap:10px;margin-bottom:5px}
 .bar-label{min-width:130px;font-size:11px;color:var(--text3)}
 .bar-track{flex:1;height:7px;background:var(--bg3);border-radius:3px;overflow:hidden;border:1px solid var(--border)}
 .bar-fill{height:100%;border-radius:3px}
 .bar-amt{min-width:52px;text-align:right;font-size:12px;font-weight:600;color:var(--text)}
-.balance-card{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--rl);padding:15px 17px;margin-top:8px}
-.balance-note{font-size:11px;color:var(--text3);margin-top:5px;line-height:1.65}
 .note{font-size:11px;color:var(--text3);margin-top:.65rem;line-height:1.7}
 .tag{display:inline-block;font-size:10px;padding:1px 7px;border-radius:10px;background:var(--bg4);color:var(--text3);margin-right:4px}
-.ira-manual{display:flex;align-items:center;gap:10px;margin-bottom:.5rem;flex-wrap:wrap}
-.ira-manual label{font-size:12px;color:var(--text3)}
-.ira-manual input{width:90px;font-size:13px;padding:4px 8px;border-radius:5px;border:1px solid var(--border2);background:var(--bg3);color:var(--green);font-family:inherit;text-align:right;font-weight:600}
-.brok-rep{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:.5rem 0}
-.brok-rep label{font-size:12px;color:var(--text3)}
-.brok-rep input{width:90px;font-size:13px;padding:4px 8px;border-radius:5px;border:1px solid var(--border2);background:var(--bg3);color:var(--blue);font-family:inherit;text-align:right;font-weight:600}
-@media print{body{background:#fff;color:#000;padding:.5rem}.btn,.remove-btn,.add-card,.deposit-row,.rep-controls .btn,.brok-rep,.ira-manual,.restore-btn,.d-del,.ps-del,.add-schedule-btn{display:none!important}.sec-body.collapsed{display:block!important}.container{max-width:100%}.card,.met,.gcard,.balance-card{border:1px solid #ccc;background:#fff}.met-val,.gc-val{color:#000}.met-val.green,.gc-val.green,.d-amt{color:#0a7a50}.met-val.amber,.amber{color:#8a5a00}.met-val.blue,.blue{color:#1a4e9a}.bar-track{border:1px solid #ccc;background:#eee}}
+@media print{body{background:#fff;color:#000;padding:.5rem}.btn,.remove-btn,.add-card,.restore-btn,.ps-del,.add-schedule-btn,.add-goal-btn,.dismiss-btn{display:none!important}.sec-body.collapsed{display:block!important}.container{max-width:100%}.card,.met,.gcard,.proj-card,.purchase-schedule{border:1px solid #ccc;background:#fff}.met-val{color:#000}.met-val.green{color:#0a7a50}.met-val.amber{color:#8a5a00}.met-val.blue{color:#1a4e9a}.bar-track{border:1px solid #ccc;background:#eee}}
 </style>
 </head>
 <body>
@@ -133,7 +154,7 @@ hr{border:none;border-top:1px solid var(--border);margin:1.4rem 0}
 
 <div class="header">
   <div>
-    <div class="page-title">Summer 2026 — Financial Planner</div>
+    <div class="page-title">Paul's Financial Planner</div>
     <div class="page-sub">All inputs editable · figures update instantly · data saved in browser</div>
   </div>
   <div class="header-actions">
@@ -146,13 +167,13 @@ hr{border:none;border-top:1px solid var(--border);margin:1.4rem 0}
 <!-- INCOME -->
 <div class="sec-header" onclick="toggleSec('income')">
   <span class="sec-label">Income — Jobs</span>
-  <span class="sec-toggle open" id="income-toggle">▾</span>
+  <span class="sec-right"><span class="sec-toggle open" id="income-toggle">▾</span></span>
 </div>
 <div class="sec-body" id="income-body">
   <div class="cards-grid" id="jobs-grid"></div>
   <div class="add-card" onclick="addJob()"><span class="add-icon">+</span><span>Add job</span></div>
 
-  <div class="sec-label" style="margin:1rem 0 .4rem;display:block;font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.12em">Pay periods</div>
+  <div style="margin:1rem 0 .4rem;font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.12em">Pay periods</div>
   <div class="pgrid">
     <div class="met"><div class="met-label">Weekly gross</div><div class="met-val" id="wk-gross">—</div></div>
     <div class="met"><div class="met-label">Weekly net</div><div class="met-val green" id="wk-net">—</div><div class="met-sub">FICA + PA</div></div>
@@ -162,19 +183,14 @@ hr{border:none;border-top:1px solid var(--border);margin:1.4rem 0}
     <div class="met"><div class="met-label">Monthly net</div><div class="met-val green" id="mo-net">—</div></div>
   </div>
 
-  <div class="sec-label" style="margin:1rem 0 .4rem;display:block;font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.12em">Summer totals</div>
-  <div class="pgrid">
-    <div class="met"><div class="met-label">Gross earnings</div><div class="met-val" id="tot-gross">—</div></div>
-    <div class="met"><div class="met-label">Taxes (10.72%)</div><div class="met-val amber" id="tot-tax">—</div></div>
-    <div class="met"><div class="met-label">Take-home</div><div class="met-val green" id="tot-net">—</div></div>
-    <div class="met"><div class="met-label">+ $1,100 saved</div><div class="met-val green" id="tot-avail">—</div></div>
-  </div>
+  <!-- Dismissable period totals -->
+  <div id="period-totals-wrap"></div>
 </div>
 
 <!-- FIXED EXPENSES -->
 <div class="sec-header" onclick="toggleSec('expenses')">
   <span class="sec-label">Fixed Expenses</span>
-  <span class="sec-toggle open" id="expenses-toggle">▾</span>
+  <span class="sec-right"><span class="sec-toggle open" id="expenses-toggle">▾</span></span>
 </div>
 <div class="sec-body" id="expenses-body">
   <div class="cards-grid" id="expenses-grid"></div>
@@ -182,17 +198,45 @@ hr{border:none;border-top:1px solid var(--border);margin:1.4rem 0}
   <div id="completed-expenses-wrap" style="margin-top:.5rem"></div>
   <div class="pgrid" style="margin-top:.75rem">
     <div class="met"><div class="met-label">Total expenses</div><div class="met-val amber" id="exp-total">—</div></div>
-    <div class="met"><div class="met-label">Equipment</div><div class="met-val purple" id="exp-equip">—</div><div class="met-sub">monitor + iPad</div></div>
+    <div class="met"><div class="met-label">Equipment</div><div class="met-val purple" id="exp-equip">—</div></div>
     <div class="met"><div class="met-label">Recurring / misc</div><div class="met-val" id="exp-misc">—</div></div>
   </div>
-  <div class="sec-label" style="margin:1rem 0 .4rem;display:block;font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.12em">Expense breakdown</div>
+  <div style="margin:1rem 0 .4rem;font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.12em">Expense breakdown</div>
   <div id="bars"></div>
 </div>
 
-<!-- PURCHASE REPAYMENT SCHEDULES -->
+<!-- DATE RANGE PROJECTION -->
+<div class="sec-header" onclick="toggleSec('projection')">
+  <span class="sec-label">Earnings Projection</span>
+  <span class="sec-right"><span class="sec-toggle open" id="projection-toggle">▾</span></span>
+</div>
+<div class="sec-body" id="projection-body">
+  <div class="proj-card">
+    <div class="proj-inputs">
+      <div class="proj-field">
+        <label>From</label>
+        <input type="date" id="proj-start" oninput="calcProjection();save()">
+      </div>
+      <div class="proj-field">
+        <label>To</label>
+        <input type="date" id="proj-end" oninput="calcProjection();save()">
+      </div>
+    </div>
+    <div class="pgrid" id="proj-metrics">
+      <div class="met"><div class="met-label">Weeks</div><div class="met-val" id="proj-weeks">—</div></div>
+      <div class="met"><div class="met-label">Gross</div><div class="met-val" id="proj-gross">—</div></div>
+      <div class="met"><div class="met-label">Taxes (10.72%)</div><div class="met-val amber" id="proj-tax">—</div></div>
+      <div class="met"><div class="met-label">Take-home</div><div class="met-val green" id="proj-net">—</div></div>
+      <div class="met"><div class="met-label">After expenses</div><div class="met-val" id="proj-after-exp">—</div></div>
+    </div>
+    <div class="note" id="proj-note">Set a date range to project earnings from your current job cards.</div>
+  </div>
+</div>
+
+<!-- REPAYMENT SCHEDULES -->
 <div class="sec-header" onclick="toggleSec('repay')">
   <span class="sec-label">Purchase Repayment Schedules</span>
-  <span class="sec-toggle open" id="repay-toggle">▾</span>
+  <span class="sec-right"><span class="sec-toggle open" id="repay-toggle">▾</span></span>
 </div>
 <div class="sec-body" id="repay-body">
   <div id="schedules-container"></div>
@@ -202,133 +246,65 @@ hr{border:none;border-top:1px solid var(--border);margin:1.4rem 0}
 <!-- GOALS -->
 <div class="sec-header" onclick="toggleSec('goals')">
   <span class="sec-label">Goals & Progress</span>
-  <span class="sec-toggle open" id="goals-toggle">▾</span>
+  <span class="sec-right">
+    <button class="btn btn-green" style="font-size:10px;padding:3px 10px" onclick="event.stopPropagation();addGoal()">+ Goal</button>
+    <span class="sec-toggle open" id="goals-toggle">▾</span>
+  </span>
 </div>
 <div class="sec-body" id="goals-body">
-  <div class="goals-grid">
-    <div class="gcard">
-      <div class="gc-label">Equipment (monitor + iPad)</div>
-      <div class="gc-val" id="g-equip-val">—</div>
-      <div class="gc-sub" id="g-equip-sub">—</div>
-      <div class="track"><div class="fill" id="g-equip-bar" style="background:var(--purple)"></div></div>
-      <div id="g-equip-pill"></div>
-    </div>
-    <div class="gcard">
-      <div class="gc-label">Roth IRA (2026 — EOY)</div>
-      <div class="gc-val">$7,500</div>
-      <div class="gc-sub" id="g-ira-sub">—</div>
-      <div class="track"><div class="fill" id="g-ira-bar" style="background:var(--blue)"></div></div>
-      <div id="g-ira-pill"></div>
-    </div>
-    <div class="gcard">
-      <div class="gc-label">Truck (deferred)</div>
-      <div class="gc-val">~$1,500</div>
-      <div class="gc-sub">Fund from fall earnings</div>
-      <div class="track"><div class="fill" style="width:0;background:var(--text3)"></div></div>
-      <div><span class="pill pill-a">deferred</span></div>
-    </div>
-  </div>
-
-  <div class="sec-label" style="margin:1.1rem 0 .4rem;display:block;font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.12em">IRA — manual contribution tracker</div>
-  <div class="ira-manual">
-    <label>Log deposit ($)</label>
-    <input id="ira-deposit-amt" type="number" placeholder="0" min="0">
-    <input id="ira-deposit-label" type="text" placeholder="Note (optional)" style="flex:1;font-size:12px;padding:4px 8px;border-radius:5px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);font-family:inherit">
-    <button class="btn btn-primary" onclick="addDeposit()">+ Log</button>
-  </div>
-  <div class="deposit-list" id="deposit-list"></div>
-  <div class="pgrid" style="margin-top:.6rem">
-    <div class="met"><div class="met-label">IRA deposited</div><div class="met-val green" id="ira-deposited">$0</div></div>
-    <div class="met"><div class="met-label">IRA remaining</div><div class="met-val amber" id="ira-remaining">$7,500</div></div>
-    <div class="met"><div class="met-label">% funded</div><div class="met-val blue" id="ira-pct">0%</div></div>
-  </div>
-
-  <div class="sec-label" style="margin:1.1rem 0 .4rem;display:block;font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.12em">IRA gap — fall job calculator</div>
-  <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:.6rem">
-    <div class="irow" style="gap:8px"><label style="color:var(--text3);font-size:12px">Fall hrs/week</label><input id="fall-hrs" type="number" value="11" style="width:70px;font-size:12px;padding:3px 7px;border-radius:5px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);font-family:inherit;text-align:right"></div>
-    <div class="irow" style="gap:8px"><label style="color:var(--text3);font-size:12px">Rate ($/hr)</label><input id="fall-rate" type="number" value="13.50" step=".25" style="width:80px;font-size:12px;padding:3px 7px;border-radius:5px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);font-family:inherit;text-align:right"></div>
-    <div class="irow" style="gap:8px"><label style="color:var(--text3);font-size:12px">Fall weeks</label><input id="fall-wks" type="number" value="18" style="width:70px;font-size:12px;padding:3px 7px;border-radius:5px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);font-family:inherit;text-align:right"></div>
-  </div>
-  <div class="pgrid">
-    <div class="met"><div class="met-label">Fall gross</div><div class="met-val" id="fall-gross">—</div></div>
-    <div class="met"><div class="met-label">Fall take-home</div><div class="met-val green" id="fall-net">—</div></div>
-    <div class="met"><div class="met-label">Projected IRA gap</div><div class="met-val" id="ira-gap-proj">—</div></div>
-    <div class="met"><div class="met-label">Gap covered?</div><div class="met-val" id="fall-covers">—</div></div>
-  </div>
-  <div class="note" id="fall-note"></div>
-</div>
-
-<!-- BROKERAGE -->
-<div class="sec-header" onclick="toggleSec('brokerage')">
-  <span class="sec-label">Brokerage & End-of-Summer Balance</span>
-  <span class="sec-toggle open" id="brokerage-toggle">▾</span>
-</div>
-<div class="sec-body" id="brokerage-body">
-  <div class="pgrid">
-    <div class="met"><div class="met-label">Total available</div><div class="met-val" id="b-avail">—</div></div>
-    <div class="met"><div class="met-label">Total expenses</div><div class="met-val amber" id="b-exp">—</div></div>
-    <div class="met"><div class="met-label">After expenses</div><div class="met-val" id="b-after">—</div></div>
-    <div class="met"><div class="met-label">After IRA goal</div><div class="met-val" id="b-after-ira">—</div></div>
-  </div>
-  <div class="balance-card" style="margin-top:10px">
-    <div class="met-label">Brokerage draw needed for IRA</div>
-    <div class="met-val" id="b-ira-gap" style="font-size:21px;font-weight:600;margin:4px 0">—</div>
-    <div class="balance-note" id="b-ira-note"></div>
-  </div>
-  <div class="sec-label" style="margin:1rem 0 .4rem;display:block;font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.12em">Brokerage replenishment tracker</div>
-  <div class="brok-rep">
-    <label>Brokerage balance ($)</label>
-    <input id="brok-balance" type="number" value="14000">
-    <label style="margin-left:8px">Replenished so far ($)</label>
-    <input id="brok-replenished" type="number" value="0">
-  </div>
-  <div class="pgrid">
-    <div class="met"><div class="met-label">Starting balance</div><div class="met-val blue" id="brok-start">$14,000</div></div>
-    <div class="met"><div class="met-label">After IRA draw</div><div class="met-val" id="brok-after-draw">—</div></div>
-    <div class="met"><div class="met-label">Replenished</div><div class="met-val green" id="brok-rep-val">$0</div></div>
-    <div class="met"><div class="met-label">Current est. balance</div><div class="met-val" id="brok-current">—</div></div>
-  </div>
-  <p class="note">Tax: FICA 7.65% + PA flat 3.07% = 10.72% effective rate. Federal income tax $0 after $15,000 standard deduction. Brokerage liquidation: likely $0 federal LTCG at your income level; 3.07% PA on realized gains only. 2026 Roth IRA limit: $7,500 (under 50). Deadline: April 15, 2027.</p>
+  <div class="goals-grid" id="goals-grid"></div>
 </div>
 
 </div>
 <script>
-const TAX=0.1072,SAVINGS=1100,IRA_GOAL=7500;
-let jobs=[],expenses=[],completedExpenses=[],deposits=[],schedules=[];
-let jobIdCounter=0,expIdCounter=0,schedIdCounter=0;
+const TAX=0.1072,SAVINGS=1100;
+let jobs=[],expenses=[],completedExpenses=[],schedules=[],goals=[];
+let jobIdCounter=0,expIdCounter=0,schedIdCounter=0,goalIdCounter=0;
+let periodTotalsDismissed=false;
 
 function save(){
   try{
-    localStorage.setItem('sp26_jobs',JSON.stringify(jobs));
-    localStorage.setItem('sp26_expenses',JSON.stringify(expenses));
-    localStorage.setItem('sp26_completedExpenses',JSON.stringify(completedExpenses));
-    localStorage.setItem('sp26_deposits',JSON.stringify(deposits));
-    localStorage.setItem('sp26_schedules',JSON.stringify(schedules));
-    localStorage.setItem('sp26_jobIdCounter',jobIdCounter);
-    localStorage.setItem('sp26_expIdCounter',expIdCounter);
-    localStorage.setItem('sp26_schedIdCounter',schedIdCounter);
-    localStorage.setItem('sp26_theme',document.body.classList.contains('dark')?'dark':'light');
+    localStorage.setItem('fp_jobs',JSON.stringify(jobs));
+    localStorage.setItem('fp_expenses',JSON.stringify(expenses));
+    localStorage.setItem('fp_completedExpenses',JSON.stringify(completedExpenses));
+    localStorage.setItem('fp_schedules',JSON.stringify(schedules));
+    localStorage.setItem('fp_goals',JSON.stringify(goals));
+    localStorage.setItem('fp_jobIdCounter',jobIdCounter);
+    localStorage.setItem('fp_expIdCounter',expIdCounter);
+    localStorage.setItem('fp_schedIdCounter',schedIdCounter);
+    localStorage.setItem('fp_goalIdCounter',goalIdCounter);
+    localStorage.setItem('fp_periodDismissed',periodTotalsDismissed?'1':'0');
+    localStorage.setItem('fp_theme',document.body.classList.contains('dark')?'dark':'light');
+    const ps=document.getElementById('proj-start'),pe=document.getElementById('proj-end');
+    if(ps&&pe){localStorage.setItem('fp_proj_start',ps.value);localStorage.setItem('fp_proj_end',pe.value);}
   }catch(e){}
 }
+
 function load(){
   try{
-    const j=localStorage.getItem('sp26_jobs');
-    const e=localStorage.getItem('sp26_expenses');
-    const ce=localStorage.getItem('sp26_completedExpenses');
-    const d=localStorage.getItem('sp26_deposits');
-    const sc=localStorage.getItem('sp26_schedules');
+    const j=localStorage.getItem('fp_jobs');
+    const e=localStorage.getItem('fp_expenses');
+    const ce=localStorage.getItem('fp_completedExpenses');
+    const sc=localStorage.getItem('fp_schedules');
+    const gl=localStorage.getItem('fp_goals');
     if(j) jobs=JSON.parse(j);
     if(e) expenses=JSON.parse(e);
     if(ce) completedExpenses=JSON.parse(ce);
-    if(d) deposits=JSON.parse(d);
     if(sc) schedules=JSON.parse(sc);
-    jobIdCounter=parseInt(localStorage.getItem('sp26_jobIdCounter')||0);
-    expIdCounter=parseInt(localStorage.getItem('sp26_expIdCounter')||0);
-    schedIdCounter=parseInt(localStorage.getItem('sp26_schedIdCounter')||0);
-    const theme=localStorage.getItem('sp26_theme');
+    if(gl) goals=JSON.parse(gl);
+    jobIdCounter=parseInt(localStorage.getItem('fp_jobIdCounter')||0);
+    expIdCounter=parseInt(localStorage.getItem('fp_expIdCounter')||0);
+    schedIdCounter=parseInt(localStorage.getItem('fp_schedIdCounter')||0);
+    goalIdCounter=parseInt(localStorage.getItem('fp_goalIdCounter')||0);
+    periodTotalsDismissed=localStorage.getItem('fp_periodDismissed')==='1';
+    const theme=localStorage.getItem('fp_theme');
     if(theme==='dark'){document.body.classList.add('dark');document.getElementById('theme-btn').textContent='◑ light';}
+    const ps=localStorage.getItem('fp_proj_start'),pe=localStorage.getItem('fp_proj_end');
+    if(ps) document.getElementById('proj-start').value=ps;
+    if(pe) document.getElementById('proj-end').value=pe;
   }catch(e){}
 }
+
 function initDefaults(){
   if(jobs.length===0){
     jobs=[
@@ -353,6 +329,13 @@ function initDefaults(){
   if(schedules.length===0){
     schedules=[{id:schedIdCounter++,name:'Launch Monitor',total:4750,fromSavings:1100,interestFree:true,apr:22}];
   }
+  if(goals.length===0){
+    goals=[
+      {id:goalIdCounter++,name:'Launch Monitor + iPad',target:4750,current:0,deferred:false,color:'#9b87f5'},
+      {id:goalIdCounter++,name:'Roth IRA 2026',target:7500,current:0,deferred:false,color:'#2a7de1'},
+      {id:goalIdCounter++,name:'Truck Fund',target:1500,current:0,deferred:true,color:'#a0a0a0'},
+    ];
+  }
 }
 
 document.getElementById('theme-btn').onclick=function(){
@@ -370,21 +353,19 @@ function fmtD(n){return '$'+Math.abs(n).toFixed(2);}
 function fmts(n){return(n<0?'-':'')+fmt(n);}
 function pct(v,t){return t===0?'0%':Math.min(100,Math.max(0,v/t*100)).toFixed(1)+'%';}
 function pill(el,text,cls){el.innerHTML='<span class="pill '+cls+'">'+text+'</span>';}
+function g(id){return document.getElementById(id);}
 
-// JOBS
+// ── JOBS ──────────────────────────────────────────────────
 function addJob(){jobs.push({id:jobIdCounter++,name:'New Job',unit:'hrs',rate:15,qty:10,weeks:12});renderJobs();calc();save();}
 function removeJob(id){jobs=jobs.filter(j=>j.id!==id);renderJobs();calc();save();}
 function renderJobs(){
-  const grid=document.getElementById('jobs-grid');
-  grid.innerHTML='';
+  const grid=g('jobs-grid');grid.innerHTML='';
   jobs.forEach(j=>{
-    const card=document.createElement('div');
-    card.className='card';
-    const unitLabel=j.unit==='nights'?'Nights/wk':'Hrs/week';
+    const card=document.createElement('div');card.className='card';
     card.innerHTML=`
       <button class="remove-btn" onclick="removeJob(${j.id})">×</button>
       <div class="card-title"><input class="title-input" value="${j.name}" onchange="updateJob(${j.id},'name',this.value)"></div>
-      <div class="irow"><label>${unitLabel}</label><input type="number" value="${j.qty}" step=".5" onchange="updateJob(${j.id},'qty',+this.value)"></div>
+      <div class="irow"><label>${j.unit==='nights'?'Nights/wk':'Hrs/week'}</label><input type="number" value="${j.qty}" step=".5" onchange="updateJob(${j.id},'qty',+this.value)"></div>
       <div class="irow"><label>Rate ($/unit)</label><input type="number" value="${j.rate}" step=".25" onchange="updateJob(${j.id},'rate',+this.value)"></div>
       <div class="irow"><label>Unit</label>
         <select style="width:72px;font-size:12px;padding:3px 6px;border-radius:5px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);font-family:inherit" onchange="updateJob(${j.id},'unit',this.value)">
@@ -401,7 +382,7 @@ function renderJobs(){
 }
 function updateJob(id,key,val){const j=jobs.find(x=>x.id===id);if(j){j[key]=val;calc();save();}}
 
-// EXPENSES
+// ── EXPENSES ──────────────────────────────────────────────
 function addExpense(){expenses.push({id:expIdCounter++,name:'New Expense',category:'Other',amount:0});renderExpenses();calc();save();}
 function removeExpense(id){
   const exp=expenses.find(e=>e.id===id);
@@ -412,12 +393,10 @@ function restoreExpense(id){
   if(exp){expenses.push({id:exp.id,name:exp.name,category:exp.category,amount:exp.amount});completedExpenses=completedExpenses.filter(e=>e.id!==id);renderExpenses();calc();save();}
 }
 function renderExpenses(){
-  const grid=document.getElementById('expenses-grid');
-  grid.innerHTML='';
+  const grid=g('expenses-grid');grid.innerHTML='';
   const cats=['Equipment','Golf','Gas','Food','Social','Subscriptions','Emergency','Other'];
   expenses.forEach(e=>{
-    const card=document.createElement('div');
-    card.className='card';
+    const card=document.createElement('div');card.className='card';
     card.innerHTML=`
       <button class="remove-btn" title="Mark done" onclick="removeExpense(${e.id})">✓</button>
       <div class="card-title"><input class="title-input" value="${e.name}" onchange="updateExp(${e.id},'name',this.value)"></div>
@@ -431,72 +410,82 @@ function renderExpenses(){
     `;
     grid.appendChild(card);
   });
-  const wrap=document.getElementById('completed-expenses-wrap');
+  const wrap=g('completed-expenses-wrap');
   if(completedExpenses.length===0){wrap.innerHTML='';return;}
-  wrap.innerHTML='<div class="sec-label" style="font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.12em;margin:.75rem 0 .35rem">Completed / paid off</div><div class="completed-list" id="completed-list"></div>';
-  const cl=document.getElementById('completed-list');
+  wrap.innerHTML='<div style="font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.12em;margin:.75rem 0 .35rem">Completed / paid off</div><div class="completed-list" id="completed-list"></div>';
   completedExpenses.forEach(e=>{
-    const item=document.createElement('div');
-    item.className='completed-item';
+    const item=document.createElement('div');item.className='completed-item';
     item.innerHTML=`<span>${e.name} — ${fmt(e.amount)}</span><button class="restore-btn" onclick="restoreExpense(${e.id})">↩ restore</button>`;
-    cl.appendChild(item);
+    g('completed-list').appendChild(item);
   });
 }
 function updateExp(id,key,val){const e=expenses.find(x=>x.id===id);if(e){e[key]=val;calc();save();}}
 
-// DEPOSITS
-function addDeposit(){
-  const amt=parseFloat(document.getElementById('ira-deposit-amt').value);
-  const label=document.getElementById('ira-deposit-label').value||'Contribution';
-  if(isNaN(amt)||amt<=0) return;
-  deposits.push({amt,label,date:new Date().toLocaleDateString()});
-  document.getElementById('ira-deposit-amt').value='';
-  document.getElementById('ira-deposit-label').value='';
-  renderDeposits();calc();save();
-}
-function removeDeposit(i){deposits.splice(i,1);renderDeposits();calc();save();}
-function renderDeposits(){
-  const list=document.getElementById('deposit-list');
-  if(deposits.length===0){list.innerHTML='';return;}
-  list.innerHTML=deposits.map((d,i)=>`
-    <div class="deposit-item">
-      <span class="d-label">${d.label} <span style="color:var(--text3);font-size:10px">${d.date}</span></span>
-      <span class="d-amt">+${fmt(d.amt)}</span>
-      <button class="d-del" onclick="removeDeposit(${i})">×</button>
+// ── PERIOD TOTALS (dismissable) ────────────────────────────
+function renderPeriodTotals(totGross,totTax,totNet){
+  const wrap=g('period-totals-wrap');
+  if(periodTotalsDismissed){wrap.innerHTML='<div style="font-size:11px;color:var(--text3);margin-top:.75rem">Period totals hidden. <button onclick="restorePeriodTotals()" style="background:none;border:none;color:var(--blue);cursor:pointer;font-family:inherit;font-size:11px;text-decoration:underline">Restore</button></div>';return;}
+  wrap.innerHTML=`
+    <div class="period-block">
+      <div class="period-block-title">
+        <span>Period Totals</span>
+        <button class="dismiss-btn" onclick="dismissPeriodTotals()" title="Dismiss">✕</button>
+      </div>
+      <div class="pgrid">
+        <div class="met"><div class="met-label">Gross earnings</div><div class="met-val">${fmt(totGross)}</div></div>
+        <div class="met"><div class="met-label">Taxes (10.72%)</div><div class="met-val amber">${fmt(totTax)}</div></div>
+        <div class="met"><div class="met-label">Take-home</div><div class="met-val green">${fmt(totNet)}</div></div>
+        <div class="met"><div class="met-label">+ $1,100 saved</div><div class="met-val green">${fmt(totNet+SAVINGS)}</div></div>
+      </div>
     </div>
-  `).join('');
+  `;
+}
+function dismissPeriodTotals(){periodTotalsDismissed=true;save();calc();}
+function restorePeriodTotals(){periodTotalsDismissed=false;save();calc();}
+
+// ── DATE RANGE PROJECTION ─────────────────────────────────
+function calcProjection(){
+  const startVal=g('proj-start').value,endVal=g('proj-end').value;
+  if(!startVal||!endVal){g('proj-note').textContent='Set a date range to project earnings from your current job cards.';['proj-weeks','proj-gross','proj-tax','proj-net','proj-after-exp'].forEach(id=>{g(id).textContent='—';g(id).className='met-val';});return;}
+  const start=new Date(startVal+'T00:00:00'),end=new Date(endVal+'T00:00:00');
+  if(end<=start){g('proj-note').textContent='End date must be after start date.';return;}
+  const days=(end-start)/86400000;
+  const weeks=days/7;
+  const wkGross=jobs.reduce((s,j)=>s+j.qty*j.rate,0);
+  const projGross=wkGross*weeks;
+  const projTax=projGross*TAX;
+  const projNet=projGross-projTax;
+  const expTotal=expenses.reduce((s,e)=>s+e.amount,0);
+  const afterExp=projNet-expTotal;
+  g('proj-weeks').textContent=weeks.toFixed(1);
+  g('proj-gross').textContent=fmt(projGross);
+  g('proj-tax').textContent=fmt(projTax);g('proj-tax').className='met-val amber';
+  g('proj-net').textContent=fmt(projNet);g('proj-net').className='met-val green';
+  g('proj-after-exp').textContent=fmts(afterExp);g('proj-after-exp').className='met-val '+(afterExp>=0?'green':'red');
+  g('proj-note').textContent=`${weeks.toFixed(1)} weeks from ${start.toLocaleDateString('en-US',{month:'short',day:'numeric'})} to ${end.toLocaleDateString('en-US',{month:'short',day:'numeric'})}. Based on current job cards at ${fmt(wkGross)}/week gross.`;
 }
 
-// REPAYMENT SCHEDULES
-function addSchedule(){
-  schedules.push({id:schedIdCounter++,name:'New Purchase',total:1000,fromSavings:0,interestFree:true,apr:22});
-  renderSchedules();save();
-}
+// ── REPAYMENT SCHEDULES ───────────────────────────────────
+function addSchedule(){schedules.push({id:schedIdCounter++,name:'New Purchase',total:1000,fromSavings:0,interestFree:true,apr:22});renderSchedules();save();}
 function removeSchedule(id){schedules=schedules.filter(s=>s.id!==id);renderSchedules();save();}
 function updateSchedule(id,key,val){const s=schedules.find(x=>x.id===id);if(s){s[key]=val;renderSchedules();save();}}
-
 function mpCalc(p,a,m){if(a===0||m===0) return m>0?p/m:0;const r=(a/100)/12;return p*r*Math.pow(1+r,m)/(Math.pow(1+r,m)-1);}
-
 function renderSchedules(){
-  const container=document.getElementById('schedules-container');
-  container.innerHTML='';
+  const container=g('schedules-container');container.innerHTML='';
   schedules.forEach(s=>{
     const owed=Math.max(0,s.total-(s.fromSavings||0));
-    const div=document.createElement('div');
-    div.className='purchase-schedule';
-    const rows=[3,6,12];
+    const div=document.createElement('div');div.className='purchase-schedule';
     let tableHtml=`<table class="rep-table"><thead><tr><th>Timeline</th><th>Monthly pmt</th><th>Biweekly pmt</th><th>Total paid</th><th>Interest cost</th></tr></thead><tbody>`;
-    rows.forEach(m=>{
+    [3,6,12].forEach(m=>{
       const mPmt=mpCalc(owed,s.interestFree?0:s.apr,m);
-      const tot=mPmt*m;
-      const interest=tot-owed;
+      const tot=mPmt*m,interest=tot-owed;
       tableHtml+=`<tr><td>${m} months</td><td>${fmtD(mPmt)}</td><td>${fmtD(mPmt/2)}</td><td>${fmtD(tot)}</td><td>${interest<.5?'$0.00':fmtD(interest)}</td></tr>`;
     });
     tableHtml+='</tbody></table>';
     div.innerHTML=`
       <div class="ps-header">
         <input class="ps-name-input" value="${s.name}" onchange="updateSchedule(${s.id},'name',this.value)" placeholder="Purchase name">
-        <button class="ps-del" onclick="removeSchedule(${s.id})" title="Remove">✕</button>
+        <button class="ps-del" onclick="removeSchedule(${s.id})">✕</button>
       </div>
       <div class="ps-controls">
         <div class="ps-irow"><label>Total cost ($)</label><input type="number" value="${s.total}" step="50" onchange="updateSchedule(${s.id},'total',+this.value)"></div>
@@ -512,8 +501,46 @@ function renderSchedules(){
   });
 }
 
-// MAIN CALC
-function g(id){return document.getElementById(id);}
+// ── GOALS ─────────────────────────────────────────────────
+const GOAL_COLORS=['#2a7de1','#0e9e70','#c27d08','#6c5bbf','#d03030','#1899a8','#e06030','#888'];
+function addGoal(){
+  goals.push({id:goalIdCounter++,name:'New Goal',target:1000,current:0,deferred:false,color:GOAL_COLORS[goals.length%GOAL_COLORS.length]});
+  renderGoals();save();
+}
+function removeGoal(id){goals=goals.filter(g=>g.id!==id);renderGoals();save();}
+function updateGoal(id,key,val){const g=goals.find(x=>x.id===id);if(g){g[key]=val;renderGoals();save();}}
+function renderGoals(){
+  const grid=g('goals-grid');grid.innerHTML='';
+  goals.forEach(goal=>{
+    const pctVal=goal.target>0?Math.min(100,(goal.current/goal.target)*100):0;
+    const covered=goal.current>=goal.target;
+    const card=document.createElement('div');card.className='gcard';
+    if(goal.deferred){
+      card.style.opacity='.55';
+    }
+    card.innerHTML=`
+      <button class="remove-btn" onclick="removeGoal(${goal.id})">×</button>
+      <div class="gc-label"><input class="gl-input" value="${goal.name}" onchange="updateGoal(${goal.id},'name',this.value)" placeholder="Goal name"></div>
+      <div class="gc-amt-row">
+        <label>Target $</label>
+        <input type="number" value="${goal.target}" step="100" onchange="updateGoal(${goal.id},'target',+this.value)">
+      </div>
+      <div class="goal-current-row">
+        <label>Current $</label>
+        <input type="number" value="${goal.current}" step="50" onchange="updateGoal(${goal.id},'current',+this.value)">
+      </div>
+      <div class="gc-sub">${goal.target>0?'$'+Math.round(goal.target-goal.current).toLocaleString()+' remaining':'—'}</div>
+      <div class="track"><div class="fill" style="width:${pctVal.toFixed(1)}%;background:${goal.color}"></div></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-top:6px">
+        <span class="pill ${covered?'pill-g':goal.deferred?'pill-a':'pill-b'}">${covered?'done':goal.deferred?'deferred':pctVal.toFixed(0)+'%'}</span>
+        <label class="defer-toggle"><input type="checkbox" ${goal.deferred?'checked':''} onchange="updateGoal(${goal.id},'deferred',this.checked)"><span>Defer</span></label>
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+// ── MAIN CALC ─────────────────────────────────────────────
 function calc(){
   let wkGross=0;
   jobs.forEach(j=>{
@@ -527,11 +554,10 @@ function calc(){
   g('wk-gross').textContent=fmt(wkGross);g('wk-net').textContent=fmt(wkNet);
   g('bw-gross').textContent=fmt(wkGross*2);g('bw-net').textContent=fmt(wkNet*2);
   g('mo-gross').textContent=fmt(wkGross*(52/12));g('mo-net').textContent=fmt(wkNet*(52/12));
+
   const totGross=jobs.reduce((a,j)=>a+j.qty*j.rate*j.weeks,0);
   const totTax=totGross*TAX,totNet=totGross-totTax;
-  g('tot-gross').textContent=fmt(totGross);g('tot-tax').textContent=fmt(totTax);
-  g('tot-net').textContent=fmt(totNet);g('tot-avail').textContent=fmt(totNet+SAVINGS);
-  const grandAvail=totNet+SAVINGS;
+  renderPeriodTotals(totGross,totTax,totNet);
 
   let expTotal=0,equipTotal=0,miscTotal=0;
   expenses.forEach(e=>{expTotal+=e.amount;if(e.category==='Equipment') equipTotal+=e.amount;else miscTotal+=e.amount;});
@@ -547,51 +573,10 @@ function calc(){
   });
   g('bars').innerHTML=barsHtml;
 
-  g('g-equip-val').textContent=fmt(equipTotal);
-  g('g-equip-bar').style.width=pct(Math.min(grandAvail,equipTotal),equipTotal);
-  pill(g('g-equip-pill'),grandAvail>=equipTotal?'fully covered':'partial',grandAvail>=equipTotal?'pill-g':'pill-a');
-  const afterExp=grandAvail-expTotal;
-  const iraFunded=Math.max(0,Math.min(afterExp,IRA_GOAL));
-  const iraGap=Math.max(0,IRA_GOAL-iraFunded);
-  g('g-ira-sub').textContent=iraGap===0?'Fully funded from earnings':fmt(iraFunded)+' from earnings, '+fmt(iraGap)+' gap';
-  g('g-ira-bar').style.width=pct(iraFunded,IRA_GOAL);
-  pill(g('g-ira-pill'),iraGap===0?'fully funded':'gap: '+fmt(iraGap),iraGap===0?'pill-g':'pill-a');
-
-  const deposited=deposits.reduce((a,d)=>a+d.amt,0);
-  const remaining=Math.max(0,IRA_GOAL-deposited);
-  const iraPct=Math.min(100,(deposited/IRA_GOAL)*100).toFixed(0);
-  g('ira-deposited').textContent=fmt(deposited);g('ira-remaining').textContent=fmt(remaining);g('ira-pct').textContent=iraPct+'%';
-
-  const fallHrs=parseFloat(g('fall-hrs').value)||11;
-  const fallRate=parseFloat(g('fall-rate').value)||13.5;
-  const fallWks=parseInt(g('fall-wks').value)||18;
-  const fallGross=fallHrs*fallRate*fallWks,fallNet=fallGross*(1-TAX);
-  g('fall-gross').textContent=fmt(fallGross);g('fall-net').textContent=fmt(fallNet);
-  const projGap=Math.max(0,iraGap-deposited);
-  g('ira-gap-proj').textContent=fmt(projGap);
-  const covers=fallNet>=projGap,fcEl=g('fall-covers');
-  if(projGap===0){fcEl.textContent='None needed';fcEl.className='met-val green';}
-  else if(covers){fcEl.textContent='Yes';fcEl.className='met-val green';}
-  else{fcEl.textContent='Partial';fcEl.className='met-val amber';}
-  g('fall-note').textContent=projGap===0?'IRA gap already covered — no fall income required for IRA goal.':covers?`Fall take-home of ${fmt(fallNet)} covers the ${fmt(projGap)} projected IRA gap with ${fmt(fallNet-projGap)} to spare.`:`Fall take-home of ${fmt(fallNet)} covers part of the ${fmt(projGap)} IRA gap. Still short by ${fmt(projGap-fallNet)}.`;
-
-  const brokBalance=parseFloat(g('brok-balance').value)||14000;
-  const brokRep=parseFloat(g('brok-replenished').value)||0;
-  g('b-avail').textContent=fmt(grandAvail);g('b-exp').textContent=fmt(expTotal);
-  const bAfter=grandAvail-expTotal;
-  const bAfterEl=g('b-after');bAfterEl.textContent=fmts(bAfter);bAfterEl.className='met-val '+(bAfter>=0?'green':'red');
-  const bAfterIra=bAfter-iraFunded;
-  const bAiraEl=g('b-after-ira');bAiraEl.textContent=fmts(bAfterIra);bAiraEl.className='met-val '+(bAfterIra>=0?'green':'amber');
-  const gapEl=g('b-ira-gap'),noteEl=g('b-ira-note'),brokAfterDraw=brokBalance-iraGap;
-  if(iraGap===0){gapEl.textContent='$0 — no draw needed';gapEl.className='met-val green';noteEl.textContent='IRA fully funded from summer earnings alone. Brokerage untouched.';}
-  else{gapEl.textContent=fmt(iraGap)+' from brokerage';gapEl.className='met-val amber';noteEl.textContent=`Draw ${fmt(iraGap)} from brokerage to reach the $7,500 IRA goal, leaving $${Math.round(brokAfterDraw).toLocaleString()} of $${Math.round(brokBalance).toLocaleString()}. Likely $0 federal LTCG tax at your income; 3.07% PA tax on realized gains only.`;}
-  g('brok-start').textContent=fmt(brokBalance);g('brok-after-draw').textContent=fmt(brokAfterDraw);g('brok-rep-val').textContent=fmt(brokRep);
-  const brokCurrent=brokAfterDraw+brokRep,bcEl=g('brok-current');bcEl.textContent=fmt(brokCurrent);bcEl.className='met-val '+(brokCurrent>=brokBalance?'green':'amber');
+  calcProjection();
 }
 
-['fall-hrs','fall-rate','fall-wks','brok-balance','brok-replenished'].forEach(id=>{document.getElementById(id).addEventListener('input',()=>{calc();save();});});
-
-load();initDefaults();renderJobs();renderExpenses();renderDeposits();renderSchedules();calc();
+load();initDefaults();renderJobs();renderExpenses();renderSchedules();renderGoals();calc();
 </script>
 </body>
 </html>

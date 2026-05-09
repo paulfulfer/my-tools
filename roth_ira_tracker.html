@@ -211,6 +211,37 @@ hr{border:none;border-top:1px solid var(--border);margin:1.4rem 0}
     <div style="font-size:11px;color:var(--text3);padding:0 2px" id="pace-note"></div>
   </div>
 
+  <!-- Projection -->
+  <div class="sec-header" onclick="toggleSec('projection')">
+    <span class="sec-label">Long-Term Projection</span>
+    <span class="sec-toggle open" id="toggle-projection">▼</span>
+  </div>
+  <div class="sec-body" id="sec-projection">
+    <div class="entry-card">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Annual Return Rate (%)</label>
+          <input type="number" id="proj-rate" value="7" step=".5" min="0" max="30" oninput="renderProjection()">
+        </div>
+        <div class="form-group">
+          <label>Current Age</label>
+          <input type="number" id="proj-age" value="20" step="1" min="1" max="80" oninput="renderProjection()">
+        </div>
+        <div class="form-group">
+          <label>Target Age</label>
+          <input type="number" id="proj-target-age" value="65" step="1" min="1" max="100" oninput="renderProjection()">
+        </div>
+      </div>
+      <div class="pgrid" id="proj-metrics">
+        <div class="met"><div class="met-label">Years to grow</div><div class="met-val blue" id="proj-years">—</div></div>
+        <div class="met"><div class="met-label">Projected balance</div><div class="met-val green" id="proj-balance">—</div><div class="met-sub">at target age</div></div>
+        <div class="met"><div class="met-label">Total deposited</div><div class="met-val" id="proj-deposited">—</div></div>
+        <div class="met"><div class="met-label">Est. returns</div><div class="met-val purple" id="proj-returns">—</div><div class="met-sub">investment gains</div></div>
+      </div>
+      <div style="font-size:11px;color:var(--text3);margin-top:8px;line-height:1.6" id="proj-note"></div>
+    </div>
+  </div>
+
   <!-- Log deposit -->
   <div class="sec-header" onclick="toggleSec('entry')">
     <span class="sec-label">Log a Deposit</span>
@@ -368,6 +399,23 @@ function deleteDeposit(id){
   renderAll();
 }
 
+function renderProjection(){
+  const rate  = parseFloat(document.getElementById('proj-rate').value)||7;
+  const age   = parseInt(document.getElementById('proj-age').value)||20;
+  const tAge  = parseInt(document.getElementById('proj-target-age').value)||65;
+  const years = Math.max(0, tAge - age);
+  const total = getTotal();
+  const bal   = currentBalance > 0 ? currentBalance : total;
+  const r     = rate / 100;
+  const projected = bal * Math.pow(1 + r, years);
+  const gains = projected - bal;
+  document.getElementById('proj-years').textContent     = years;
+  document.getElementById('proj-balance').textContent   = '$' + Math.round(projected).toLocaleString();
+  document.getElementById('proj-deposited').textContent = '$' + Math.round(bal).toLocaleString();
+  document.getElementById('proj-returns').textContent   = '$' + Math.round(gains).toLocaleString();
+  document.getElementById('proj-note').textContent      = `Starting from ${currentBalance>0?'your current balance':'deposited total'} of $${Math.round(bal).toLocaleString()}, at ${rate}% annual return over ${years} years, projected balance at age ${tAge} is $${Math.round(projected).toLocaleString()}. This is a simplified estimate — actual returns will vary.`;
+}
+
 function toggleSec(name){
   document.getElementById('sec-'+name).classList.toggle('collapsed');
   document.getElementById('toggle-'+name).classList.toggle('open');
@@ -389,6 +437,7 @@ document.getElementById('current-balance').value   = currentBalance   || '';
 document.getElementById('beginning-balance').value = beginningBalance || '';
 
 renderAll();
+renderProjection();
 </script>
 </body>
 </html>
