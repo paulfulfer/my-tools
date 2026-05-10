@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Round Tracker</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f5f5f3;--bg2:#ffffff;--bg3:#efefed;--bg4:#e4e4e2;
+  --border:#dddddb;--border2:#c8c8c6;
+  --text:#1a1a1a;--text2:#555;--text3:#999;--text4:#bbb;
+  --green:#0e9e70;--green-bg:#e0f5ec;--green-txt:#0e9e70;
+  --amber:#c27d08;--amber-bg:#fdf0d5;--amber-txt:#c27d08;
+  --blue:#2a7de1;--blue-bg:#deeafa;--blue-txt:#2a7de1;
+  --red:#d03030;--red-bg:#fce8e8;--red-txt:#d03030;
+  --purple:#6c5bbf;--purple-bg:#eae8fa;
+  --teal:#0e8a8a;--teal-bg:#e0f5f5;
+  --r:8px;--rl:12px;
+}
+.dark{
+  --bg:#1e1e1e;--bg2:#272727;--bg3:#2f2f2f;--bg4:#383838;
+  --border:#3a3a3a;--border2:#484848;
+  --text:#e2e2e2;--text2:#a0a0a0;--text3:#666;--text4:#444;
+  --green:#1fbd8a;--green-bg:#0d2e22;--green-txt:#1fbd8a;
+  --amber:#e6a020;--amber-bg:#2c1f06;--amber-txt:#e6a020;
+  --blue:#4a9eff;--blue-bg:#0a1e35;--blue-txt:#4a9eff;
+  --red:#f05050;--red-bg:#2a0f0f;--red-txt:#f05050;
+  --purple:#9b87f5;--purple-bg:#1a1530;
+  --teal:#1fbd9a;--teal-bg:#0d2e2e;
+}
+body{background:var(--bg);color:var(--text);font-family:'SF Mono','Fira Code','Cascadia Code',monospace;font-size:13px;line-height:1.6;padding:1.5rem 1rem;transition:background .2s,color .2s;min-height:100vh}
+.container{max-width:900px;margin:0 auto}
+
+/* Header */
+.header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1.75rem}
+.page-title{font-size:17px;font-weight:600;letter-spacing:.02em;margin-bottom:2px}
+.page-sub{font-size:11px;color:var(--text3);letter-spacing:.03em}
+.header-actions{display:flex;gap:8px;align-items:center;flex-shrink:0}
+.btn{font-family:inherit;font-size:11px;font-weight:600;padding:5px 13px;border-radius:20px;border:1px solid var(--border2);background:var(--bg3);color:var(--text2);cursor:pointer;letter-spacing:.04em;text-transform:uppercase;transition:all .15s;text-decoration:none;display:inline-block}
+.btn:hover{background:var(--bg4);color:var(--text)}
+.btn-green{background:var(--green-bg);color:var(--green-txt);border-color:var(--green)}
+.btn-green:hover{opacity:.85}
+
+/* Section */
+.sec-header{display:flex;align-items:center;justify-content:space-between;margin:1.6rem 0 .65rem;padding-bottom:5px;border-bottom:1px solid var(--border);cursor:pointer;user-select:none}
+.sec-label{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.12em}
+.sec-toggle{font-size:14px;color:var(--text3);transition:transform .2s;line-height:1}
+.sec-toggle.open{transform:rotate(180deg)}
+.sec-body.collapsed{display:none}
+hr{border:none;border-top:1px solid var(--border);margin:1.4rem 0}
+
+/* Metrics grid */
+.pgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(118px,1fr));gap:8px;margin:.5rem 0}
+.met{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:11px 13px}
+.met-label{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:3px}
+.met-val{font-size:19px;font-weight:600;color:var(--text);letter-spacing:-.01em}
+.met-val.green{color:var(--green)}.met-val.blue{color:var(--blue)}.met-val.amber{color:var(--amber)}.met-val.red{color:var(--red)}.met-val.purple{color:var(--purple)}.met-val.teal{color:var(--teal)}
+.met-sub{font-size:10px;color:var(--text3);margin-top:2px}
+
+/* ROUND BUBBLES */
+.rounds-grid{display:flex;flex-direction:column;gap:8px;margin-bottom:1rem}
+.round-bubble{
+  background:var(--bg2);border:1.5px solid var(--border);
+  border-radius:50px;padding:10px 18px;
+  cursor:pointer;display:flex;align-items:center;gap:12px;
+  transition:all .18s;user-select:none;
+}
+.round-bubble:hover{border-color:var(--border2);background:var(--bg3);transform:translateX(3px);box-shadow:0 3px 12px rgba(0,0,0,.07)}
+.rb-score-badge{
+  width:46px;height:46px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:16px;font-weight:700;flex-shrink:0;
+  border:2px solid;
+}
+.rb-info{flex:1;min-width:0}
+.rb-course{font-size:12px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rb-date{font-size:10px;color:var(--text3)}
+.rb-stats{display:flex;gap:10px;margin-top:2px;flex-wrap:wrap}
+.rb-stat{font-size:10px;color:var(--text3)}
+.rb-stat span{font-weight:600;color:var(--text2)}
+.rb-arrow{font-size:13px;color:var(--text4);transition:transform .15s;flex-shrink:0}
+.round-bubble:hover .rb-arrow{transform:translateX(3px);color:var(--text3)}
+
+/* Score color helpers */
+.score-great{color:var(--green);border-color:var(--green);background:var(--green-bg)}
+.score-good{color:var(--blue);border-color:var(--blue);background:var(--blue-bg)}
+.score-avg{color:var(--amber);border-color:var(--amber);background:var(--amber-bg)}
+.score-high{color:var(--red);border-color:var(--red);background:var(--red-bg)}
+
+.see-more-btn{width:100%;padding:10px;border:1px dashed var(--border2);border-radius:var(--r);background:transparent;color:var(--text3);font-family:inherit;font-size:12px;cursor:pointer;transition:all .15s}
+.see-more-btn:hover{border-color:var(--blue);color:var(--blue)}
+.empty-state{text-align:center;padding:2rem;color:var(--text3);font-size:12px;border:1px dashed var(--border2);border-radius:var(--r)}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;z-index:1000;opacity:0;pointer-events:none;transition:opacity .2s;padding:1rem;overflow-y:auto}
+.modal-overlay.open{opacity:1;pointer-events:all}
+.modal{background:var(--bg2);border:1px solid var(--border2);border-radius:16px;width:100%;max-width:560px;max-height:90vh;overflow-y:auto;transform:scale(.92) translateY(12px);transition:transform .22s cubic-bezier(.34,1.4,.64,1),opacity .2s;opacity:0;box-shadow:0 20px 60px rgba(0,0,0,.18)}
+.modal-overlay.open .modal{transform:scale(1) translateY(0);opacity:1}
+.modal-header{display:flex;align-items:center;justify-content:space-between;padding:18px 20px 14px;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--bg2);z-index:2}
+.modal-title{font-size:15px;font-weight:600;color:var(--text)}
+.modal-close{background:var(--bg3);border:1px solid var(--border2);color:var(--text2);width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:all .15s;font-family:inherit;flex-shrink:0}
+.modal-close:hover{background:var(--red-bg);color:var(--red);border-color:var(--red)}
+.modal-body{padding:18px 20px}
+
+/* Form */
+.form-section{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;margin:14px 0 8px;padding-bottom:4px;border-bottom:1px solid var(--border)}
+.form-section:first-child{margin-top:0}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:6px}
+.form-grid.three{grid-template-columns:1fr 1fr 1fr}
+@media(max-width:480px){.form-grid,.form-grid.three{grid-template-columns:1fr}}
+.form-group{display:flex;flex-direction:column;gap:3px}
+.form-group.full{grid-column:1/-1}
+.form-group label{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.08em}
+.form-group input,.form-group select{font-family:inherit;font-size:12px;padding:6px 10px;border-radius:6px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);transition:border-color .15s}
+.form-group input:focus,.form-group select:focus{outline:none;border-color:var(--blue)}
+.modal-actions{display:flex;justify-content:space-between;align-items:center;margin-top:16px;padding-top:14px;border-top:1px solid var(--border)}
+
+/* Par 3 rows */
+.par3-list{display:flex;flex-direction:column;gap:6px;margin-bottom:8px}
+.par3-row{display:grid;grid-template-columns:auto 1fr 1fr 1fr auto;gap:6px;align-items:center;background:var(--bg3);border-radius:var(--r);padding:8px 10px}
+.par3-hole-num{font-size:11px;font-weight:600;color:var(--text3);min-width:30px}
+.par3-input{font-family:inherit;font-size:12px;padding:4px 7px;border-radius:5px;border:1px solid var(--border2);background:var(--bg2);color:var(--text);width:100%}
+.par3-input:focus{outline:none;border-color:var(--blue)}
+.par3-del{background:none;border:none;color:var(--text4);cursor:pointer;font-size:14px;padding:0 3px;font-family:inherit;transition:color .15s}
+.par3-del:hover{color:var(--red)}
+.add-par3-btn{display:flex;align-items:center;gap:5px;background:none;border:1px dashed var(--border2);border-radius:20px;padding:4px 12px;color:var(--text3);font-family:inherit;font-size:11px;cursor:pointer;transition:all .15s;margin-bottom:10px}
+.add-par3-btn:hover{border-color:var(--teal);color:var(--teal)}
+
+/* Detail view */
+.detail-section{margin-bottom:14px}
+.ds-title{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:7px;padding-bottom:4px;border-bottom:1px solid var(--border)}
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+@media(max-width:480px){.detail-grid{grid-template-columns:1fr}}
+.df{background:var(--bg3);border-radius:var(--r);padding:8px 11px}
+.df.full{grid-column:1/-1}
+.df-label{font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:var(--text3);margin-bottom:2px}
+.df-val{font-size:13px;color:var(--text);font-weight:500}
+.df-val.empty{color:var(--text4);font-style:italic}
+.par3-detail-table{width:100%;border-collapse:collapse;font-size:12px}
+.par3-detail-table th{text-align:left;padding:5px 8px;font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;border-bottom:1px solid var(--border)}
+.par3-detail-table td{padding:6px 8px;border-bottom:1px solid var(--border);color:var(--text)}
+.par3-detail-table tr:last-child td{border-bottom:none}
+.score-pill{display:inline-block;font-size:11px;font-weight:700;padding:1px 9px;border-radius:10px}
+
+/* Trend mini bars */
+.trend-bar-wrap{display:flex;align-items:flex-end;gap:3px;height:32px;margin-top:6px}
+.trend-bar{border-radius:2px 2px 0 0;min-width:8px;flex:1;transition:opacity .15s}
+.trend-bar:hover{opacity:.75}
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="header">
+  <div>
+    <div class="page-title">Paul's Round Tracker</div>
+    <div class="page-sub">golf · scores · stats · 2026</div>
+  </div>
+  <div class="header-actions">
+    <a href="index.html" class="btn">← home</a>
+    <button class="btn" onclick="toggleTheme()" id="theme-btn">◑ dark</button>
+  </div>
+</div>
+
+<!-- ALL-TIME STATS -->
+<div class="sec-header" onclick="toggleSec('stats')">
+  <span class="sec-label">All-Time Statistics</span>
+  <span class="sec-toggle open" id="toggle-stats">▼</span>
+</div>
+<div class="sec-body" id="sec-stats">
+  <div class="pgrid">
+    <div class="met"><div class="met-label">Rounds</div><div class="met-val blue" id="st-rounds">0</div><div class="met-sub">logged</div></div>
+    <div class="met"><div class="met-label">Scoring Avg</div><div class="met-val" id="st-avg">—</div><div class="met-sub">all rounds</div></div>
+    <div class="met"><div class="met-label">Best Round</div><div class="met-val green" id="st-best">—</div><div class="met-sub" id="st-best-course"></div></div>
+    <div class="met"><div class="met-label">Worst Round</div><div class="met-val red" id="st-worst">—</div><div class="met-sub" id="st-worst-course"></div></div>
+  </div>
+  <div class="pgrid" style="margin-top:8px">
+    <div class="met"><div class="met-label">FIR Avg</div><div class="met-val teal" id="st-fir">—</div><div class="met-sub">fairways in reg</div></div>
+    <div class="met"><div class="met-label">GIR Avg</div><div class="met-val teal" id="st-gir">—</div><div class="met-sub">greens in reg</div></div>
+    <div class="met"><div class="met-label">Putts Avg</div><div class="met-val" id="st-putts">—</div><div class="met-sub">per round</div></div>
+    <div class="met"><div class="met-label">3-Putt Avg</div><div class="met-val amber" id="st-3putt">—</div><div class="met-sub">per round</div></div>
+  </div>
+
+  <!-- Par 3 stats -->
+  <div style="margin:1rem 0 .4rem;font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.12em">Par 3 Statistics</div>
+  <div class="pgrid">
+    <div class="met"><div class="met-label">Avg Par 3 Score</div><div class="met-val" id="st-p3score">—</div><div class="met-sub">strokes per hole</div></div>
+    <div class="met"><div class="met-label">Par 3 GIR %</div><div class="met-val green" id="st-p3gir">—</div><div class="met-sub">greens hit</div></div>
+    <div class="met"><div class="met-label">Top P3 Club</div><div class="met-val" id="st-p3club" style="font-size:14px">—</div><div class="met-sub">most used</div></div>
+    <div class="met"><div class="met-label">Aces / Birdies</div><div class="met-val purple" id="st-p3great">—</div><div class="met-sub">par 3 highlights</div></div>
+  </div>
+
+  <!-- Scoring trend -->
+  <div style="margin:1rem 0 .4rem;font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.12em">Last 10 Rounds — Scoring Trend</div>
+  <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:12px 14px">
+    <div class="trend-bar-wrap" id="trend-bars"></div>
+    <div style="font-size:10px;color:var(--text3);margin-top:5px" id="trend-label">Log rounds to see trend.</div>
+  </div>
+
+  <!-- Course breakdown -->
+  <div style="margin:1rem 0 .4rem;font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.12em">Course Breakdown</div>
+  <div id="course-breakdown"></div>
+</div>
+
+<!-- LOG A ROUND BUTTON -->
+<div style="margin:1.6rem 0 .75rem;display:flex;justify-content:flex-end">
+  <button class="btn btn-green" onclick="openAdd()">+ Log Round</button>
+</div>
+
+<!-- ROUNDS LIST -->
+<div class="sec-header" onclick="toggleSec('rounds')">
+  <span class="sec-label">Round History</span>
+  <span class="sec-toggle open" id="toggle-rounds">▼</span>
+</div>
+<div class="sec-body" id="sec-rounds">
+  <div class="rounds-grid" id="rounds-list"></div>
+  <button class="see-more-btn" id="see-more-btn" onclick="showMore()" style="display:none">Show more rounds</button>
+</div>
+
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal-overlay" onclick="handleOverlayClick(event)">
+  <div class="modal" id="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="modal-title">Log Round</span>
+      <button class="modal-close" onclick="closeModal()">×</button>
+    </div>
+    <div class="modal-body" id="modal-body"></div>
+  </div>
+</div>
+
+<script>
+let rounds = JSON.parse(localStorage.getItem('golf_rounds') || '[]');
+let idCounter = parseInt(localStorage.getItem('golf_rounds_id') || '1', 10);
+let shownCount = 9;
+// Temp state for add/edit form par 3s
+let formPar3s = [];
+
+function save(){
+  localStorage.setItem('golf_rounds', JSON.stringify(rounds));
+  localStorage.setItem('golf_rounds_id', idCounter);
+}
+
+// ── SCORE COLOR ─────────────────────────────────────────
+function scoreClass(score, par){
+  if(!score||!par) return 'score-avg';
+  const diff = score - par;
+  if(diff <= 2)  return 'score-great';
+  if(diff <= 8)  return 'score-good';
+  if(diff <= 15) return 'score-avg';
+  return 'score-high';
+}
+function scoreBgColor(score, par){
+  const cls = scoreClass(score,par);
+  const map = {'score-great':'var(--green)','score-good':'var(--blue)','score-avg':'var(--amber)','score-high':'var(--red)'};
+  return map[cls]||'var(--text3)';
+}
+
+// ── STATS ───────────────────────────────────────────────
+function calcStats(){
+  if(rounds.length===0){
+    ['st-rounds','st-avg','st-best','st-worst','st-fir','st-gir','st-putts','st-3putt','st-p3score','st-p3gir','st-p3club','st-p3great']
+      .forEach(id=>{const el=document.getElementById(id);if(el)el.textContent='—';});
+    document.getElementById('st-rounds').textContent='0';
+    document.getElementById('trend-bars').innerHTML='';
+    document.getElementById('trend-label').textContent='Log rounds to see trend.';
+    document.getElementById('course-breakdown').innerHTML='<div style="color:var(--text4);font-size:11px;font-style:italic">No rounds yet.</div>';
+    return;
+  }
+
+  const n = rounds.length;
+  document.getElementById('st-rounds').textContent = n;
+
+  // Scoring
+  const scores = rounds.map(r=>r.score).filter(s=>s>0);
+  const avg = scores.reduce((a,b)=>a+b,0)/scores.length;
+  document.getElementById('st-avg').textContent = avg.toFixed(1);
+  const best = Math.min(...scores);
+  const worst = Math.max(...scores);
+  const bestRound = rounds.find(r=>r.score===best);
+  const worstRound = rounds.find(r=>r.score===worst);
+  const bestEl = document.getElementById('st-best');
+  bestEl.textContent = best;
+  bestEl.className = 'met-val green';
+  document.getElementById('st-best-course').textContent = bestRound?.course||'';
+  document.getElementById('st-worst').textContent = worst;
+  document.getElementById('st-worst-course').textContent = worstRound?.course||'';
+
+  // Color avg based on score
+  const avgEl = document.getElementById('st-avg');
+  const samplePar = rounds.find(r=>r.par)?.par || 72;
+  avgEl.className = 'met-val ' + (avg-samplePar<=5?'green':avg-samplePar<=12?'blue':avg-samplePar<=20?'amber':'red');
+
+  // FIR
+  const firRounds = rounds.filter(r=>r.firHit!=null&&r.firTotal>0);
+  if(firRounds.length>0){
+    const firPct = firRounds.reduce((s,r)=>s+(r.firHit/r.firTotal),0)/firRounds.length*100;
+    document.getElementById('st-fir').textContent = firPct.toFixed(0)+'%';
+    document.getElementById('st-fir').className = 'met-val teal';
+  }
+
+  // GIR
+  const girRounds = rounds.filter(r=>r.gir!=null);
+  if(girRounds.length>0){
+    const girPct = girRounds.reduce((s,r)=>s+(r.gir/18),0)/girRounds.length*100;
+    document.getElementById('st-gir').textContent = girPct.toFixed(0)+'%';
+    document.getElementById('st-gir').className = 'met-val teal';
+  }
+
+  // Putts
+  const puttRounds = rounds.filter(r=>r.putts>0);
+  if(puttRounds.length>0){
+    const puttAvg = puttRounds.reduce((s,r)=>s+r.putts,0)/puttRounds.length;
+    document.getElementById('st-putts').textContent = puttAvg.toFixed(1);
+  }
+
+  // 3-putts
+  const threePuttRounds = rounds.filter(r=>r.threePutts!=null);
+  if(threePuttRounds.length>0){
+    const tpAvg = threePuttRounds.reduce((s,r)=>s+r.threePutts,0)/threePuttRounds.length;
+    document.getElementById('st-3putt').textContent = tpAvg.toFixed(1);
+    document.getElementById('st-3putt').className = 'met-val ' + (tpAvg<1?'green':tpAvg<2?'amber':'red');
+  }
+
+  // Par 3 stats
+  const allPar3s = rounds.flatMap(r=>r.par3s||[]);
+  if(allPar3s.length>0){
+    const p3ScoreAvg = allPar3s.filter(p=>p.score>0).reduce((s,p)=>s+p.score,0)/allPar3s.filter(p=>p.score>0).length;
+    document.getElementById('st-p3score').textContent = p3ScoreAvg.toFixed(2);
+    document.getElementById('st-p3score').className = 'met-val '+(p3ScoreAvg<=3?'green':p3ScoreAvg<=3.5?'blue':'amber');
+
+    const p3GirPct = allPar3s.filter(p=>p.gir!=null).length > 0
+      ? allPar3s.filter(p=>p.gir).length / allPar3s.filter(p=>p.gir!=null).length * 100 : null;
+    if(p3GirPct!==null){
+      document.getElementById('st-p3gir').textContent = p3GirPct.toFixed(0)+'%';
+      document.getElementById('st-p3gir').className = 'met-val '+(p3GirPct>=50?'green':p3GirPct>=30?'blue':'amber');
+    }
+
+    // Most used club
+    const clubs = {};
+    allPar3s.filter(p=>p.club).forEach(p=>{clubs[p.club]=(clubs[p.club]||0)+1;});
+    const topClub = Object.entries(clubs).sort((a,b)=>b[1]-a[1])[0];
+    if(topClub){document.getElementById('st-p3club').textContent=topClub[0];document.getElementById('st-p3club').className='met-val teal';}
+
+    // Aces + birdies
+    const great = allPar3s.filter(p=>p.score>0&&p.score<=2).length;
+    document.getElementById('st-p3great').textContent = great;
+    document.getElementById('st-p3great').className = 'met-val '+(great>0?'purple':'');
+  }
+
+  // Trend bars — last 10 rounds
+  const last10 = [...rounds].sort((a,b)=>new Date(b.date)-new Date(a.date)).slice(0,10).reverse();
+  const trendEl = document.getElementById('trend-bars');
+  if(last10.length>0){
+    const tScores = last10.map(r=>r.score);
+    const tMin = Math.min(...tScores)-2, tMax = Math.max(...tScores)+2;
+    trendEl.innerHTML = last10.map(r=>{
+      const h = Math.max(6, Math.round(((r.score-tMin)/(tMax-tMin||1))*28)+4);
+      const col = scoreBgColor(r.score, r.par||72);
+      return `<div class="trend-bar" style="height:${h}px;background:${col}" title="${r.course||'Round'}: ${r.score}"></div>`;
+    }).join('');
+    const trend = last10.length>1 ? last10[last10.length-1].score - last10[0].score : 0;
+    document.getElementById('trend-label').textContent =
+      last10.length<2 ? 'Log more rounds to see trend.' :
+      trend < 0 ? `↓ ${Math.abs(trend)} strokes better over last ${last10.length} rounds` :
+      trend > 0 ? `↑ ${trend} strokes higher over last ${last10.length} rounds` :
+      `Consistent over last ${last10.length} rounds`;
+  }
+
+  // Course breakdown
+  const courses = {};
+  rounds.forEach(r=>{
+    if(!r.course) return;
+    if(!courses[r.course]) courses[r.course]={scores:[],rounds:0};
+    courses[r.course].scores.push(r.score);
+    courses[r.course].rounds++;
+  });
+  const cbEl = document.getElementById('course-breakdown');
+  cbEl.innerHTML = '';
+  const pgrid = document.createElement('div');
+  pgrid.className = 'pgrid';
+  Object.entries(courses).sort((a,b)=>b[1].rounds-a[1].rounds).forEach(([course,data])=>{
+    const cAvg = data.scores.reduce((a,b)=>a+b,0)/data.scores.length;
+    const best = Math.min(...data.scores);
+    const div = document.createElement('div');
+    div.className = 'met';
+    div.innerHTML = `<div class="met-label" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${course}</div><div class="met-val">${cAvg.toFixed(1)}</div><div class="met-sub">${data.rounds} round${data.rounds!==1?'s':''} · best ${best}</div>`;
+    pgrid.appendChild(div);
+  });
+  cbEl.appendChild(pgrid);
+}
+
+// ── RENDER ROUNDS LIST ───────────────────────────────────
+function renderRounds(){
+  const list = document.getElementById('rounds-list');
+  const sorted = [...rounds].sort((a,b)=>new Date(b.date)-new Date(a.date));
+  list.innerHTML = '';
+  if(sorted.length===0){
+    list.innerHTML = '<div class="empty-state">No rounds logged yet. Hit "+ Log Round" to get started.</div>';
+    document.getElementById('see-more-btn').style.display = 'none';
+    return;
+  }
+  const toShow = sorted.slice(0, shownCount);
+  toShow.forEach(r=>{
+    const cls = scoreClass(r.score, r.par);
+    const fmtDate = r.date ? new Date(r.date+'T00:00:00').toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'}) : '—';
+    const firStr = r.firHit!=null&&r.firTotal>0 ? `${r.firHit}/${r.firTotal} FIR` : null;
+    const girStr = r.gir!=null ? `${r.gir}/18 GIR` : null;
+    const puttStr = r.putts>0 ? `${r.putts} putts` : null;
+    const stats = [firStr,girStr,puttStr].filter(Boolean);
+    const div = document.createElement('div');
+    div.className = 'round-bubble';
+    div.onclick = () => openDetail(r.id);
+    div.innerHTML = `
+      <div class="rb-score-badge ${cls}">${r.score||'—'}</div>
+      <div class="rb-info">
+        <div class="rb-course">${r.course||'Unknown Course'}</div>
+        <div class="rb-date">${fmtDate}${r.par?' · Par '+r.par:''}</div>
+        <div class="rb-stats">${stats.map(s=>`<span class="rb-stat"><span>${s}</span></span>`).join('')}</div>
+      </div>
+      <div class="rb-arrow">→</div>
+    `;
+    list.appendChild(div);
+  });
+  const btn = document.getElementById('see-more-btn');
+  btn.style.display = sorted.length > shownCount ? 'block' : 'none';
+  btn.textContent = `Show more rounds (${sorted.length - shownCount} remaining)`;
+}
+
+function showMore(){ shownCount += 9; renderRounds(); }
+
+// ── MODAL HELPERS ────────────────────────────────────────
+function openModal(title, body){
+  document.getElementById('modal-title').textContent = title;
+  document.getElementById('modal-body').innerHTML = body;
+  document.getElementById('modal-overlay').classList.add('open');
+}
+function closeModal(){
+  document.getElementById('modal-overlay').classList.remove('open');
+  formPar3s = [];
+}
+function handleOverlayClick(e){ if(e.target===document.getElementById('modal-overlay')) closeModal(); }
+document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeModal(); });
+
+// ── ADD FORM ─────────────────────────────────────────────
+function openAdd(){
+  formPar3s = [];
+  const today = new Date();
+  const todayStr = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
+  openModal('Log a Round', buildAddForm({date:todayStr}));
+}
+
+function buildAddForm(vals={}){
+  const par3Rows = formPar3s.map((p,i)=>`
+    <div class="par3-row" id="par3-row-${i}">
+      <span class="par3-hole-num">H${i+1}</span>
+      <input class="par3-input" type="text" placeholder="Club" value="${p.club||''}" oninput="formPar3s[${i}].club=this.value">
+      <input class="par3-input" type="number" placeholder="Dist (yds)" min="50" max="300" value="${p.dist||''}" oninput="formPar3s[${i}].dist=+this.value">
+      <input class="par3-input" type="number" placeholder="Score" min="1" max="10" value="${p.score||''}" oninput="formPar3s[${i}].score=+this.value">
+      <select class="par3-input" style="min-width:60px" onchange="formPar3s[${i}].gir=this.value==='1'">
+        <option value="">GIR?</option>
+        <option value="1" ${p.gir===true?'selected':''}>Yes</option>
+        <option value="0" ${p.gir===false?'selected':''}>No</option>
+      </select>
+      <button class="par3-del" onclick="removePar3(${i})">✕</button>
+    </div>
+  `).join('');
+
+  return `
+    <div class="form-section">Round Info</div>
+    <div class="form-grid">
+      <div class="form-group"><label>Course Name</label><input id="f-course" placeholder="e.g. Hershey Country Club" value="${vals.course||''}"></div>
+      <div class="form-group"><label>Date</label><input id="f-date" type="date" value="${vals.date||''}"></div>
+      <div class="form-group"><label>Par</label><input id="f-par" type="number" placeholder="72" min="60" max="80" value="${vals.par||''}"></div>
+      <div class="form-group"><label>Gross Score</label><input id="f-score" type="number" placeholder="85" min="50" max="160" value="${vals.score||''}"></div>
+    </div>
+
+    <div class="form-section">Fairways & Greens</div>
+    <div class="form-grid three">
+      <div class="form-group"><label>FIR Hit</label><input id="f-fir-hit" type="number" placeholder="8" min="0" max="18" value="${vals.firHit!=null?vals.firHit:''}"></div>
+      <div class="form-group"><label>FIR Total</label><input id="f-fir-total" type="number" placeholder="14" min="1" max="18" value="${vals.firTotal||''}"></div>
+      <div class="form-group"><label>GIR (of 18)</label><input id="f-gir" type="number" placeholder="6" min="0" max="18" value="${vals.gir!=null?vals.gir:''}"></div>
+    </div>
+
+    <div class="form-section">Putting</div>
+    <div class="form-grid">
+      <div class="form-group"><label>Total Putts</label><input id="f-putts" type="number" placeholder="33" min="0" max="60" value="${vals.putts||''}"></div>
+      <div class="form-group"><label>3-Putts</label><input id="f-3putts" type="number" placeholder="2" min="0" max="18" value="${vals.threePutts!=null?vals.threePutts:''}"></div>
+    </div>
+
+    <div class="form-section">Par 3 Holes</div>
+    <div class="par3-list" id="par3-list">${par3Rows}</div>
+    <button class="add-par3-btn" onclick="addPar3()">+ Add Par 3 Hole</button>
+
+    <div class="form-section">Notes</div>
+    <div class="form-group full" style="margin-bottom:4px"><input id="f-notes" placeholder="Conditions, highlights, anything notable..." value="${vals.notes||''}"></div>
+
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-green" onclick="saveRound(${vals.id||'null'})">Save Round</button>
+    </div>
+  `;
+}
+
+function addPar3(){
+  formPar3s.push({club:'',dist:'',score:'',gir:null});
+  document.getElementById('par3-list').innerHTML = buildPar3Rows();
+}
+function removePar3(i){
+  formPar3s.splice(i,1);
+  document.getElementById('par3-list').innerHTML = buildPar3Rows();
+}
+function buildPar3Rows(){
+  return formPar3s.map((p,i)=>`
+    <div class="par3-row">
+      <span class="par3-hole-num">H${i+1}</span>
+      <input class="par3-input" type="text" placeholder="Club" value="${p.club||''}" oninput="formPar3s[${i}].club=this.value">
+      <input class="par3-input" type="number" placeholder="Dist (yds)" min="50" max="300" value="${p.dist||''}" oninput="formPar3s[${i}].dist=+this.value">
+      <input class="par3-input" type="number" placeholder="Score" min="1" max="10" value="${p.score||''}" oninput="formPar3s[${i}].score=+this.value">
+      <select class="par3-input" style="min-width:60px" onchange="formPar3s[${i}].gir=this.value==='1'">
+        <option value="">GIR?</option>
+        <option value="1" ${p.gir===true?'selected':''}>Yes</option>
+        <option value="0" ${p.gir===false?'selected':''}>No</option>
+      </select>
+      <button class="par3-del" onclick="removePar3(${i})">✕</button>
+    </div>
+  `).join('');
+}
+
+function saveRound(existingId){
+  const course    = document.getElementById('f-course').value.trim();
+  const date      = document.getElementById('f-date').value;
+  const par       = parseInt(document.getElementById('f-par').value)||72;
+  const score     = parseInt(document.getElementById('f-score').value);
+  const firHit    = document.getElementById('f-fir-hit').value!=='' ? parseInt(document.getElementById('f-fir-hit').value) : null;
+  const firTotal  = document.getElementById('f-fir-total').value!=='' ? parseInt(document.getElementById('f-fir-total').value) : null;
+  const gir       = document.getElementById('f-gir').value!=='' ? parseInt(document.getElementById('f-gir').value) : null;
+  const putts     = document.getElementById('f-putts').value!=='' ? parseInt(document.getElementById('f-putts').value) : null;
+  const threePutts= document.getElementById('f-3putts').value!=='' ? parseInt(document.getElementById('f-3putts').value) : null;
+  const notes     = document.getElementById('f-notes').value.trim();
+
+  if(!score||isNaN(score)){ alert('Please enter a gross score.'); return; }
+
+  // Collect par3s from formPar3s (already live-updated via oninput)
+  const par3s = formPar3s.filter(p=>p.club||p.score).map(p=>({...p}));
+
+  const round = { course, date, par, score, firHit, firTotal, gir, putts, threePutts, notes, par3s };
+
+  if(existingId){
+    const idx = rounds.findIndex(r=>r.id===existingId);
+    if(idx>-1){ rounds[idx]={...round,id:existingId}; }
+  } else {
+    round.id = idCounter++;
+    rounds.push(round);
+  }
+  save(); renderAll(); closeModal();
+}
+
+// ── DETAIL VIEW ──────────────────────────────────────────
+function openDetail(id){
+  const r = rounds.find(x=>x.id===id);
+  if(!r) return;
+  const fmtDate = r.date ? new Date(r.date+'T00:00:00').toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'}) : '—';
+  const cls = scoreClass(r.score, r.par);
+  const firStr = r.firHit!=null&&r.firTotal ? `${r.firHit}/${r.firTotal} (${Math.round(r.firHit/r.firTotal*100)}%)` : '—';
+  const girStr = r.gir!=null ? `${r.gir}/18 (${Math.round(r.gir/18*100)}%)` : '—';
+
+  let par3Html = '';
+  if(r.par3s&&r.par3s.length>0){
+    par3Html = `
+      <div class="detail-section">
+        <div class="ds-title">Par 3 Breakdown</div>
+        <table class="par3-detail-table">
+          <thead><tr><th>#</th><th>Club</th><th>Distance</th><th>Score</th><th>GIR</th></tr></thead>
+          <tbody>
+            ${r.par3s.map((p,i)=>{
+              const sc = p.score;
+              const scClass = sc===1?'score-great':sc===2?'score-good':sc===3?'score-avg':'score-high';
+              return `<tr>
+                <td>H${i+1}</td>
+                <td>${p.club||'—'}</td>
+                <td>${p.dist?p.dist+' yds':'—'}</td>
+                <td><span class="score-pill ${scClass}">${sc||'—'}</span></td>
+                <td>${p.gir===true?'✓':p.gir===false?'✗':'—'}</td>
+              </tr>`;
+            }).join('')}
+          </tbody>
+        </table>
+      </div>
+    `;
+  }
+
+  const body = `
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+      <div class="rb-score-badge ${cls}" style="width:56px;height:56px;font-size:20px">${r.score}</div>
+      <div>
+        <div style="font-size:15px;font-weight:600;color:var(--text)">${r.course||'Unknown Course'}</div>
+        <div style="font-size:11px;color:var(--text3)">${fmtDate} · Par ${r.par||72}</div>
+      </div>
+    </div>
+
+    <div class="detail-section">
+      <div class="ds-title">Round Stats</div>
+      <div class="detail-grid">
+        <div class="df"><div class="df-label">Fairways in Reg</div><div class="df-val">${firStr}</div></div>
+        <div class="df"><div class="df-label">Greens in Reg</div><div class="df-val">${girStr}</div></div>
+        <div class="df"><div class="df-label">Total Putts</div><div class="df-val ${!r.putts?'empty':''}">${r.putts||'—'}</div></div>
+        <div class="df"><div class="df-label">3-Putts</div><div class="df-val ${r.threePutts==null?'empty':''}">${r.threePutts!=null?r.threePutts:'—'}</div></div>
+        ${r.notes?`<div class="df full"><div class="df-label">Notes</div><div class="df-val">${r.notes}</div></div>`:''}
+      </div>
+    </div>
+
+    ${par3Html}
+
+    <div class="modal-actions">
+      <button class="btn" style="background:var(--red-bg);color:var(--red-txt);border-color:var(--red)" onclick="deleteRound(${r.id})">Delete</button>
+      <button class="btn btn-green" onclick="openEdit(${r.id})">Edit</button>
+    </div>
+  `;
+  openModal(`${r.course||'Round'} — ${r.score}`, body);
+}
+
+function openEdit(id){
+  const r = rounds.find(x=>x.id===id);
+  if(!r) return;
+  formPar3s = r.par3s ? r.par3s.map(p=>({...p})) : [];
+  openModal('Edit Round', buildAddForm(r));
+}
+
+function deleteRound(id){
+  if(!confirm('Delete this round? This cannot be undone.')) return;
+  rounds = rounds.filter(r=>r.id!==id);
+  save(); renderAll(); closeModal();
+}
+
+// ── RENDER ALL ───────────────────────────────────────────
+function renderAll(){
+  calcStats();
+  renderRounds();
+}
+
+function toggleSec(id){
+  document.getElementById('sec-'+id).classList.toggle('collapsed');
+  document.getElementById('toggle-'+id).classList.toggle('open');
+}
+function toggleTheme(){
+  const dark=document.body.classList.toggle('dark');
+  document.getElementById('theme-btn').textContent=dark?'◑ light':'◑ dark';
+  localStorage.setItem('golf_rounds_theme',dark?'dark':'light');
+}
+const savedTheme=localStorage.getItem('golf_rounds_theme');
+if(savedTheme==='dark'){document.body.classList.add('dark');document.getElementById('theme-btn').textContent='◑ light';}
+
+renderAll();
+</script>
+</body>
+</html>
