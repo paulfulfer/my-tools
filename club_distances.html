@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Club Distance Log</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f5f5f3;--bg2:#ffffff;--bg3:#efefed;--bg4:#e4e4e2;
+  --border:#dddddb;--border2:#c8c8c6;
+  --text:#1a1a1a;--text2:#555;--text3:#999;--text4:#bbb;
+  --green:#0e9e70;--green-bg:#e0f5ec;--green-txt:#0e9e70;
+  --amber:#c27d08;--amber-bg:#fdf0d5;--amber-txt:#c27d08;
+  --blue:#2a7de1;--blue-bg:#deeafa;--blue-txt:#2a7de1;
+  --red:#d03030;--red-bg:#fce8e8;--red-txt:#d03030;
+  --purple:#6c5bbf;--purple-bg:#eae8fa;
+  --teal:#0e8a8a;--teal-bg:#e0f5f5;
+  --r:8px;--rl:12px;
+}
+.dark{
+  --bg:#1e1e1e;--bg2:#272727;--bg3:#2f2f2f;--bg4:#383838;
+  --border:#3a3a3a;--border2:#484848;
+  --text:#e2e2e2;--text2:#a0a0a0;--text3:#666;--text4:#444;
+  --green:#1fbd8a;--green-bg:#0d2e22;--green-txt:#1fbd8a;
+  --amber:#e6a020;--amber-bg:#2c1f06;--amber-txt:#e6a020;
+  --blue:#4a9eff;--blue-bg:#0a1e35;--blue-txt:#4a9eff;
+  --red:#f05050;--red-bg:#2a0f0f;--red-txt:#f05050;
+  --purple:#9b87f5;--purple-bg:#1a1530;
+  --teal:#1fbd9a;--teal-bg:#0d2e2e;
+}
+body{background:var(--bg);color:var(--text);font-family:'SF Mono','Fira Code','Cascadia Code',monospace;font-size:13px;line-height:1.6;padding:1.5rem 1rem;transition:background .2s,color .2s;min-height:100vh}
+.container{max-width:900px;margin:0 auto}
+.header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1.75rem}
+.page-title{font-size:17px;font-weight:600;letter-spacing:.02em;margin-bottom:2px}
+.page-sub{font-size:11px;color:var(--text3);letter-spacing:.03em}
+.header-actions{display:flex;gap:8px;align-items:center;flex-shrink:0}
+.btn{font-family:inherit;font-size:11px;font-weight:600;padding:5px 13px;border-radius:20px;border:1px solid var(--border2);background:var(--bg3);color:var(--text2);cursor:pointer;letter-spacing:.04em;text-transform:uppercase;transition:all .15s;text-decoration:none;display:inline-block}
+.btn:hover{background:var(--bg4);color:var(--text)}
+.btn-green{background:var(--green-bg);color:var(--green-txt);border-color:var(--green)}
+.btn-green:hover{opacity:.85}
+.sec-header{display:flex;align-items:center;justify-content:space-between;margin:1.6rem 0 .65rem;padding-bottom:5px;border-bottom:1px solid var(--border);cursor:pointer;user-select:none}
+.sec-label{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.12em}
+.sec-toggle{font-size:14px;color:var(--text3);transition:transform .2s;line-height:1}
+.sec-toggle.open{transform:rotate(180deg)}
+.sec-body.collapsed{display:none}
+hr{border:none;border-top:1px solid var(--border);margin:1.4rem 0}
+
+/* Club average table */
+.club-table-wrap{overflow-x:auto}
+.club-table{width:100%;border-collapse:collapse;font-size:12px}
+.club-table th{text-align:left;padding:7px 10px;font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;border-bottom:1px solid var(--border);white-space:nowrap}
+.club-table td{padding:8px 10px;border-bottom:1px solid var(--border);vertical-align:middle}
+.club-table tr:last-child td{border-bottom:none}
+.club-table tr:hover td{background:var(--bg3)}
+.club-name{font-size:12px;font-weight:600;color:var(--text)}
+.club-sessions{font-size:11px;color:var(--text3)}
+.dist-badge{display:inline-block;font-size:13px;font-weight:700;padding:3px 12px;border-radius:20px;min-width:60px;text-align:center}
+.dist-carry{background:var(--teal-bg);color:var(--teal)}
+.dist-total{background:var(--blue-bg);color:var(--blue-txt)}
+.dist-none{color:var(--text4);font-size:11px;font-style:italic}
+
+/* Trend spark */
+.spark{display:flex;align-items:flex-end;gap:2px;height:20px}
+.spark-bar{border-radius:1px 1px 0 0;min-width:5px;flex:1}
+
+/* Log entry form */
+.entry-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--rl);padding:16px 18px;margin-bottom:1rem}
+.form-row{display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end;margin-bottom:10px}
+.form-group{display:flex;flex-direction:column;gap:3px;flex:1;min-width:110px}
+.form-group label{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.08em}
+.form-group input,.form-group select{font-family:inherit;font-size:12px;padding:6px 10px;border-radius:6px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);transition:border-color .15s}
+.form-group input:focus,.form-group select:focus{outline:none;border-color:var(--green)}
+.form-actions{display:flex;justify-content:flex-end}
+
+/* Pill tag for condition */
+.cond-pill{display:inline-block;font-size:10px;font-weight:600;padding:2px 9px;border-radius:20px;letter-spacing:.04em;text-transform:uppercase}
+
+/* Session history */
+.session-list{display:flex;flex-direction:column;gap:6px}
+.session-item{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:10px 14px;display:flex;align-items:center;justify-content:space-between;gap:10px;cursor:pointer;transition:border-color .15s}
+.session-item:hover{border-color:var(--border2);background:var(--bg3)}
+.si-left{flex:1;min-width:0}
+.si-club{font-size:12px;font-weight:600;color:var(--text)}
+.si-meta{font-size:10px;color:var(--text3);margin-top:1px;display:flex;gap:8px;flex-wrap:wrap}
+.si-right{display:flex;gap:8px;align-items:center;flex-shrink:0}
+.si-del{background:none;border:none;color:var(--text4);cursor:pointer;font-size:14px;padding:0;font-family:inherit;transition:color .15s}
+.si-del:hover{color:var(--red)}
+
+/* Modal */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;z-index:1000;opacity:0;pointer-events:none;transition:opacity .2s;padding:1rem}
+.modal-overlay.open{opacity:1;pointer-events:all}
+.modal{background:var(--bg2);border:1px solid var(--border2);border-radius:16px;width:100%;max-width:480px;max-height:88vh;overflow-y:auto;transform:scale(.92) translateY(12px);transition:transform .22s cubic-bezier(.34,1.4,.64,1),opacity .2s;opacity:0;box-shadow:0 20px 60px rgba(0,0,0,.18)}
+.modal-overlay.open .modal{transform:scale(1) translateY(0);opacity:1}
+.modal-header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px 12px;border-bottom:1px solid var(--border)}
+.modal-title{font-size:14px;font-weight:600;color:var(--text)}
+.modal-close{background:var(--bg3);border:1px solid var(--border2);color:var(--text2);width:26px;height:26px;border-radius:50%;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:all .15s;font-family:inherit}
+.modal-close:hover{background:var(--red-bg);color:var(--red);border-color:var(--red)}
+.modal-body{padding:16px 20px}
+
+/* Sync notice */
+.sync-notice{background:var(--blue-bg);border:1px solid var(--blue);border-radius:var(--r);padding:8px 13px;font-size:11px;color:var(--blue-txt);margin-bottom:1rem;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.empty-state{text-align:center;padding:1.5rem;color:var(--text3);font-size:12px;border:1px dashed var(--border2);border-radius:var(--r)}
+
+/* Section type colors */
+.club-type-driver{color:var(--blue)}
+.club-type-wood{color:var(--teal)}
+.club-type-hybrid{color:var(--green)}
+.club-type-iron{color:var(--text2)}
+.club-type-wedge{color:var(--amber)}
+.club-type-putter{color:var(--purple)}
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="header">
+  <div>
+    <div class="page-title">Club Distance Log</div>
+    <div class="page-sub">carry & total · averages per club · synced from equipment page</div>
+  </div>
+  <div class="header-actions">
+    <a href="index.html" class="btn">← home</a>
+    <button class="btn" onclick="syncClubs()" title="Refresh club list from equipment page">⟳ Sync Clubs</button>
+    <button class="btn" onclick="toggleTheme()" id="theme-btn">◑ dark</button>
+  </div>
+</div>
+
+<!-- SYNC NOTICE -->
+<div class="sync-notice" id="sync-notice" style="display:none">
+  <span id="sync-msg"></span>
+  <button class="btn" style="padding:3px 10px;font-size:10px" onclick="document.getElementById('sync-notice').style.display='none'">×</button>
+</div>
+
+<!-- AVERAGES TABLE -->
+<div class="sec-header" onclick="toggleSec('averages')">
+  <span class="sec-label">Club Averages</span>
+  <span class="sec-toggle open" id="toggle-averages">▼</span>
+</div>
+<div class="sec-body" id="sec-averages">
+  <div class="club-table-wrap">
+    <table class="club-table">
+      <thead><tr>
+        <th>Club</th>
+        <th>Type</th>
+        <th>Avg Carry</th>
+        <th>Avg Total</th>
+        <th>Sessions</th>
+        <th>Trend</th>
+      </tr></thead>
+      <tbody id="averages-tbody"></tbody>
+    </table>
+  </div>
+  <div id="averages-empty" style="display:none" class="empty-state">No sessions logged yet. Add a session below to see averages.</div>
+</div>
+
+<!-- LOG SESSION -->
+<div style="margin:1.6rem 0 .75rem;display:flex;justify-content:flex-end">
+  <button class="btn btn-green" onclick="toggleSec('entry');document.getElementById('toggle-entry').classList.add('open')">+ Log Session</button>
+</div>
+
+<div class="sec-header" onclick="toggleSec('entry')">
+  <span class="sec-label">Log a Session</span>
+  <span class="sec-toggle open" id="toggle-entry">▼</span>
+</div>
+<div class="sec-body" id="sec-entry">
+  <div class="entry-card">
+    <div class="form-row">
+      <div class="form-group">
+        <label>Club</label>
+        <select id="f-club" onchange="updateClubSelect()">
+          <option value="">Select club...</option>
+        </select>
+      </div>
+      <div class="form-group" style="max-width:140px">
+        <label>Date</label>
+        <input type="date" id="f-date">
+      </div>
+      <div class="form-group">
+        <label>Condition / Tag</label>
+        <input type="text" id="f-condition" placeholder="e.g. Summer, Cold, Windy, Indoor...">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group" style="max-width:140px">
+        <label>Ball Used</label>
+        <input type="text" id="f-ball" placeholder="e.g. Pro V1">
+      </div>
+      <div class="form-group" style="max-width:140px">
+        <label>Avg Carry (yds)</label>
+        <input type="number" id="f-carry" placeholder="e.g. 245" min="0" max="400">
+      </div>
+      <div class="form-group" style="max-width:140px">
+        <label>Avg Total (yds)</label>
+        <input type="number" id="f-total" placeholder="e.g. 265" min="0" max="450">
+      </div>
+      <div class="form-group">
+        <label>Notes</label>
+        <input type="text" id="f-notes" placeholder="Optional notes...">
+      </div>
+    </div>
+    <div class="form-actions">
+      <button class="btn btn-green" onclick="logSession()">+ Save Session</button>
+    </div>
+  </div>
+</div>
+
+<!-- SESSION HISTORY -->
+<div class="sec-header" onclick="toggleSec('history')">
+  <span class="sec-label">Session History</span>
+  <span class="sec-toggle open" id="toggle-history">▼</span>
+</div>
+<div class="sec-body" id="sec-history">
+  <div class="session-list" id="session-list"></div>
+</div>
+
+</div>
+
+<!-- MODAL (session detail) -->
+<div class="modal-overlay" id="modal-overlay" onclick="handleOverlayClick(event)">
+  <div class="modal" id="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="modal-title"></span>
+      <button class="modal-close" onclick="closeModal()">×</button>
+    </div>
+    <div class="modal-body" id="modal-body"></div>
+  </div>
+</div>
+
+<script>
+// ── STATE ────────────────────────────────────────────────
+let clubs    = JSON.parse(localStorage.getItem('dist_clubs')    || '[]');
+let sessions = JSON.parse(localStorage.getItem('dist_sessions') || '[]');
+let idCounter = parseInt(localStorage.getItem('dist_id') || '1', 10);
+
+const TYPE_ORDER = ['driver','wood','hybrid','iron','wedge','putter','ball','training','other'];
+const TYPE_LABELS = {driver:'Driver',wood:'Wood',hybrid:'Hybrid',iron:'Iron',wedge:'Wedge',putter:'Putter',ball:'Ball',training:'Training',other:'Other'};
+
+function save(){
+  localStorage.setItem('dist_clubs',    JSON.stringify(clubs));
+  localStorage.setItem('dist_sessions', JSON.stringify(sessions));
+  localStorage.setItem('dist_id',       idCounter);
+}
+
+// ── SYNC FROM EQUIPMENT PAGE ──────────────────────────────
+function syncClubs(){
+  const raw = localStorage.getItem('golf_equipment');
+  if(!raw){
+    showNotice('No equipment data found. Add clubs on the Golf Equipment page first.','amber');
+    return;
+  }
+  const eq = JSON.parse(raw);
+  const newClubs = [];
+  TYPE_ORDER.forEach(type=>{
+    if(['ball','training','other'].includes(type)) return;
+    (eq[type]||[]).forEach(c=>{
+      const name = [c.make,c.model].filter(Boolean).join(' ').trim() || 'Unnamed';
+      newClubs.push({ id: c.id, name, type, make: c.make||'', model: c.model||'', loft: c.loft||'' });
+    });
+  });
+  clubs = newClubs;
+  save();
+  renderAll();
+  showNotice(`Synced ${clubs.length} club${clubs.length!==1?'s':''} from your equipment page.`,'green');
+}
+
+function showNotice(msg, color='blue'){
+  const el = document.getElementById('sync-notice');
+  const msgEl = document.getElementById('sync-msg');
+  msgEl.textContent = msg;
+  el.style.display = 'flex';
+  el.style.background = color==='green'?'var(--green-bg)':color==='amber'?'var(--amber-bg)':'var(--blue-bg)';
+  el.style.borderColor = color==='green'?'var(--green)':color==='amber'?'var(--amber)':'var(--blue)';
+  msgEl.style.color = color==='green'?'var(--green-txt)':color==='amber'?'var(--amber-txt)':'var(--blue-txt)';
+}
+
+// ── AVERAGES TABLE ────────────────────────────────────────
+function getClubSessions(clubName){
+  return sessions.filter(s=>s.club===clubName).sort((a,b)=>new Date(a.date)-new Date(b.date));
+}
+
+function avg(arr){ return arr.length>0 ? arr.reduce((a,b)=>a+b,0)/arr.length : null; }
+
+function renderAverages(){
+  const tbody = document.getElementById('averages-tbody');
+  const empty = document.getElementById('averages-empty');
+  tbody.innerHTML = '';
+
+  // Build club list — all synced clubs + any from sessions not in synced list
+  const clubNames = new Set();
+  clubs.forEach(c=>clubNames.add(c.name));
+  sessions.forEach(s=>{ if(s.club) clubNames.add(s.club); });
+
+  if(clubNames.size===0){
+    empty.style.display='block';
+    return;
+  }
+  empty.style.display='none';
+
+  // Sort by type order then name
+  const sorted = [...clubNames].sort((a,b)=>{
+    const ca = clubs.find(c=>c.name===a);
+    const cb = clubs.find(c=>c.name===b);
+    const ta = TYPE_ORDER.indexOf(ca?.type||'other');
+    const tb = TYPE_ORDER.indexOf(cb?.type||'other');
+    return ta!==tb ? ta-tb : a.localeCompare(b);
+  });
+
+  sorted.forEach(name=>{
+    const clubSessions = getClubSessions(name);
+    const clubInfo = clubs.find(c=>c.name===name);
+    const carries = clubSessions.map(s=>s.carry).filter(v=>v>0);
+    const totals  = clubSessions.map(s=>s.total).filter(v=>v>0);
+    const avgCarry = avg(carries);
+    const avgTotal = avg(totals);
+
+    // Spark bars from last 6 sessions
+    const last6 = clubSessions.slice(-6);
+    const sparkHtml = last6.length>=2 ? (() => {
+      const vals = last6.map(s=>s.carry||s.total||0).filter(v=>v>0);
+      if(vals.length<2) return '<span style="color:var(--text4);font-size:10px">—</span>';
+      const mn=Math.min(...vals)-5, mx=Math.max(...vals)+5;
+      return `<div class="spark">${vals.map(v=>{
+        const h=Math.max(3,Math.round(((v-mn)/(mx-mn||1))*18)+2);
+        return `<div class="spark-bar" style="height:${h}px;background:var(--teal)"></div>`;
+      }).join('')}</div>`;
+    })() : '<span style="color:var(--text4);font-size:10px">—</span>';
+
+    const typeLabel = TYPE_LABELS[clubInfo?.type||'other']||'';
+    const typeCls = 'club-type-'+(clubInfo?.type||'other');
+    const loftStr = clubInfo?.loft ? ` · ${clubInfo.loft}°` : '';
+
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><div class="club-name">${name}${loftStr}</div></td>
+      <td><span class="${typeCls}" style="font-size:11px;font-weight:600">${typeLabel}</span></td>
+      <td>${avgCarry!==null?`<span class="dist-badge dist-carry">${Math.round(avgCarry)}</span>`:'<span class="dist-none">—</span>'}</td>
+      <td>${avgTotal!==null?`<span class="dist-badge dist-total">${Math.round(avgTotal)}</span>`:'<span class="dist-none">—</span>'}</td>
+      <td><span class="club-sessions">${clubSessions.length}</span></td>
+      <td>${sparkHtml}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+// ── LOG SESSION ───────────────────────────────────────────
+function updateClubSelect(){
+  // nothing needed — just a change hook
+}
+
+function buildClubSelect(selectedName=''){
+  const sel = document.getElementById('f-club');
+  sel.innerHTML = '<option value="">Select club...</option>';
+
+  if(clubs.length===0){
+    // Fall back to sessions clubs
+    const fromSessions = [...new Set(sessions.map(s=>s.club).filter(Boolean))];
+    fromSessions.forEach(name=>{
+      const opt=document.createElement('option');
+      opt.value=name;opt.textContent=name;
+      if(name===selectedName) opt.selected=true;
+      sel.appendChild(opt);
+    });
+    return;
+  }
+
+  // Group by type
+  const grouped = {};
+  clubs.forEach(c=>{
+    if(!grouped[c.type]) grouped[c.type]=[];
+    grouped[c.type].push(c);
+  });
+  TYPE_ORDER.forEach(type=>{
+    if(!grouped[type]||grouped[type].length===0) return;
+    const og = document.createElement('optgroup');
+    og.label = TYPE_LABELS[type]||type;
+    grouped[type].forEach(c=>{
+      const name=[c.make,c.model].filter(Boolean).join(' ')||'Unnamed';
+      const opt=document.createElement('option');
+      opt.value=name;
+      opt.textContent=name+(c.loft?' ('+c.loft+'°)':'');
+      if(name===selectedName) opt.selected=true;
+      og.appendChild(opt);
+    });
+    sel.appendChild(og);
+  });
+}
+
+function logSession(){
+  const club    = document.getElementById('f-club').value;
+  const date    = document.getElementById('f-date').value;
+  const cond    = document.getElementById('f-condition').value.trim();
+  const ball    = document.getElementById('f-ball').value.trim();
+  const carry   = parseFloat(document.getElementById('f-carry').value)||0;
+  const total   = parseFloat(document.getElementById('f-total').value)||0;
+  const notes   = document.getElementById('f-notes').value.trim();
+
+  if(!club){ alert('Please select a club.'); return; }
+  if(!date){ alert('Please enter a date.'); return; }
+  if(!carry&&!total){ alert('Please enter at least a carry or total distance.'); return; }
+
+  sessions.push({ id: idCounter++, club, date, condition: cond, ball, carry, total, notes });
+  save(); renderAll();
+
+  document.getElementById('f-carry').value='';
+  document.getElementById('f-total').value='';
+  document.getElementById('f-notes').value='';
+  document.getElementById('f-condition').value='';
+}
+
+function deleteSession(id){
+  sessions = sessions.filter(s=>s.id!==id);
+  save(); renderAll();
+}
+
+// ── SESSION HISTORY ───────────────────────────────────────
+function renderSessionHistory(){
+  const list = document.getElementById('session-list');
+  const sorted = [...sessions].sort((a,b)=>new Date(b.date)-new Date(a.date));
+  list.innerHTML='';
+  if(sorted.length===0){
+    list.innerHTML='<div class="empty-state">No sessions logged yet.</div>';
+    return;
+  }
+  sorted.forEach(s=>{
+    const fmtDate = s.date ? new Date(s.date+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : '—';
+    const div=document.createElement('div');
+    div.className='session-item';
+    div.innerHTML=`
+      <div class="si-left">
+        <div class="si-club">${s.club}</div>
+        <div class="si-meta">
+          <span>${fmtDate}</span>
+          ${s.condition?`<span>· ${s.condition}</span>`:''}
+          ${s.ball?`<span>· ${s.ball}</span>`:''}
+          ${s.carry?`<span>· Carry: <strong>${s.carry} yds</strong></span>`:''}
+          ${s.total?`<span>· Total: <strong>${s.total} yds</strong></span>`:''}
+        </div>
+      </div>
+      <div class="si-right">
+        ${s.notes?`<span style="font-size:10px;color:var(--text3);font-style:italic;max-width:140px;text-align:right;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${s.notes}</span>`:''}
+        <button class="si-del" onclick="event.stopPropagation();deleteSession(${s.id})" title="Delete">✕</button>
+      </div>
+    `;
+    list.appendChild(div);
+  });
+}
+
+// ── MODAL ─────────────────────────────────────────────────
+function closeModal(){ document.getElementById('modal-overlay').classList.remove('open'); }
+function handleOverlayClick(e){ if(e.target===document.getElementById('modal-overlay')) closeModal(); }
+document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeModal(); });
+
+// ── UTILS ─────────────────────────────────────────────────
+function renderAll(){
+  renderAverages();
+  renderSessionHistory();
+  buildClubSelect();
+}
+
+function toggleSec(id){
+  document.getElementById('sec-'+id).classList.toggle('collapsed');
+  document.getElementById('toggle-'+id).classList.toggle('open');
+}
+function toggleTheme(){
+  const dark=document.body.classList.toggle('dark');
+  document.getElementById('theme-btn').textContent=dark?'◑ light':'◑ dark';
+  localStorage.setItem('dist_theme',dark?'dark':'light');
+}
+
+// Init
+const savedTheme=localStorage.getItem('dist_theme');
+if(savedTheme==='dark'){document.body.classList.add('dark');document.getElementById('theme-btn').textContent='◑ light';}
+
+const today=new Date();
+document.getElementById('f-date').value=`${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
+
+// Auto-sync on load if equipment data exists and we have no clubs yet
+if(clubs.length===0 && localStorage.getItem('golf_equipment')){
+  syncClubs();
+} else {
+  renderAll();
+}
+</script>
+</body>
+</html>

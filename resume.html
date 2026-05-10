@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Paul Resume</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#1a1d23;--bg2:#22262e;--bg3:#2a2f38;--bg4:#333a45;
+  --border:#353c48;--border2:#424b5a;
+  --text:#e8eaf0;--text2:#a8b0c0;--text3:#6b7585;--text4:#3d4555;
+  --blue:#4a9eff;--blue-bg:#0a1e35;--blue-dim:#1a3a5c;
+  --green:#1fbd8a;--green-bg:#0d2e22;
+  --amber:#e6a020;--amber-bg:#2c1f06;
+  --red:#f05050;--red-bg:#2a0f0f;
+  --purple:#9b87f5;
+  --accent:#4a9eff;
+  --r:8px;--rl:12px;
+}
+body{background:var(--bg);color:var(--text);font-family:'SF Mono','Fira Code','Cascadia Code',monospace;font-size:13px;line-height:1.6;padding:1.5rem 1rem;min-height:100vh}
+.container{max-width:860px;margin:0 auto}
+
+/* Header */
+.page-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:2rem;gap:12px}
+.page-header-left{flex:1}
+.page-title{font-size:17px;font-weight:600;letter-spacing:.02em;margin-bottom:2px;color:var(--text)}
+.page-sub{font-size:11px;color:var(--text3);letter-spacing:.03em}
+.header-actions{display:flex;gap:8px;align-items:center;flex-shrink:0}
+.btn{font-family:inherit;font-size:11px;font-weight:600;padding:5px 13px;border-radius:20px;border:1px solid var(--border2);background:var(--bg3);color:var(--text2);cursor:pointer;letter-spacing:.04em;text-transform:uppercase;transition:all .15s;text-decoration:none;display:inline-block}
+.btn:hover{background:var(--bg4);color:var(--text)}
+.btn-blue{background:var(--blue-dim);color:var(--blue);border-color:var(--blue)}
+.btn-blue:hover{opacity:.85}
+
+/* Profile block */
+.profile-block{background:var(--bg2);border:1px solid var(--border);border-radius:var(--rl);padding:22px 24px;margin-bottom:1.5rem;position:relative}
+.profile-name{font-size:22px;font-weight:700;color:var(--text);letter-spacing:-.01em;margin-bottom:4px}
+.profile-name input{background:transparent;border:none;color:var(--text);font:inherit;font-size:22px;font-weight:700;letter-spacing:-.01em;width:100%;outline:none}
+.profile-name input:focus{border-bottom:1px solid var(--border2)}
+.profile-headline{font-size:13px;color:var(--text2);margin-bottom:8px}
+.profile-headline input{background:transparent;border:none;color:var(--text2);font:inherit;font-size:13px;width:100%;outline:none}
+.profile-headline input:focus{border-bottom:1px solid var(--border2)}
+.profile-meta{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:10px}
+.pm-field{display:flex;align-items:center;gap:5px}
+.pm-field input{background:transparent;border:none;color:var(--text3);font:inherit;font-size:11px;outline:none;min-width:120px}
+.pm-field input:focus{border-bottom:1px solid var(--border2);color:var(--text2)}
+.pm-icon{font-size:11px;color:var(--text3)}
+.profile-about{font-size:12px;color:var(--text2);line-height:1.65}
+.profile-about textarea{background:transparent;border:none;color:var(--text2);font:inherit;font-size:12px;line-height:1.65;width:100%;outline:none;resize:none;min-height:48px}
+.profile-about textarea:focus{border-bottom:1px solid var(--border2)}
+
+/* Sections */
+.resume-section{background:var(--bg2);border:1px solid var(--border);border-radius:var(--rl);padding:18px 22px;margin-bottom:1rem;position:relative}
+.rs-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid var(--border)}
+.rs-title{font-size:13px;font-weight:700;color:var(--text);letter-spacing:.04em;text-transform:uppercase}
+.rs-add{background:none;border:1px solid var(--border2);color:var(--text3);width:24px;height:24px;border-radius:50%;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:all .15s;font-family:inherit;line-height:1;flex-shrink:0}
+.rs-add:hover{background:var(--blue-dim);color:var(--blue);border-color:var(--blue)}
+
+/* Entry items */
+.entry-item{padding:12px 0;border-bottom:1px solid var(--border);position:relative}
+.entry-item:last-child{border-bottom:none;padding-bottom:0}
+.entry-item:first-child{padding-top:0}
+.entry-header{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:4px}
+.entry-title{font-size:13px;font-weight:600;color:var(--text)}
+.entry-title input,.entry-org input,.entry-date input,.entry-loc input{background:transparent;border:none;color:inherit;font:inherit;outline:none;width:100%}
+.entry-title input:focus,.entry-org input:focus,.entry-date input:focus,.entry-loc input:focus{border-bottom:1px solid var(--border2)}
+.entry-org{font-size:12px;color:var(--blue);font-weight:500}
+.entry-date{font-size:11px;color:var(--text3)}
+.entry-loc{font-size:11px;color:var(--text3)}
+.entry-meta{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:5px}
+.entry-desc{font-size:12px;color:var(--text2);line-height:1.65;margin-top:5px}
+.entry-desc textarea{background:transparent;border:none;color:var(--text2);font:inherit;font-size:12px;line-height:1.65;width:100%;outline:none;resize:none;min-height:42px}
+.entry-desc textarea:focus{border-bottom:1px solid var(--border2)}
+.entry-del{background:none;border:none;color:var(--text4);cursor:pointer;font-size:14px;padding:0;font-family:inherit;transition:color .15s;flex-shrink:0;margin-top:1px}
+.entry-del:hover{color:var(--red)}
+
+/* Skills & tags */
+.tags-wrap{display:flex;flex-wrap:wrap;gap:7px;margin-top:4px}
+.skill-tag{background:var(--bg3);border:1px solid var(--border2);border-radius:20px;padding:3px 12px;font-size:11px;color:var(--text2);display:flex;align-items:center;gap:6px}
+.skill-tag .tag-del{background:none;border:none;color:var(--text4);cursor:pointer;font-size:12px;padding:0;line-height:1;transition:color .15s}
+.skill-tag .tag-del:hover{color:var(--red)}
+.tag-add-row{display:flex;gap:8px;margin-top:10px;align-items:center}
+.tag-add-row input{flex:1;font-family:inherit;font-size:12px;padding:5px 10px;border-radius:20px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);outline:none;transition:border-color .15s}
+.tag-add-row input:focus{border-color:var(--blue)}
+.tag-add-btn{font-family:inherit;font-size:11px;font-weight:600;padding:5px 12px;border-radius:20px;border:1px solid var(--border2);background:var(--bg3);color:var(--text2);cursor:pointer;white-space:nowrap;transition:all .15s}
+.tag-add-btn:hover{background:var(--blue-dim);color:var(--blue);border-color:var(--blue)}
+
+/* Bullet points in desc */
+.bullet-list{list-style:none;padding:0;margin-top:5px}
+.bullet-list li{display:flex;gap:7px;align-items:flex-start;margin-bottom:4px;font-size:12px;color:var(--text2);line-height:1.55}
+.bullet-list li::before{content:'·';color:var(--blue);font-weight:700;flex-shrink:0;margin-top:1px}
+.bullet-input-wrap{display:flex;align-items:center;gap:6px;margin-bottom:4px}
+.bullet-input{flex:1;background:transparent;border:none;border-bottom:1px solid transparent;color:var(--text2);font:inherit;font-size:12px;outline:none;padding:2px 0;transition:border-color .15s}
+.bullet-input:focus{border-bottom-color:var(--border2)}
+.bullet-del{background:none;border:none;color:var(--text4);cursor:pointer;font-size:13px;padding:0 2px;font-family:inherit;transition:color .15s;flex-shrink:0}
+.bullet-del:hover{color:var(--red)}
+.add-bullet-btn{background:none;border:none;color:var(--text3);font-family:inherit;font-size:11px;cursor:pointer;padding:3px 0;transition:color .15s;display:flex;align-items:center;gap:4px}
+.add-bullet-btn:hover{color:var(--blue)}
+
+/* Section color accents */
+.sec-exp{border-left:3px solid var(--blue)}
+.sec-edu{border-left:3px solid var(--green)}
+.sec-lic{border-left:3px solid var(--amber)}
+.sec-skills{border-left:3px solid var(--purple)}
+.sec-honors{border-left:3px solid var(--amber)}
+.sec-vol{border-left:3px solid var(--green)}
+.sec-projects{border-left:3px solid var(--blue)}
+
+/* ── PRINT STYLES ── */
+@media print{
+  *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+  body{background:#fff!important;color:#000!important;padding:.4in .5in;font-size:11px}
+  .page-header,.btn,.rs-add,.entry-del,.tag-del,.add-bullet-btn,.bullet-del,.tag-add-row{display:none!important}
+  .container{max-width:100%}
+  .profile-block,.resume-section{background:#fff!important;border:none!important;border-radius:0!important;padding:8px 0!important;margin-bottom:10px!important;box-shadow:none!important}
+  .profile-block{border-bottom:2px solid #000!important;padding-bottom:10px!important}
+  .resume-section{border-left:none!important;border-top:1px solid #ccc!important}
+  .rs-header{border-bottom:1px solid #ccc!important;padding-bottom:4px!important}
+  .rs-title{color:#000!important;font-size:11px!important}
+  .profile-name,.profile-name input{color:#000!important;font-size:18px!important}
+  .profile-headline,.profile-headline input{color:#222!important}
+  .pm-field input,.entry-title,.entry-title input,.entry-org,.entry-org input{color:#000!important}
+  .entry-date input,.entry-loc input,.entry-date,.entry-loc{color:#444!important}
+  .entry-desc textarea,.bullet-list li,.bullet-input{color:#222!important}
+  .skill-tag{background:#f0f0f0!important;border:1px solid #ccc!important;color:#000!important}
+  .entry-item{border-bottom:1px solid #eee!important}
+  .bullet-input-wrap{margin-bottom:2px}
+  textarea,input{pointer-events:none}
+  /* Force page breaks sensibly */
+  .resume-section{page-break-inside:avoid}
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="page-header">
+  <div class="page-header-left">
+    <div class="page-title">Paul's Resume</div>
+    <div class="page-sub">edit inline · data saved in browser</div>
+  </div>
+  <div class="header-actions">
+    <a href="index.html" class="btn">← home</a>
+    <button class="btn btn-blue" onclick="window.print()">⬇ Export PDF</button>
+  </div>
+</div>
+
+<!-- PROFILE -->
+<div class="profile-block">
+  <div class="profile-name"><input id="p-name" placeholder="Your Name" oninput="save()"></div>
+  <div class="profile-headline"><input id="p-headline" placeholder="Headline — e.g. Student · Resident Assistant · Finance & Operations" oninput="save()"></div>
+  <div class="profile-meta">
+    <div class="pm-field"><span class="pm-icon">📍</span><input id="p-location" placeholder="Location" oninput="save()"></div>
+    <div class="pm-field"><span class="pm-icon">✉</span><input id="p-email" placeholder="Email" oninput="save()"></div>
+    <div class="pm-field"><span class="pm-icon">📞</span><input id="p-phone" placeholder="Phone" oninput="save()"></div>
+    <div class="pm-field"><span class="pm-icon">🔗</span><input id="p-linkedin" placeholder="LinkedIn URL" oninput="save()"></div>
+  </div>
+  <div class="profile-about"><textarea id="p-about" placeholder="About / Summary — write a short professional summary..." rows="3" oninput="autoResize(this);save()"></textarea></div>
+</div>
+
+<!-- EXPERIENCE -->
+<div class="resume-section sec-exp">
+  <div class="rs-header">
+    <span class="rs-title">Experience</span>
+    <button class="rs-add" onclick="addEntry('exp')" title="Add">+</button>
+  </div>
+  <div id="exp-list"></div>
+</div>
+
+<!-- EDUCATION -->
+<div class="resume-section sec-edu">
+  <div class="rs-header">
+    <span class="rs-title">Education</span>
+    <button class="rs-add" onclick="addEntry('edu')" title="Add">+</button>
+  </div>
+  <div id="edu-list"></div>
+</div>
+
+<!-- LICENSES & CERTIFICATIONS -->
+<div class="resume-section sec-lic">
+  <div class="rs-header">
+    <span class="rs-title">Licenses & Certifications</span>
+    <button class="rs-add" onclick="addEntry('lic')" title="Add">+</button>
+  </div>
+  <div id="lic-list"></div>
+</div>
+
+<!-- SKILLS -->
+<div class="resume-section sec-skills">
+  <div class="rs-header">
+    <span class="rs-title">Skills</span>
+    <button class="rs-add" onclick="addSkill()" title="Add" id="skills-add">+</button>
+  </div>
+  <div id="skills-tags"></div>
+  <div class="tag-add-row" id="skills-add-row" style="display:none">
+    <input id="skill-input" placeholder="Add a skill..." onkeydown="if(event.key==='Enter')commitSkill()">
+    <button class="tag-add-btn" onclick="commitSkill()">Add</button>
+  </div>
+</div>
+
+<!-- HONORS & AWARDS -->
+<div class="resume-section sec-honors">
+  <div class="rs-header">
+    <span class="rs-title">Honors & Awards</span>
+    <button class="rs-add" onclick="addEntry('honors')" title="Add">+</button>
+  </div>
+  <div id="honors-list"></div>
+</div>
+
+<!-- VOLUNTEER -->
+<div class="resume-section sec-vol">
+  <div class="rs-header">
+    <span class="rs-title">Volunteer & Leadership</span>
+    <button class="rs-add" onclick="addEntry('vol')" title="Add">+</button>
+  </div>
+  <div id="vol-list"></div>
+</div>
+
+<!-- PROJECTS -->
+<div class="resume-section sec-projects">
+  <div class="rs-header">
+    <span class="rs-title">Projects</span>
+    <button class="rs-add" onclick="addEntry('projects')" title="Add">+</button>
+  </div>
+  <div id="projects-list"></div>
+</div>
+
+</div>
+<script>
+// ── DATA ─────────────────────────────────────────────────
+const SECTIONS = ['exp','edu','lic','honors','vol','projects'];
+const SECTION_CONFIG = {
+  exp:      {titlePlaceholder:'Job Title',orgPlaceholder:'Company / Organization',datePlaceholder:'e.g. May 2025 – Present',locPlaceholder:'Location',hasBullets:true},
+  edu:      {titlePlaceholder:'Degree / Program',orgPlaceholder:'Institution',datePlaceholder:'e.g. Aug 2022 – May 2026',locPlaceholder:'Location',hasBullets:true},
+  lic:      {titlePlaceholder:'License / Certification Name',orgPlaceholder:'Issuing Organization',datePlaceholder:'Issued / Expires',locPlaceholder:'Credential ID',hasBullets:false},
+  honors:   {titlePlaceholder:'Award / Honor',orgPlaceholder:'Issuing Organization',datePlaceholder:'Year',locPlaceholder:'',hasBullets:false},
+  vol:      {titlePlaceholder:'Role',orgPlaceholder:'Organization',datePlaceholder:'Date Range',locPlaceholder:'Location',hasBullets:true},
+  projects: {titlePlaceholder:'Project Name',orgPlaceholder:'Organization / Context',datePlaceholder:'Date',locPlaceholder:'',hasBullets:true},
+};
+
+let data = {
+  profile: {name:'',headline:'',location:'',email:'',phone:'',linkedin:'',about:''},
+  sections: {exp:[],edu:[],lic:[],honors:[],vol:[],projects:[]},
+  skills: [],
+};
+let idCounter = parseInt(localStorage.getItem('resume_id')||'1',10)||1;
+
+function save(){
+  // Gather profile
+  data.profile = {
+    name:     document.getElementById('p-name').value,
+    headline: document.getElementById('p-headline').value,
+    location: document.getElementById('p-location').value,
+    email:    document.getElementById('p-email').value,
+    phone:    document.getElementById('p-phone').value,
+    linkedin: document.getElementById('p-linkedin').value,
+    about:    document.getElementById('p-about').value,
+  };
+  localStorage.setItem('resume_data', JSON.stringify(data));
+  localStorage.setItem('resume_id', idCounter);
+}
+
+function load(){
+  const raw = localStorage.getItem('resume_data');
+  if(raw){ try{ data = JSON.parse(raw); }catch(e){} }
+  idCounter = parseInt(localStorage.getItem('resume_id')||'1',10)||1;
+}
+
+function initProfile(){
+  const p = data.profile;
+  document.getElementById('p-name').value     = p.name||'';
+  document.getElementById('p-headline').value = p.headline||'';
+  document.getElementById('p-location').value = p.location||'';
+  document.getElementById('p-email').value    = p.email||'';
+  document.getElementById('p-phone').value    = p.phone||'';
+  document.getElementById('p-linkedin').value = p.linkedin||'';
+  document.getElementById('p-about').value    = p.about||'';
+  autoResize(document.getElementById('p-about'));
+}
+
+function autoResize(el){ el.style.height='auto'; el.style.height=el.scrollHeight+'px'; }
+
+// ── ENTRIES ───────────────────────────────────────────────
+function addEntry(sec){
+  const entry = { id: idCounter++, title:'', org:'', date:'', loc:'', bullets:[] };
+  data.sections[sec].push(entry);
+  save();
+  renderSection(sec);
+}
+
+function removeEntry(sec, id){
+  data.sections[sec] = data.sections[sec].filter(e=>e.id!==id);
+  save();
+  renderSection(sec);
+}
+
+function updateEntry(sec, id, field, val){
+  const e = data.sections[sec].find(x=>x.id===id);
+  if(e){ e[field]=val; save(); }
+}
+
+function addBullet(sec, id){
+  const e = data.sections[sec].find(x=>x.id===id);
+  if(e){ e.bullets = e.bullets||[]; e.bullets.push(''); save(); renderSection(sec); }
+}
+
+function updateBullet(sec, id, idx, val){
+  const e = data.sections[sec].find(x=>x.id===id);
+  if(e&&e.bullets){ e.bullets[idx]=val; save(); }
+}
+
+function removeBullet(sec, id, idx){
+  const e = data.sections[sec].find(x=>x.id===id);
+  if(e&&e.bullets){ e.bullets.splice(idx,1); save(); renderSection(sec); }
+}
+
+function renderSection(sec){
+  const cfg = SECTION_CONFIG[sec];
+  const list = document.getElementById(sec+'-list');
+  list.innerHTML = '';
+  const entries = data.sections[sec];
+  if(entries.length===0){
+    list.innerHTML = `<div style="color:var(--text4);font-size:11px;font-style:italic">No entries yet. Click + to add.</div>`;
+    return;
+  }
+  entries.forEach(e=>{
+    const div = document.createElement('div');
+    div.className = 'entry-item';
+    const bulletsHtml = cfg.hasBullets ? `
+      <div style="margin-top:6px">
+        ${(e.bullets||[]).map((b,i)=>`
+          <div class="bullet-input-wrap">
+            <span style="color:var(--blue);font-weight:700;font-size:13px;flex-shrink:0">·</span>
+            <input class="bullet-input" value="${escHtml(b)}" placeholder="Add bullet point..."
+              oninput="updateBullet('${sec}',${e.id},${i},this.value)"
+              onblur="save()">
+            <button class="bullet-del" onclick="removeBullet('${sec}',${e.id},${i})">✕</button>
+          </div>
+        `).join('')}
+        <button class="add-bullet-btn" onclick="addBullet('${sec}',${e.id})"><span style="font-size:14px;font-weight:300">+</span> Add bullet</button>
+      </div>
+    ` : '';
+    div.innerHTML = `
+      <div class="entry-header">
+        <div style="flex:1;min-width:0">
+          <div class="entry-title"><input value="${escHtml(e.title)}" placeholder="${cfg.titlePlaceholder}" oninput="updateEntry('${sec}',${e.id},'title',this.value)" onblur="save()"></div>
+          <div class="entry-meta">
+            <div class="entry-org"><input value="${escHtml(e.org)}" placeholder="${cfg.orgPlaceholder}" oninput="updateEntry('${sec}',${e.id},'org',this.value)" onblur="save()"></div>
+            <div class="entry-date"><input value="${escHtml(e.date)}" placeholder="${cfg.datePlaceholder}" oninput="updateEntry('${sec}',${e.id},'date',this.value)" onblur="save()"></div>
+            ${cfg.locPlaceholder?`<div class="entry-loc"><input value="${escHtml(e.loc||'')}" placeholder="${cfg.locPlaceholder}" oninput="updateEntry('${sec}',${e.id},'loc',this.value)" onblur="save()"></div>`:''}
+          </div>
+        </div>
+        <button class="entry-del" onclick="removeEntry('${sec}',${e.id})">✕</button>
+      </div>
+      ${bulletsHtml}
+    `;
+    list.appendChild(div);
+  });
+}
+
+function renderAll(){
+  SECTIONS.forEach(s=>renderSection(s));
+  renderSkills();
+}
+
+function escHtml(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+// ── SKILLS ────────────────────────────────────────────────
+function addSkill(){
+  const row = document.getElementById('skills-add-row');
+  row.style.display = row.style.display==='none'?'flex':'none';
+  if(row.style.display==='flex') document.getElementById('skill-input').focus();
+}
+
+function commitSkill(){
+  const input = document.getElementById('skill-input');
+  const val = input.value.trim();
+  if(!val) return;
+  data.skills.push(val);
+  input.value = '';
+  document.getElementById('skills-add-row').style.display = 'none';
+  save();
+  renderSkills();
+}
+
+function removeSkill(idx){
+  data.skills.splice(idx,1);
+  save();
+  renderSkills();
+}
+
+function renderSkills(){
+  const wrap = document.getElementById('skills-tags');
+  if(data.skills.length===0){
+    wrap.innerHTML = '<div style="color:var(--text4);font-size:11px;font-style:italic">No skills yet. Click + to add.</div>';
+    return;
+  }
+  wrap.innerHTML = '<div class="tags-wrap">'
+    + data.skills.map((s,i)=>`
+        <div class="skill-tag">
+          <span>${escHtml(s)}</span>
+          <button class="tag-del" onclick="removeSkill(${i})">✕</button>
+        </div>
+      `).join('')
+    + '</div>';
+}
+
+// ── INIT ──────────────────────────────────────────────────
+load();
+initProfile();
+renderAll();
+
+// Init with sample data if empty
+if(data.sections.exp.length===0 && !data.profile.name){
+  // Pre-fill Paul's known roles
+  const roles=[
+    {title:'Resident Assistant (Building)',org:'Elizabethtown College — SESP',date:'Aug 2025 – Present',loc:'Elizabethtown, PA',bullets:['Managed residential community of undergraduate students, providing support and crisis response.','Facilitated programming and community-building events for residents.']},
+    {title:'Teaching Assistant — H201',org:'Elizabethtown College',date:'Spring 2026',loc:'Elizabethtown, PA',bullets:['Supported Prof. Benowitz\'s American History course with student research guidance.','Built a multi-step property research guide for historic Marietta, PA properties.']},
+    {title:'Entertainment Supervisor',org:'Hersheypark / Hershey Entertainment & Resorts',date:'Summer 2026',loc:'Hershey, PA',bullets:['']},
+  ];
+  roles.forEach(r=>{
+    data.sections.exp.push({id:idCounter++,title:r.title,org:r.org,date:r.date,loc:r.loc,bullets:r.bullets});
+  });
+  const edu=[{id:idCounter++,title:'Bachelor of Arts',org:'Elizabethtown College',date:'Aug 2022 – May 2026',loc:'Elizabethtown, PA',bullets:['Honors Program','Resident Assistant']}];
+  data.sections.edu = edu;
+  data.profile.name = 'Paul';
+  data.profile.location = 'Elizabethtown, PA';
+  initProfile();
+  save();
+  renderAll();
+}
+</script>
+</body>
+</html>
