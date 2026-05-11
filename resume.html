@@ -350,6 +350,20 @@ if(data.sections.exp.length===0&&!data.profile.name){
   save();initProfile();renderAll();
 }
 
+
+// ── EXPOSE TO GLOBAL SCOPE (required for inline onclick handlers in ES modules) ──
+window.addBullet = addBullet;
+window.addEntry = addEntry;
+window.addSkill = addSkill;
+window.autoResize = autoResize;
+window.commitSkill = commitSkill;
+window.removeBullet = removeBullet;
+window.removeEntry = removeEntry;
+window.removeSkill = removeSkill;
+window.save = save;
+window.toggleTheme = toggleTheme;
+window.updateBullet = updateBullet;
+window.updateEntry = updateEntry;
 }); // end initShim
 </script>
 </body>

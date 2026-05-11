@@ -221,6 +221,12 @@ if(isNaN(jobId)){
   renderPage();
 }
 
+
+// ── EXPOSE TO GLOBAL SCOPE ──
+window.addBullet = addBullet;
+window.autoResize = autoResize;
+window.removeBullet = removeBullet;
+window.toggleTheme = toggleTheme;
 }); // end initShim
 </script>
 </body>

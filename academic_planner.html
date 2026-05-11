@@ -373,6 +373,15 @@ if(savedTheme==='dark'){document.body.classList.add('dark');document.getElementB
 
 renderAll();
 
+
+// ── EXPOSE TO GLOBAL SCOPE (required for inline onclick handlers in ES modules) ──
+window.closeModal = closeModal;
+window.handleOverlayClick = handleOverlayClick;
+window.openAdd = openAdd;
+window.saveAdd = saveAdd;
+window.selectColor = selectColor;
+window.toggleSec = toggleSec;
+window.toggleTheme = toggleTheme;
 }); // end initShim
 </script>
 </body>

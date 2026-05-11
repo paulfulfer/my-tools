@@ -444,6 +444,20 @@ function hexToRgba(hex,alpha){
   return `rgba(${r},${g},${b},${alpha})`;
 }
 
+
+// ── EXPOSE TO GLOBAL SCOPE ──
+window.addAssignment = addAssignment;
+window.archiveCourse = archiveCourse;
+window.deleteAssign = deleteAssign;
+window.deleteCourse = deleteCourse;
+window.saveNotes = saveNotes;
+window.setCurGrade = setCurGrade;
+window.setFinalGrade = setFinalGrade;
+window.setGrade = setGrade;
+window.toggleDone = toggleDone;
+window.toggleSec = toggleSec;
+window.toggleTheme = toggleTheme;
+window.unarchive = unarchive;
 }); // end initShim
 </script>
 </body>

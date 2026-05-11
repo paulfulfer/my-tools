@@ -403,6 +403,20 @@ if(savedTheme==='dark'){document.body.classList.add('dark');document.getElementB
 
 renderAll();
 
+
+// ── EXPOSE TO GLOBAL SCOPE (required for inline onclick handlers in ES modules) ──
+window.closeModal = closeModal;
+window.deleteContact = deleteContact;
+window.handleOverlayClick = handleOverlayClick;
+window.markContacted = markContacted;
+window.openAdd = openAdd;
+window.openDetail = openDetail;
+window.openEdit = openEdit;
+window.renderContacts = renderContacts;
+window.saveContact = saveContact;
+window.setStrength = setStrength;
+window.toggleFilter = toggleFilter;
+window.toggleTheme = toggleTheme;
 }); // end initShim
 </script>
 </body>

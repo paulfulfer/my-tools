@@ -754,6 +754,28 @@ g('s-date').value=`${today.getFullYear()}-${String(today.getMonth()+1).padStart(
 calcStats();
 renderTabContent();
 
+
+// ── EXPOSE TO GLOBAL SCOPE (required for inline onclick handlers in ES modules) ──
+window.addDrill = addDrill;
+window.addRoutine = addRoutine;
+window.adjustSinks = adjustSinks;
+window.closeModal = closeModal;
+window.deleteRoutine = deleteRoutine;
+window.deleteSession = deleteSession;
+window.handleOverlayClick = handleOverlayClick;
+window.logSession = logSession;
+window.openQuickLog = openQuickLog;
+window.removeDrill = removeDrill;
+window.removeFromRoutine = removeFromRoutine;
+window.saveQuickLog = saveQuickLog;
+window.setPutt = setPutt;
+window.switchTab = switchTab;
+window.toggleTheme = toggleTheme;
+window.toggleTimer = toggleTimer;
+window.updateDrillField = updateDrillField;
+window.updateDrillNum = updateDrillNum;
+window.updatePuttDrill = updatePuttDrill;
+window.updateRoutineName = updateRoutineName;
 }); // end initShim
 </script>
 </body>

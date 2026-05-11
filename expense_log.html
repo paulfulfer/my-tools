@@ -277,6 +277,12 @@ const today = new Date();
 document.getElementById('f-date').value = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
 renderAll();
 
+
+// ── EXPOSE TO GLOBAL SCOPE (required for inline onclick handlers in ES modules) ──
+window.deleteEntry = deleteEntry;
+window.logExpense = logExpense;
+window.toggleSec = toggleSec;
+window.toggleTheme = toggleTheme;
 }); // end initShim
 </script>
 </body>

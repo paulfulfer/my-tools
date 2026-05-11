@@ -445,6 +445,14 @@ document.getElementById('beginning-balance').value = beginningBalance || '';
 renderAll();
 renderProjection();
 
+
+// ── EXPOSE TO GLOBAL SCOPE (required for inline onclick handlers in ES modules) ──
+window.deleteDeposit = deleteDeposit;
+window.logDeposit = logDeposit;
+window.renderProjection = renderProjection;
+window.saveBalance = saveBalance;
+window.toggleSec = toggleSec;
+window.toggleTheme = toggleTheme;
 }); // end initShim
 </script>
 </body>

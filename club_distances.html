@@ -488,6 +488,16 @@ if(clubs.length===0 && localStorage.getItem('golf_equipment')){
   renderAll();
 }
 
+
+// ── EXPOSE TO GLOBAL SCOPE (required for inline onclick handlers in ES modules) ──
+window.closeModal = closeModal;
+window.deleteSession = deleteSession;
+window.handleOverlayClick = handleOverlayClick;
+window.logSession = logSession;
+window.syncClubs = syncClubs;
+window.toggleSec = toggleSec;
+window.toggleTheme = toggleTheme;
+window.updateClubSelect = updateClubSelect;
 }); // end initShim
 </script>
 </body>

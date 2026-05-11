@@ -560,6 +560,21 @@ renderCardTabs();
 renderProgram();
 renderHistory();
 
+
+// ── EXPOSE TO GLOBAL SCOPE (required for inline onclick handlers in ES modules) ──
+window.closeModal = closeModal;
+window.createCard = createCard;
+window.deleteCard = deleteCard;
+window.deleteSession = deleteSession;
+window.handleOverlayClick = handleOverlayClick;
+window.logSession = logSession;
+window.openAddCard = openAddCard;
+window.savePRs = savePRs;
+window.selectCard = selectCard;
+window.selectDay = selectDay;
+window.selectWeek = selectWeek;
+window.toggleSec = toggleSec;
+window.toggleTheme = toggleTheme;
 }); // end initShim
 </script>
 </body>

@@ -490,6 +490,19 @@ const savedTheme = localStorage.getItem('global_theme');
 if(savedTheme==='dark'){document.body.classList.add('dark');document.getElementById('theme-btn').textContent='◑ light';}
 renderAll();
 
+
+// ── EXPOSE TO GLOBAL SCOPE (required for inline onclick handlers in ES modules) ──
+window.closeModal = closeModal;
+window.deleteItem = deleteItem;
+window.handleOverlayClick = handleOverlayClick;
+window.openAdd = openAdd;
+window.openEdit = openEdit;
+window.openView = openView;
+window.saveAdd = saveAdd;
+window.saveEdit = saveEdit;
+window.toggleSec = toggleSec;
+window.toggleStatus = toggleStatus;
+window.toggleTheme = toggleTheme;
 }); // end initShim
 </script>
 </body>

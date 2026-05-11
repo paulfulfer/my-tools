@@ -584,6 +584,26 @@ function calc(){
 
 load();initDefaults();renderJobs();renderExpenses();renderSchedules();renderGoals();calc();
 
+
+// ── EXPOSE TO GLOBAL SCOPE (required for inline onclick handlers in ES modules) ──
+window.save = save;
+window.addExpense = addExpense;
+window.addGoal = addGoal;
+window.addJob = addJob;
+window.addSchedule = addSchedule;
+window.calcProjection = calcProjection;
+window.dismissPeriodTotals = dismissPeriodTotals;
+window.removeExpense = removeExpense;
+window.removeGoal = removeGoal;
+window.removeJob = removeJob;
+window.removeSchedule = removeSchedule;
+window.restoreExpense = restoreExpense;
+window.restorePeriodTotals = restorePeriodTotals;
+window.toggleSec = toggleSec;
+window.updateExp = updateExp;
+window.updateGoal = updateGoal;
+window.updateJob = updateJob;
+window.updateSchedule = updateSchedule;
 }); // end initShim
 </script>
 </body>
