@@ -100,6 +100,21 @@ hr{border:none;border-top:1px solid var(--border);margin:1.4rem 0}
 .rs-val{font-size:21px;font-weight:600;letter-spacing:-.01em}
 .rs-sub{font-size:11px;color:var(--text3);margin-top:3px}
 </style>
+<script>
+// Prevent dark mode flash — apply theme before first paint
+(function(){
+  try{
+    if(localStorage.getItem('global_theme')==='dark'){
+      document.documentElement.style.setProperty('--flash-bg','#1e1e1e');
+      document.documentElement.classList.add('pre-dark');
+    }
+  }catch(e){}
+})();
+</script>
+<style>
+/* Applied instantly before JS loads to prevent flash */
+html.pre-dark body{background:#1e1e1e !important;color:#e2e2e2 !important}
+</style>
 </head>
 <body>
 <div class="container">
@@ -302,6 +317,8 @@ function saveBalance(){
   beginningBalance = parseFloat(document.getElementById('beginning-balance').value) || 0;
   localStorage.setItem('ira_current_balance',   currentBalance);
   localStorage.setItem('ira_beginning_balance', beginningBalance);
+  renderAll();
+  renderProjection();
 }
 
 function getTotal(){ return deposits.reduce((s,d) => s + d.amount, 0); }
@@ -395,6 +412,7 @@ function logDeposit(){
   if(total+amount>LIMIT){ if(!confirm(`This deposit would bring your total to ${fmt$(total+amount)}, over the $7,500 limit. Add anyway?`)) return; }
   deposits.push({id:Date.now(),label,date,amount});
   localStorage.setItem('ira_deposits',JSON.stringify(deposits));
+  // shim handles sync
   document.getElementById('f-label').value='';document.getElementById('f-amount').value='';
   renderAll();
 }
@@ -402,6 +420,7 @@ function logDeposit(){
 function deleteDeposit(id){
   deposits=deposits.filter(d=>d.id!==id);
   localStorage.setItem('ira_deposits',JSON.stringify(deposits));
+  // shim handles sync
   renderAll();
 }
 
@@ -428,7 +447,7 @@ function toggleSec(name){
 }
 
 function toggleTheme(){
-  const dark=document.body.classList.toggle('dark');
+  const dark=document.body.classList.toggle('dark');document.documentElement.classList.remove('pre-dark');
   document.getElementById('theme-btn').textContent=dark?'◑ light':'◑ dark';
   localStorage.setItem('global_theme',dark?'dark':'light');
 }
@@ -448,6 +467,7 @@ renderProjection();
 
 // ── EXPOSE TO GLOBAL SCOPE (required for inline onclick handlers in ES modules) ──
 window.deleteDeposit = deleteDeposit;
+window.renderAll = renderAll;
 window.logDeposit = logDeposit;
 window.renderProjection = renderProjection;
 window.saveBalance = saveBalance;

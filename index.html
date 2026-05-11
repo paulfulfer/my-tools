@@ -28,7 +28,7 @@
   --purple:#9b87f5;--purple-bg:#1a1530;
 }
 body{background:var(--bg);color:var(--text);font-family:'SF Mono','Fira Code','Cascadia Code',monospace;font-size:13px;line-height:1.6;padding:1.5rem 1rem;transition:background .2s,color .2s;min-height:100vh}
-.container{max-width:820px;margin:0 auto}
+.container{max-width:1100px;margin:0 auto}
 .header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:2.5rem}
 .page-title{font-size:17px;font-weight:600;letter-spacing:.02em;margin-bottom:2px}
 .page-sub{font-size:11px;color:var(--text3);letter-spacing:.03em}
@@ -36,7 +36,7 @@ body{background:var(--bg);color:var(--text);font-family:'SF Mono','Fira Code','C
 .btn{font-family:inherit;font-size:11px;font-weight:600;padding:5px 13px;border-radius:20px;border:1px solid var(--border2);background:var(--bg3);color:var(--text2);cursor:pointer;letter-spacing:.04em;text-transform:uppercase;transition:all .15s}
 .btn:hover{background:var(--bg4);color:var(--text)}
 .sec-label{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.12em;margin-bottom:.55rem;padding-bottom:5px;border-bottom:1px solid var(--border)}
-.tools-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px;margin-bottom:2rem}
+.tools-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;margin-bottom:2rem}
 .tool-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--rl);padding:16px 18px;text-decoration:none;display:block;transition:border-color .15s,background .15s;position:relative;overflow:hidden}
 .tool-card:hover{border-color:var(--border2);background:var(--bg3)}
 .tool-card:hover .tc-arrow{opacity:1;transform:translateX(0)}
@@ -52,6 +52,21 @@ body{background:var(--bg);color:var(--text);font-family:'SF Mono','Fira Code','C
 .dot{width:6px;height:6px;border-radius:50%;display:inline-block;margin-right:5px;vertical-align:middle}
 .dot-green{background:var(--green)}
 hr{border:none;border-top:1px solid var(--border);margin:1.6rem 0}
+</style>
+<script>
+// Prevent dark mode flash — apply theme before first paint
+(function(){
+  try{
+    if(localStorage.getItem('global_theme')==='dark'){
+      document.documentElement.style.setProperty('--flash-bg','#1e1e1e');
+      document.documentElement.classList.add('pre-dark');
+    }
+  }catch(e){}
+})();
+</script>
+<style>
+/* Applied instantly before JS loads to prevent flash */
+html.pre-dark body{background:#1e1e1e !important;color:#e2e2e2 !important}
 </style>
 </head>
 <body>
@@ -171,7 +186,7 @@ initShim(function() {
   // ── PAGE INIT (runs after auth + data loaded) ──────────────
 
 function toggleTheme(){
-  const dark=document.body.classList.toggle('dark');
+  const dark=document.body.classList.toggle('dark');document.documentElement.classList.remove('pre-dark');
   document.getElementById('theme-btn').textContent=dark?'◑ light':'◑ dark';
   localStorage.setItem('global_theme',dark?'dark':'light');
 }

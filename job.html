@@ -70,6 +70,21 @@ hr{border:none;border-top:1px solid var(--border);margin:1.2rem 0}
 /* Not found */
 .not-found{text-align:center;padding:3rem;color:var(--text3)}
 </style>
+<script>
+// Prevent dark mode flash — apply theme before first paint
+(function(){
+  try{
+    if(localStorage.getItem('global_theme')==='dark'){
+      document.documentElement.style.setProperty('--flash-bg','#1e1e1e');
+      document.documentElement.classList.add('pre-dark');
+    }
+  }catch(e){}
+})();
+</script>
+<style>
+/* Applied instantly before JS loads to prevent flash */
+html.pre-dark body{background:#1e1e1e !important;color:#e2e2e2 !important}
+</style>
 </head>
 <body>
 <div class="container" id="app">
@@ -210,7 +225,7 @@ function removeBullet(field,idx){
 function escHtml(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
 function toggleTheme(){
-  const dark=document.body.classList.toggle('dark');
+  const dark=document.body.classList.toggle('dark');document.documentElement.classList.remove('pre-dark');
   g('theme-btn').textContent=dark?'◑ light':'◑ dark';
   localStorage.setItem('global_theme',dark?'dark':'light');
 }

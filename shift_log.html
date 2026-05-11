@@ -6,8 +6,25 @@
 <title>Shift Log</title>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{--bg:#f5f5f3;--bg2:#ffffff;--bg3:#efefed;--bg4:#e4e4e2;--border:#dddddb;--border2:#c8c8c6;--text:#1a1a1a;--text2:#555;--text3:#999;--text4:#bbb;--green:#0e9e70;--green-bg:#e0f5ec;--green-txt:#0e9e70;--amber:#c27d08;--amber-bg:#fdf0d5;--amber-txt:#c27d08;--blue:#2a7de1;--blue-bg:#deeafa;--blue-txt:#2a7de1;--red:#d03030;--red-bg:#fce8e8;--red-txt:#d03030;--purple:#6c5bbf;--purple-bg:#eae8fa;--r:8px;--rl:12px}
-.dark{--bg:#1e1e1e;--bg2:#272727;--bg3:#2f2f2f;--bg4:#383838;--border:#3a3a3a;--border2:#484848;--text:#e2e2e2;--text2:#a0a0a0;--text3:#666;--text4:#444;--green:#1fbd8a;--green-bg:#0d2e22;--green-txt:#1fbd8a;--amber:#e6a020;--amber-bg:#2c1f06;--amber-txt:#e6a020;--blue:#4a9eff;--blue-bg:#0a1e35;--blue-txt:#4a9eff;--red:#f05050;--red-bg:#2a0f0f;--red-txt:#f05050;--purple:#9b87f5;--purple-bg:#1a1530}
+:root{
+  --bg:#f5f5f3;--bg2:#ffffff;--bg3:#efefed;--bg4:#e4e4e2;
+  --border:#dddddb;--border2:#c8c8c6;
+  --text:#1a1a1a;--text2:#555;--text3:#999;--text4:#bbb;
+  --green:#0e9e70;--green-bg:#e0f5ec;--green-txt:#0e9e70;
+  --amber:#c27d08;--amber-bg:#fdf0d5;--amber-txt:#c27d08;
+  --blue:#2a7de1;--blue-bg:#deeafa;--blue-txt:#2a7de1;
+  --red:#d03030;--red-bg:#fce8e8;--red-txt:#d03030;
+  --r:8px;--rl:12px;
+}
+.dark{
+  --bg:#1e1e1e;--bg2:#272727;--bg3:#2f2f2f;--bg4:#383838;
+  --border:#3a3a3a;--border2:#484848;
+  --text:#e2e2e2;--text2:#a0a0a0;--text3:#666;--text4:#444;
+  --green:#1fbd8a;--green-bg:#0d2e22;--green-txt:#1fbd8a;
+  --amber:#e6a020;--amber-bg:#2c1f06;--amber-txt:#e6a020;
+  --blue:#4a9eff;--blue-bg:#0a1e35;--blue-txt:#4a9eff;
+  --red:#f05050;--red-bg:#2a0f0f;--red-txt:#f05050;
+}
 body{background:var(--bg);color:var(--text);font-family:'SF Mono','Fira Code','Cascadia Code',monospace;font-size:13px;line-height:1.6;padding:1.5rem 1rem;transition:background .2s,color .2s;min-height:100vh}
 .container{max-width:820px;margin:0 auto}
 .header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1.75rem}
@@ -23,21 +40,23 @@ body{background:var(--bg);color:var(--text);font-family:'SF Mono','Fira Code','C
 .sec-toggle.open{transform:rotate(180deg)}
 .sec-body.collapsed{display:none}
 hr{border:none;border-top:1px solid var(--border);margin:1.4rem 0}
+/* Metrics */
 .pgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(118px,1fr));gap:8px;margin:.5rem 0 1rem}
 .met{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:11px 13px}
 .met-label{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:3px}
 .met-val{font-size:19px;font-weight:600;color:var(--text);letter-spacing:-.01em}
 .met-val.green{color:var(--green)}.met-val.blue{color:var(--blue)}.met-val.amber{color:var(--amber)}
 .met-sub{font-size:10px;color:var(--text3);margin-top:2px}
+/* Entry form */
 .entry-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--rl);padding:16px 18px;margin-bottom:1rem}
 .form-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px;align-items:flex-end}
-.form-group{display:flex;flex-direction:column;gap:3px;flex:1;min-width:120px}
-.form-group.narrow{flex:0 0 auto;min-width:90px}
+.form-group{display:flex;flex-direction:column;gap:3px;flex:1;min-width:110px}
 .form-group label{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.08em}
 .form-group input,.form-group select,.form-group textarea{font-family:inherit;font-size:12px;padding:5px 9px;border-radius:6px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);transition:border-color .15s}
 .form-group input:focus,.form-group select:focus,.form-group textarea:focus{outline:none;border-color:var(--blue)}
 .form-group textarea{resize:vertical;min-height:38px;line-height:1.4}
 .form-actions{display:flex;justify-content:flex-end;margin-top:4px}
+/* Shift list */
 .shift-list{display:flex;flex-direction:column;gap:6px}
 .shift-item{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:10px 14px;display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
 .shift-item:hover{border-color:var(--border2)}
@@ -53,17 +72,38 @@ hr{border:none;border-top:1px solid var(--border);margin:1.4rem 0}
 .si-del{background:none;border:none;color:var(--text4);cursor:pointer;font-size:14px;padding:0;line-height:1;font-family:inherit;transition:color .15s}
 .si-del:hover{color:var(--red)}
 .empty-state{text-align:center;padding:2rem;color:var(--text3);font-size:12px;border:1px dashed var(--border2);border-radius:var(--r)}
-.job-sesp{color:#2a7de1}.job-honors{color:#6c5bbf}.job-intern{color:#0e9e70}.job-ra{color:#c27d08}
-.wages-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px}
-.wage-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:11px 14px}
-.wage-label{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px}
-.wage-input-row{display:flex;align-items:center;gap:4px}
-.wage-prefix{font-size:12px;color:var(--text3)}
-.wage-input-row input{flex:1;font-family:inherit;font-size:13px;font-weight:600;padding:4px 7px;border-radius:6px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);text-align:right}
-.wage-input-row input:focus{outline:none;border-color:var(--blue)}
+/* Job Details section */
+.jobs-list{display:flex;flex-direction:column;gap:8px;margin-bottom:10px}
+.job-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:11px 14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.jc-title-input{font-family:inherit;font-size:12px;font-weight:600;padding:4px 9px;border-radius:6px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);flex:1;min-width:100px;outline:none;transition:border-color .15s}
+.jc-title-input:focus{border-color:var(--blue)}
+.jc-wage-input{font-family:inherit;font-size:12px;font-weight:600;padding:4px 9px;border-radius:6px;border:1px solid var(--border2);background:var(--bg3);color:var(--green);width:80px;text-align:right;outline:none;transition:border-color .15s}
+.jc-wage-input:focus{border-color:var(--green)}
+.jc-unit-select{font-family:inherit;font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);outline:none}
+.jc-label{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;white-space:nowrap}
+.jc-del{background:none;border:none;color:var(--text4);cursor:pointer;font-size:14px;padding:0 4px;font-family:inherit;transition:color .15s;flex-shrink:0}
+.jc-del:hover{color:var(--red)}
+.add-job-btn{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;padding:9px;border:1px dashed var(--border2);border-radius:var(--r);background:transparent;color:var(--text3);font-family:inherit;font-size:12px;cursor:pointer;transition:all .15s}
+.add-job-btn:hover{border-color:var(--blue);color:var(--blue)}
+/* Save indicator */
 .saving-indicator{position:fixed;bottom:1rem;right:1rem;background:var(--green-bg);color:var(--green-txt);border:1px solid var(--green);border-radius:20px;padding:4px 12px;font-size:11px;font-weight:600;opacity:0;transition:opacity .3s;pointer-events:none;z-index:100}
 .saving-indicator.show{opacity:1}
 #auth-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:9999;align-items:center;justify-content:center}
+</style>
+<script>
+// Prevent dark mode flash — apply theme before first paint
+(function(){
+  try{
+    if(localStorage.getItem('global_theme')==='dark'){
+      document.documentElement.style.setProperty('--flash-bg','#1e1e1e');
+      document.documentElement.classList.add('pre-dark');
+    }
+  }catch(e){}
+})();
+</script>
+<style>
+/* Applied instantly before JS loads to prevent flash */
+html.pre-dark body{background:#1e1e1e !important;color:#e2e2e2 !important}
 </style>
 </head>
 <body>
@@ -80,7 +120,7 @@ hr{border:none;border-top:1px solid var(--border);margin:1.4rem 0}
   <div class="header">
     <div>
       <div class="page-title">Paul's Shift Log</div>
-      <div class="page-sub">hours & earnings tracker · 2026</div>
+      <div class="page-sub">hours & earnings tracker</div>
     </div>
     <div class="header-actions">
       <a href="index.html" class="btn">← home</a>
@@ -88,87 +128,152 @@ hr{border:none;border-top:1px solid var(--border);margin:1.4rem 0}
       <button class="btn" id="signout-btn" style="display:none">Sign out</button>
     </div>
   </div>
+
+  <!-- Summary metrics -->
   <div class="pgrid">
     <div class="met"><div class="met-label">Total Hours</div><div class="met-val blue" id="met-hours">0.0</div><div class="met-sub">all jobs</div></div>
     <div class="met"><div class="met-label">Total Gross</div><div class="met-val green" id="met-gross">$0.00</div><div class="met-sub">before tax</div></div>
     <div class="met"><div class="met-label">Shifts Logged</div><div class="met-val" id="met-shifts">0</div><div class="met-sub">all time</div></div>
     <div class="met"><div class="met-label">This Week</div><div class="met-val amber" id="met-week">$0.00</div><div class="met-sub">gross earnings</div></div>
   </div>
+
+  <!-- Per-job breakdown -->
   <div class="sec-header" onclick="toggleSec('breakdown')"><span class="sec-label">Per-Job Breakdown</span><span class="sec-toggle open" id="toggle-breakdown">▼</span></div>
   <div class="sec-body" id="sec-breakdown"><div class="pgrid" id="job-breakdown"></div></div>
+
+  <!-- Log shift -->
   <div class="sec-header" onclick="toggleSec('entry')"><span class="sec-label">Log a Shift</span><span class="sec-toggle open" id="toggle-entry">▼</span></div>
   <div class="sec-body" id="sec-entry">
     <div class="entry-card">
       <div class="form-row">
-        <div class="form-group"><label>Job</label><select id="f-job"><option value="SESP">SESP</option><option value="Honors Center">Honors Center</option><option value="Internship">Internship</option></select></div>
+        <div class="form-group"><label>Job</label><select id="f-job"></select></div>
         <div class="form-group"><label>Date</label><input type="date" id="f-date"></div>
-        <div class="form-group narrow"><label>Clock In</label><input type="time" id="f-in"></div>
-        <div class="form-group narrow"><label>Clock Out</label><input type="time" id="f-out"></div>
+        <div class="form-group" style="max-width:100px"><label>Clock In</label><input type="time" id="f-in"></div>
+        <div class="form-group" style="max-width:100px"><label>Clock Out</label><input type="time" id="f-out"></div>
       </div>
       <div class="form-row"><div class="form-group"><label>Note (optional)</label><textarea id="f-note" placeholder="e.g. desk coverage, event setup..."></textarea></div></div>
       <div class="form-actions"><button class="btn btn-green" onclick="logShift()">+ Log Shift</button></div>
     </div>
   </div>
+
+  <!-- Shift history -->
   <div class="sec-header" onclick="toggleSec('history')"><span class="sec-label">Shift History</span><span class="sec-toggle open" id="toggle-history">▼</span></div>
   <div class="sec-body" id="sec-history"><div class="shift-list" id="shift-list"></div></div>
+
   <hr>
-  <div class="sec-header" onclick="toggleSec('wages')"><span class="sec-label">Hourly Wages</span><span class="sec-toggle" id="toggle-wages">▼</span></div>
-  <div class="sec-body collapsed" id="sec-wages">
-    <div class="wages-grid">
-      <div class="wage-card"><div class="wage-label job-sesp">SESP</div><div class="wage-input-row"><span class="wage-prefix">$</span><input type="number" id="wage-SESP" step="0.01" min="0" placeholder="0.00" oninput="saveWages()"></div></div>
-      <div class="wage-card"><div class="wage-label job-honors">Honors Center</div><div class="wage-input-row"><span class="wage-prefix">$</span><input type="number" id="wage-Honors Center" step="0.01" min="0" placeholder="0.00" oninput="saveWages()"></div></div>
-      <div class="wage-card"><div class="wage-label job-intern">Internship</div><div class="wage-input-row"><span class="wage-prefix">$</span><input type="number" id="wage-Internship" step="0.01" min="0" placeholder="0.00" oninput="saveWages()"></div></div>
-    </div>
+
+  <!-- Job Details -->
+  <div class="sec-header" onclick="toggleSec('jobs')"><span class="sec-label">Job Details</span><span class="sec-toggle" id="toggle-jobs">▼</span></div>
+  <div class="sec-body collapsed" id="sec-jobs">
+    <div class="jobs-list" id="jobs-list"></div>
+    <button class="add-job-btn" onclick="addJob()"><span style="font-size:16px;font-weight:300">+</span> Add Job</button>
   </div>
 </div>
 
 <script type="module">
 import { signIn, signOutUser, onAuth, getBlob, setBlob, getCollection, addToCollection, deleteFromCollection } from './firebase-config.js';
 
-const JOBS = ['SESP','Honors Center','Internship'];
-const JOB_COLORS = {'SESP':'job-sesp','Honors Center':'job-honors','Internship':'job-intern'};
-let shifts = [], wages = {}, UID = null;
+let shifts = [], jobs = [], UID = null;
+
+// Default jobs if none exist
+const DEFAULT_JOBS = [
+  {id:'j1', title:'SESP',          wage:10.25, unit:'hrs'},
+  {id:'j2', title:'Honors Center', wage:10.25, unit:'hrs'},
+  {id:'j3', title:'Internship',    wage:15.00, unit:'hrs'},
+];
 
 // ── AUTH ────────────────────────────────────────────────
 document.getElementById('signin-btn').onclick = () => signIn();
 document.getElementById('signout-btn').onclick = () => signOutUser();
 
 onAuth(async user => {
-  const overlay = document.getElementById('auth-overlay');
   if(user){
     UID = user.uid;
-    overlay.style.display = 'none';
+    document.getElementById('auth-overlay').style.display = 'none';
     document.getElementById('signout-btn').style.display = 'block';
     await loadAll();
-    renderAll();
   } else {
     UID = null;
-    overlay.style.display = 'flex';
+    document.getElementById('auth-overlay').style.display = 'flex';
     document.getElementById('signout-btn').style.display = 'none';
   }
 });
 
-// ── LOAD / SAVE ─────────────────────────────────────────
 async function loadAll(){
-  const [shiftsData, wagesData] = await Promise.all([
+  const [shiftsData, jobsData] = await Promise.all([
     getCollection('shifts'),
-    getBlob('wages'),
+    getBlob('shift_jobs'),
   ]);
-  shifts = shiftsData.sort((a,b)=>new Date(b.date+' '+b.inT)-new Date(a.date+' '+a.inT));
-  wages  = wagesData || {};
-  JOBS.forEach(j=>{ const el=document.getElementById('wage-'+j); if(el&&wages[j]) el.value=wages[j]; });
+  shifts = shiftsData.sort((a,b)=> new Date(b.date+' '+(b.inT||'')) - new Date(a.date+' '+(a.inT||'')));
+  jobs   = jobsData?.jobs || DEFAULT_JOBS;
+  renderJobSelect();
+  renderJobsList();
+  renderAll();
 }
 
-function showSaved(){ const el=document.getElementById('saving-indicator'); el.classList.add('show'); setTimeout(()=>el.classList.remove('show'),1500); }
-
-async function saveWages(){
-  JOBS.forEach(j=>{ const el=document.getElementById('wage-'+j); if(el) wages[j]=parseFloat(el.value)||0; });
-  await setBlob('wages', wages);
-  showSaved(); renderAll();
+function showSaved(){
+  const el = document.getElementById('saving-indicator');
+  el.classList.add('show');
+  setTimeout(()=>el.classList.remove('show'), 1500);
 }
-window.saveWages = saveWages;
 
-// ── LOGIC ────────────────────────────────────────────────
+async function saveJobs(){
+  await setBlob('shift_jobs', {jobs});
+  showSaved();
+}
+
+// ── JOB DETAILS ─────────────────────────────────────────
+function renderJobsList(){
+  const list = document.getElementById('jobs-list');
+  list.innerHTML = '';
+  jobs.forEach((j,i) => {
+    const div = document.createElement('div');
+    div.className = 'job-card';
+    div.innerHTML = `
+      <span class="jc-label">Title</span>
+      <input class="jc-title-input" value="${esc(j.title)}" placeholder="Job title"
+        oninput="updateJobField('${j.id}','title',this.value)">
+      <span class="jc-label">Wage $</span>
+      <input class="jc-wage-input" type="number" step="0.25" value="${j.wage||''}" placeholder="0.00"
+        oninput="updateJobField('${j.id}','wage',+this.value)">
+      <span class="jc-label">Unit</span>
+      <select class="jc-unit-select" onchange="updateJobField('${j.id}','unit',this.value)">
+        <option value="hrs" ${j.unit==='hrs'?'selected':''}>hrs</option>
+        <option value="nights" ${j.unit==='nights'?'selected':''}>nights</option>
+      </select>
+      <button class="jc-del" onclick="removeJob('${j.id}')" title="Remove job">✕</button>
+    `;
+    list.appendChild(div);
+  });
+  renderJobSelect();
+}
+
+function renderJobSelect(){
+  const sel = document.getElementById('f-job');
+  const current = sel.value;
+  sel.innerHTML = jobs.map(j=>`<option value="${esc(j.id)}">${esc(j.title)}</option>`).join('');
+  if(jobs.find(j=>j.id===current)) sel.value = current;
+}
+
+window.addJob = function(){
+  jobs.push({id:'j'+Date.now(), title:'New Job', wage:0, unit:'hrs'});
+  renderJobsList();
+  saveJobs();
+};
+
+window.removeJob = function(id){
+  if(jobs.length<=1){ alert('At least one job is required.'); return; }
+  jobs = jobs.filter(j=>j.id!==id);
+  renderJobsList();
+  saveJobs();
+};
+
+window.updateJobField = function(id, field, val){
+  const j = jobs.find(x=>x.id===id);
+  if(j){ j[field]=val; renderJobSelect(); renderAll(); saveJobs(); }
+};
+
+// ── SHIFT LOG ────────────────────────────────────────────
 function parseHours(inT, outT){
   if(!inT||!outT) return 0;
   const [ih,im]=inT.split(':').map(Number),[oh,om]=outT.split(':').map(Number);
@@ -178,64 +283,88 @@ function parseHours(inT, outT){
 function fmt$(n){ return '$'+n.toFixed(2); }
 
 window.logShift = async function(){
-  const job=document.getElementById('f-job').value, date=document.getElementById('f-date').value;
-  const inT=document.getElementById('f-in').value, outT=document.getElementById('f-out').value;
-  const note=document.getElementById('f-note').value.trim();
+  const jobId = document.getElementById('f-job').value;
+  const job   = jobs.find(j=>j.id===jobId);
+  const date  = document.getElementById('f-date').value;
+  const inT   = document.getElementById('f-in').value;
+  const outT  = document.getElementById('f-out').value;
+  const note  = document.getElementById('f-note').value.trim();
   if(!date||!inT||!outT){ alert('Please fill in date, clock-in, and clock-out.'); return; }
-  const hours=parseHours(inT,outT);
+  const hours = parseHours(inT, outT);
   if(hours<=0){ alert('Clock-out must be after clock-in.'); return; }
-  const shift={job,date,inT,outT,note,hours};
+  const shift = {jobId, jobTitle: job?.title||'Unknown', date, inT, outT, note, hours};
   const id = await addToCollection('shifts', shift);
   shifts.unshift({...shift, id});
-  document.getElementById('f-note').value=''; document.getElementById('f-in').value=''; document.getElementById('f-out').value='';
+  document.getElementById('f-note').value='';
+  document.getElementById('f-in').value='';
+  document.getElementById('f-out').value='';
   showSaved(); renderAll();
 };
 
 window.deleteShift = async function(id){
   await deleteFromCollection('shifts', id);
-  shifts=shifts.filter(s=>s.id!==id);
+  shifts = shifts.filter(s=>s.id!==id);
   showSaved(); renderAll();
 };
+
+function getJobWage(jobId){
+  const j = jobs.find(x=>x.id===jobId);
+  return j?.wage||0;
+}
 
 function getWeekGross(){
   const now=new Date(), day=now.getDay();
   const monday=new Date(now); monday.setDate(now.getDate()-(day===0?6:day-1)); monday.setHours(0,0,0,0);
-  return shifts.filter(s=>new Date(s.date+'T00:00:00')>=monday).reduce((sum,s)=>sum+s.hours*(wages[s.job]||0),0);
+  return shifts.filter(s=>new Date(s.date+'T00:00:00')>=monday).reduce((s,x)=>s+x.hours*getJobWage(x.jobId),0);
 }
 
 function renderAll(){
-  const totalHours=shifts.reduce((s,x)=>s+x.hours,0);
-  const totalGross=shifts.reduce((s,x)=>s+x.hours*(wages[x.job]||0),0);
-  document.getElementById('met-hours').textContent=totalHours.toFixed(1);
-  document.getElementById('met-gross').textContent=fmt$(totalGross);
-  document.getElementById('met-shifts').textContent=shifts.length;
-  document.getElementById('met-week').textContent=fmt$(getWeekGross());
-  const bd=document.getElementById('job-breakdown'); bd.innerHTML='';
-  JOBS.forEach(j=>{
-    const jH=shifts.filter(s=>s.job===j).reduce((s,x)=>s+x.hours,0);
-    const jG=jH*(wages[j]||0);
+  const totalHours = shifts.reduce((s,x)=>s+x.hours,0);
+  const totalGross = shifts.reduce((s,x)=>s+x.hours*getJobWage(x.jobId),0);
+  document.getElementById('met-hours').textContent  = totalHours.toFixed(1);
+  document.getElementById('met-gross').textContent  = fmt$(totalGross);
+  document.getElementById('met-shifts').textContent = shifts.length;
+  document.getElementById('met-week').textContent   = fmt$(getWeekGross());
+
+  // Per-job breakdown
+  const bd = document.getElementById('job-breakdown'); bd.innerHTML='';
+  jobs.forEach(j=>{
+    const jShifts = shifts.filter(s=>s.jobId===j.id);
+    const jHours  = jShifts.reduce((s,x)=>s+x.hours,0);
+    const jGross  = jHours*(j.wage||0);
     const div=document.createElement('div'); div.className='met';
-    div.innerHTML=`<div class="met-label ${JOB_COLORS[j]}">${j}</div><div class="met-val">${jH.toFixed(1)}h</div><div class="met-sub">${fmt$(jG)} gross</div>`;
+    div.innerHTML=`<div class="met-label" style="color:var(--blue)">${esc(j.title)}</div><div class="met-val">${jHours.toFixed(1)}h</div><div class="met-sub">${fmt$(jGross)} gross</div>`;
     bd.appendChild(div);
   });
+
+  // Shift list
   const list=document.getElementById('shift-list');
-  if(shifts.length===0){ list.innerHTML='<div class="empty-state">No shifts logged yet.</div>'; return; }
+  if(shifts.length===0){ list.innerHTML='<div class="empty-state">No shifts logged yet. Clock in above.</div>'; return; }
   list.innerHTML='';
   shifts.forEach(s=>{
-    const gross=s.hours*(wages[s.job]||0);
+    const gross=s.hours*getJobWage(s.jobId);
     const fmtDate=new Date(s.date+'T00:00:00').toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});
     const div=document.createElement('div'); div.className='shift-item';
-    div.innerHTML=`<div class="si-left"><div class="si-top"><span class="si-job ${JOB_COLORS[s.job]||''}">${s.job}</span><span class="si-date">${fmtDate}</span></div><div class="si-times">${s.inT} → ${s.outT}</div>${s.note?`<div class="si-note">${s.note}</div>`:''}</div><div class="si-right"><span class="si-hours">${s.hours.toFixed(1)}h</span><span class="si-gross">${fmt$(gross)}</span><button class="si-del" onclick="deleteShift('${s.id}')">✕</button></div>`;
+    div.innerHTML=`
+      <div class="si-left">
+        <div class="si-top"><span class="si-job" style="color:var(--blue)">${esc(s.jobTitle||s.jobId)}</span><span class="si-date">${fmtDate}</span></div>
+        <div class="si-times">${s.inT} → ${s.outT}</div>
+        ${s.note?`<div class="si-note">${esc(s.note)}</div>`:''}
+      </div>
+      <div class="si-right">
+        <span class="si-hours">${s.hours.toFixed(1)}h</span>
+        <span class="si-gross">${fmt$(gross)}</span>
+        <button class="si-del" onclick="deleteShift('${s.id}')">✕</button>
+      </div>`;
     list.appendChild(div);
   });
 }
 
-function toggleSec(name){ document.getElementById('sec-'+name).classList.toggle('collapsed'); document.getElementById('toggle-'+name).classList.toggle('open'); }
-window.toggleSec = toggleSec;
+function esc(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+window.toggleSec = function(n){ document.getElementById('sec-'+n).classList.toggle('collapsed'); document.getElementById('toggle-'+n).classList.toggle('open'); };
+window.toggleTheme = function(){ const dark=document.body.classList.toggle('dark');document.documentElement.classList.remove('pre-dark'); document.getElementById('theme-btn').textContent=dark?'◑ light':'◑ dark'; localStorage.setItem('global_theme',dark?'dark':'light'); };
 
-function toggleTheme(){ const dark=document.body.classList.toggle('dark'); document.getElementById('theme-btn').textContent=dark?'◑ light':'◑ dark'; localStorage.setItem('global_theme',dark?'dark':'light'); }
-window.toggleTheme = toggleTheme;
-
+// Init theme
 const savedTheme=localStorage.getItem('global_theme');
 if(savedTheme==='dark'){ document.body.classList.add('dark'); document.getElementById('theme-btn').textContent='◑ light'; }
 const today=new Date();
