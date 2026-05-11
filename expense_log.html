@@ -156,7 +156,13 @@ hr{border:none;border-top:1px solid var(--border);margin:1.4rem 0}
   </div>
 
 </div>
-<script>
+<script type="module">
+import { initShim, shimLocalStorage, signIn, signOutUser } from './firebase-shim.js';
+
+shimLocalStorage();
+initShim(function() {
+  // ── PAGE INIT (runs after auth + data loaded) ──────────────
+
 const CAT_COLORS={Equipment:'#9b87f5',Golf:'#4a9eff',Gas:'#e6a020',Food:'#1fbd8a',Social:'#f06292',Subscriptions:'#888',Emergency:'#555',Other:'#aaa'};
 let log = JSON.parse(localStorage.getItem('explog_entries') || '[]');
 
@@ -262,14 +268,16 @@ function toggleSec(name){
 function toggleTheme(){
   const dark = document.body.classList.toggle('dark');
   document.getElementById('theme-btn').textContent = dark ? '◑ light' : '◑ dark';
-  localStorage.setItem('explog_theme', dark ? 'dark' : 'light');
+  localStorage.setItem('global_theme', dark ? 'dark' : 'light');
 }
-const savedTheme = localStorage.getItem('explog_theme');
+const savedTheme = localStorage.getItem('global_theme');
 if(savedTheme === 'dark'){ document.body.classList.add('dark'); document.getElementById('theme-btn').textContent = '◑ light'; }
 
 const today = new Date();
 document.getElementById('f-date').value = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
 renderAll();
+
+}); // end initShim
 </script>
 </body>
 </html>

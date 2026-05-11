@@ -256,7 +256,13 @@ hr{border:none;border-top:1px solid var(--border);margin:1.4rem 0}
 </div>
 
 </div>
-<script>
+<script type="module">
+import { initShim, shimLocalStorage, signIn, signOutUser } from './firebase-shim.js';
+
+shimLocalStorage();
+initShim(function() {
+  // ── PAGE INIT (runs after auth + data loaded) ──────────────
+
 const TAX=0.1072,SAVINGS=1100;
 let jobs=[],expenses=[],completedExpenses=[],schedules=[],goals=[];
 let jobIdCounter=0,expIdCounter=0,schedIdCounter=0,goalIdCounter=0;
@@ -274,7 +280,7 @@ function save(){
     localStorage.setItem('fp_schedIdCounter',schedIdCounter);
     localStorage.setItem('fp_goalIdCounter',goalIdCounter);
     localStorage.setItem('fp_periodDismissed',periodTotalsDismissed?'1':'0');
-    localStorage.setItem('fp_theme',document.body.classList.contains('dark')?'dark':'light');
+    localStorage.setItem('global_theme',document.body.classList.contains('dark')?'dark':'light');
     const ps=document.getElementById('proj-start'),pe=document.getElementById('proj-end');
     if(ps&&pe){localStorage.setItem('fp_proj_start',ps.value);localStorage.setItem('fp_proj_end',pe.value);}
   }catch(e){}
@@ -297,7 +303,7 @@ function load(){
     schedIdCounter=parseInt(localStorage.getItem('fp_schedIdCounter')||0);
     goalIdCounter=parseInt(localStorage.getItem('fp_goalIdCounter')||0);
     periodTotalsDismissed=localStorage.getItem('fp_periodDismissed')==='1';
-    const theme=localStorage.getItem('fp_theme');
+    const theme=localStorage.getItem('global_theme');
     if(theme==='dark'){document.body.classList.add('dark');document.getElementById('theme-btn').textContent='◑ light';}
     const ps=localStorage.getItem('fp_proj_start'),pe=localStorage.getItem('fp_proj_end');
     if(ps) document.getElementById('proj-start').value=ps;
@@ -577,6 +583,8 @@ function calc(){
 }
 
 load();initDefaults();renderJobs();renderExpenses();renderSchedules();renderGoals();calc();
+
+}); // end initShim
 </script>
 </body>
 </html>

@@ -169,7 +169,13 @@ hr{border:none;border-top:1px solid var(--border);margin:1.4rem 0}
   </div>
 </div>
 
-<script>
+<script type="module">
+import { initShim, shimLocalStorage, signIn, signOutUser } from './firebase-shim.js';
+
+shimLocalStorage();
+initShim(function() {
+  // ── PAGE INIT (runs after auth + data loaded) ──────────────
+
 const COLORS = ['#2a7de1','#0e9e70','#c27d08','#d03030','#6c5bbf','#e06030','#1899a8','#888'];
 const COLOR_NAMES = ['Blue','Green','Amber','Red','Purple','Orange','Teal','Grey'];
 
@@ -360,12 +366,14 @@ function toggleSec(id){
 function toggleTheme(){
   const dark=document.body.classList.toggle('dark');
   document.getElementById('theme-btn').textContent=dark?'◑ light':'◑ dark';
-  localStorage.setItem('acad_theme',dark?'dark':'light');
+  localStorage.setItem('global_theme',dark?'dark':'light');
 }
-const savedTheme=localStorage.getItem('acad_theme');
+const savedTheme=localStorage.getItem('global_theme');
 if(savedTheme==='dark'){document.body.classList.add('dark');document.getElementById('theme-btn').textContent='◑ light';}
 
 renderAll();
+
+}); // end initShim
 </script>
 </body>
 </html>

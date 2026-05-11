@@ -279,7 +279,13 @@ hr{border:none;border-top:1px solid var(--border);margin:1.4rem 0}
   </div>
 
 </div>
-<script>
+<script type="module">
+import { initShim, shimLocalStorage, signIn, signOutUser } from './firebase-shim.js';
+
+shimLocalStorage();
+initShim(function() {
+  // ── PAGE INIT (runs after auth + data loaded) ──────────────
+
 const LIMIT = 7500;
 let deposits = JSON.parse(localStorage.getItem('ira_deposits') || '[]');
 let currentBalance  = parseFloat(localStorage.getItem('ira_current_balance')  || '0');
@@ -424,11 +430,11 @@ function toggleSec(name){
 function toggleTheme(){
   const dark=document.body.classList.toggle('dark');
   document.getElementById('theme-btn').textContent=dark?'◑ light':'◑ dark';
-  localStorage.setItem('ira_theme',dark?'dark':'light');
+  localStorage.setItem('global_theme',dark?'dark':'light');
 }
 
 // Init
-const savedTheme=localStorage.getItem('ira_theme');
+const savedTheme=localStorage.getItem('global_theme');
 if(savedTheme==='dark'){document.body.classList.add('dark');document.getElementById('theme-btn').textContent='◑ light';}
 
 const today=new Date();
@@ -438,6 +444,8 @@ document.getElementById('beginning-balance').value = beginningBalance || '';
 
 renderAll();
 renderProjection();
+
+}); // end initShim
 </script>
 </body>
 </html>

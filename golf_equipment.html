@@ -193,7 +193,13 @@ hr{border:none;border-top:1px solid var(--border);margin:1.4rem 0}
   </div>
 </div>
 
-<script>
+<script type="module">
+import { initShim, shimLocalStorage, signIn, signOutUser } from './firebase-shim.js';
+
+shimLocalStorage();
+initShim(function() {
+  // ── PAGE INIT (runs after auth + data loaded) ──────────────
+
 const SECTIONS = [
   {key:'driver',  label:'Drivers',           icon:'🏌️'},
   {key:'wood',    label:'Fairway Woods',      icon:'🪵'},
@@ -476,13 +482,15 @@ function toggleSec(id){
 function toggleTheme(){
   const dark = document.body.classList.toggle('dark');
   document.getElementById('theme-btn').textContent = dark?'◑ light':'◑ dark';
-  localStorage.setItem('golf_theme', dark?'dark':'light');
+  localStorage.setItem('global_theme', dark?'dark':'light');
 }
 
 // Init
-const savedTheme = localStorage.getItem('golf_theme');
+const savedTheme = localStorage.getItem('global_theme');
 if(savedTheme==='dark'){document.body.classList.add('dark');document.getElementById('theme-btn').textContent='◑ light';}
 renderAll();
+
+}); // end initShim
 </script>
 </body>
 </html>

@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Practice Log</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f5f5f3;--bg2:#ffffff;--bg3:#efefed;--bg4:#e4e4e2;
+  --border:#dddddb;--border2:#c8c8c6;
+  --text:#1a1a1a;--text2:#555;--text3:#999;--text4:#bbb;
+  --green:#0e9e70;--green-bg:#e0f5ec;--green-txt:#0e9e70;
+  --amber:#c27d08;--amber-bg:#fdf0d5;--amber-txt:#c27d08;
+  --blue:#2a7de1;--blue-bg:#deeafa;--blue-txt:#2a7de1;
+  --red:#d03030;--red-bg:#fce8e8;--red-txt:#d03030;
+  --purple:#6c5bbf;--purple-bg:#eae8fa;
+  --teal:#0e8a8a;--teal-bg:#e0f5f5;--teal-txt:#0e8a8a;
+  --r:8px;--rl:12px;
+}
+.dark{
+  --bg:#1e1e1e;--bg2:#272727;--bg3:#2f2f2f;--bg4:#383838;
+  --border:#3a3a3a;--border2:#484848;
+  --text:#e2e2e2;--text2:#a0a0a0;--text3:#666;--text4:#444;
+  --green:#1fbd8a;--green-bg:#0d2e22;--green-txt:#1fbd8a;
+  --amber:#e6a020;--amber-bg:#2c1f06;--amber-txt:#e6a020;
+  --blue:#4a9eff;--blue-bg:#0a1e35;--blue-txt:#4a9eff;
+  --red:#f05050;--red-bg:#2a0f0f;--red-txt:#f05050;
+  --purple:#9b87f5;--purple-bg:#1a1530;
+  --teal:#1fbd9a;--teal-bg:#0d2e2e;--teal-txt:#1fbd9a;
+}
+body{background:var(--bg);color:var(--text);font-family:'SF Mono','Fira Code','Cascadia Code',monospace;font-size:13px;line-height:1.6;padding:1.5rem 1rem;transition:background .2s,color .2s;min-height:100vh}
+.container{max-width:920px;margin:0 auto}
+.header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1.5rem;gap:10px}
+.page-title{font-size:17px;font-weight:600;letter-spacing:.02em;margin-bottom:2px}
+.page-sub{font-size:11px;color:var(--text3)}
+.header-actions{display:flex;gap:8px;align-items:center;flex-shrink:0;flex-wrap:wrap}
+.btn{font-family:inherit;font-size:11px;font-weight:600;padding:5px 13px;border-radius:20px;border:1px solid var(--border2);background:var(--bg3);color:var(--text2);cursor:pointer;letter-spacing:.04em;text-transform:uppercase;transition:all .15s;text-decoration:none;display:inline-block}
+.btn:hover{background:var(--bg4);color:var(--text)}
+.btn-green{background:var(--green-bg);color:var(--green-txt);border-color:var(--green)}
+.btn-green:hover{opacity:.85}
+.btn-blue{background:var(--blue-bg);color:var(--blue-txt);border-color:var(--blue)}
+.btn-amber{background:var(--amber-bg);color:var(--amber-txt);border-color:var(--amber)}
+.btn-red{background:var(--red-bg);color:var(--red-txt);border-color:var(--red)}
+
+/* Stats bar */
+.pgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:8px;margin-bottom:1.2rem}
+.met{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:10px 13px}
+.met-label{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:2px}
+.met-val{font-size:18px;font-weight:600;color:var(--text)}
+.met-val.green{color:var(--green)}.met-val.blue{color:var(--blue)}.met-val.amber{color:var(--amber)}.met-val.teal{color:var(--teal)}
+.met-sub{font-size:10px;color:var(--text3);margin-top:1px}
+
+/* Main tabs */
+.main-tabs{display:flex;gap:6px;margin-bottom:1.2rem;flex-wrap:wrap}
+.main-tab{font-family:inherit;font-size:12px;font-weight:600;padding:7px 18px;border-radius:20px;border:1.5px solid var(--border2);background:var(--bg3);color:var(--text3);cursor:pointer;transition:all .15s;letter-spacing:.04em}
+.main-tab.active-fs{background:var(--blue-bg);color:var(--blue-txt);border-color:var(--blue)}
+.main-tab.active-sg{background:var(--green-bg);color:var(--green-txt);border-color:var(--green)}
+.main-tab.active-pt{background:var(--purple-bg);color:var(--purple);border-color:var(--purple)}
+.main-tab.active-rt{background:var(--amber-bg);color:var(--amber-txt);border-color:var(--amber)}
+.main-tab.active-hs{background:var(--bg4);color:var(--text2);border-color:var(--border2)}
+
+/* Section */
+.sec-header{display:flex;align-items:center;justify-content:space-between;margin:1.2rem 0 .6rem;padding-bottom:5px;border-bottom:1px solid var(--border)}
+.sec-label{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.12em}
+.sec-actions{display:flex;gap:8px;align-items:center}
+
+/* Drill cards */
+.drill-grid{display:flex;flex-direction:column;gap:6px;margin-bottom:.5rem}
+.drill-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--rl);padding:13px 16px;position:relative}
+.drill-card:hover{border-color:var(--border2)}
+.dc-header{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:8px}
+.dc-name{font-size:13px;font-weight:600;color:var(--text)}
+.dc-name input{background:transparent;border:none;color:var(--text);font:inherit;font-size:13px;font-weight:600;outline:none;width:100%}
+.dc-name input:focus{border-bottom:1px solid var(--border2)}
+.dc-cue{font-size:11px;color:var(--text3);font-style:italic;margin-bottom:6px}
+.dc-cue input{background:transparent;border:none;color:var(--text3);font:inherit;font-size:11px;font-style:italic;outline:none;width:100%}
+.dc-cue input:focus{border-bottom:1px solid var(--border2)}
+.dc-del{background:none;border:none;color:var(--text4);cursor:pointer;font-size:14px;padding:0;font-family:inherit;transition:color .15s;flex-shrink:0}
+.dc-del:hover{color:var(--red)}
+
+/* Field goal tracker (full swing) */
+.fg-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.fg-label{font-size:11px;color:var(--text3);min-width:60px}
+.fg-input{width:65px;font-family:inherit;font-size:12px;font-weight:600;padding:4px 8px;border-radius:6px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);text-align:right;transition:border-color .15s}
+.fg-input:focus{outline:none;border-color:var(--blue)}
+.fg-result{font-size:13px;font-weight:700}
+.fg-pass{color:var(--green)}.fg-fail{color:var(--red)}.fg-none{color:var(--text4)}
+.fg-bar-wrap{flex:1;min-width:80px;height:6px;background:var(--bg4);border-radius:3px;overflow:hidden}
+.fg-bar{height:100%;border-radius:3px;transition:width .3s}
+
+/* Sinks tracker (short game) */
+.sinks-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.sinks-counter{display:flex;align-items:center;gap:6px}
+.sink-btn{width:28px;height:28px;border-radius:50%;border:1.5px solid var(--border2);background:var(--bg3);color:var(--text2);font-family:inherit;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;line-height:1}
+.sink-btn:hover{background:var(--green-bg);color:var(--green-txt);border-color:var(--green)}
+.sinks-val{font-size:18px;font-weight:700;color:var(--text);min-width:28px;text-align:center}
+.sinks-target{font-size:11px;color:var(--text3)}
+.sinks-pass{color:var(--green);font-weight:600}
+.sinks-fail{color:var(--red);font-weight:600}
+
+/* Putting completion */
+.putting-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.put-status-btn{font-family:inherit;font-size:11px;font-weight:600;padding:5px 14px;border-radius:20px;border:1.5px solid var(--border2);background:transparent;color:var(--text3);cursor:pointer;transition:all .15s}
+.put-status-btn.done{background:var(--green-bg);color:var(--green-txt);border-color:var(--green)}
+.put-status-btn.fail{background:var(--red-bg);color:var(--red-txt);border-color:var(--red)}
+.put-last{font-size:10px;color:var(--text4);font-style:italic}
+
+/* Add drill row */
+.add-drill-row{display:flex;gap:8px;align-items:center;margin-top:6px}
+.add-drill-input{flex:1;font-family:inherit;font-size:12px;padding:5px 10px;border-radius:20px;border:1px solid var(--border2);background:var(--bg2);color:var(--text);outline:none;transition:border-color .15s}
+.add-drill-input:focus{border-color:var(--blue)}
+
+/* Session timer */
+.session-bar{background:var(--bg2);border:1px solid var(--border);border-radius:var(--rl);padding:12px 16px;margin-bottom:1.2rem;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.timer-display{font-size:20px;font-weight:700;color:var(--text);min-width:70px;letter-spacing:.05em}
+.session-meta{display:flex;gap:8px;flex:1;flex-wrap:wrap;align-items:center}
+.session-meta input,.session-meta select{font-family:inherit;font-size:11px;padding:4px 9px;border-radius:20px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);outline:none}
+.session-meta input:focus,.session-meta select:focus{border-color:var(--blue)}
+.session-notes{flex:1;min-width:140px}
+
+/* Routines */
+.routine-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--rl);margin-bottom:10px;overflow:hidden}
+.rc-header{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--border)}
+.rc-name input{background:transparent;border:none;color:var(--text);font:inherit;font-size:13px;font-weight:600;outline:none;width:200px}
+.rc-name input:focus{border-bottom:1px solid var(--border2)}
+.rc-body{padding:12px 16px}
+.routine-drill-list{min-height:40px;border:1.5px dashed var(--border2);border-radius:var(--r);padding:8px;display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;transition:border-color .2s}
+.routine-drill-list.dragover{border-color:var(--amber);background:var(--amber-bg)}
+.routine-pill{display:flex;align-items:center;gap:5px;font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;background:var(--bg3);border:1px solid var(--border2);color:var(--text2);cursor:default}
+.routine-pill .rp-del{background:none;border:none;color:var(--text4);cursor:pointer;font-size:12px;padding:0;line-height:1;transition:color .15s}
+.routine-pill .rp-del:hover{color:var(--red)}
+.drag-hint{font-size:10px;color:var(--text4);font-style:italic;padding:4px 0}
+/* Draggable drill bubbles (source) */
+.drill-bubble-source{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;padding:3px 11px;border-radius:20px;background:var(--bg3);border:1.5px solid var(--border2);color:var(--text2);cursor:grab;margin:3px;transition:all .15s;user-select:none}
+.drill-bubble-source:hover{border-color:var(--amber);color:var(--amber-txt)}
+.drill-bubble-source:active{cursor:grabbing;opacity:.7}
+.drag-source-area{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:10px;padding:10px;background:var(--bg3);border-radius:var(--r)}
+.drag-source-label{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;width:100%;margin-bottom:4px}
+
+/* History */
+.hist-item{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:10px 14px;margin-bottom:5px}
+.hist-item:hover{border-color:var(--border2)}
+.hi-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:3px}
+.hi-date{font-size:12px;font-weight:600;color:var(--text)}
+.hi-del{background:none;border:none;color:var(--text4);cursor:pointer;font-size:14px;padding:0;font-family:inherit;transition:color .15s}
+.hi-del:hover{color:var(--red)}
+.hi-meta{font-size:11px;color:var(--text3)}
+.hi-pills{display:flex;gap:5px;flex-wrap:wrap;margin-top:4px}
+.hi-pill{font-size:10px;font-weight:600;padding:1px 8px;border-radius:10px;background:var(--bg4);color:var(--text3)}
+.hi-pill.pass{background:var(--green-bg);color:var(--green-txt)}
+.hi-pill.fail{background:var(--red-bg);color:var(--red-txt)}
+
+.empty-state{text-align:center;padding:1.5rem;color:var(--text3);font-size:12px;border:1px dashed var(--border2);border-radius:var(--r)}
+.pill{display:inline-block;font-size:10px;font-weight:600;padding:2px 9px;border-radius:20px;letter-spacing:.04em;text-transform:uppercase}
+.pill-g{background:var(--green-bg);color:var(--green-txt)}.pill-a{background:var(--amber-bg);color:var(--amber-txt)}.pill-r{background:var(--red-bg);color:var(--red-txt)}.pill-b{background:var(--blue-bg);color:var(--blue-txt)}
+
+/* Quick log modal fields */
+.ql-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;z-index:1000;opacity:0;pointer-events:none;transition:opacity .2s;padding:1rem;overflow-y:auto}
+.modal-overlay.open{opacity:1;pointer-events:all}
+.modal{background:var(--bg2);border:1px solid var(--border2);border-radius:16px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto;transform:scale(.92) translateY(12px);transition:transform .22s cubic-bezier(.34,1.4,.64,1),opacity .2s;opacity:0;box-shadow:0 20px 60px rgba(0,0,0,.18)}
+.modal-overlay.open .modal{transform:scale(1) translateY(0);opacity:1}
+.modal-header{display:flex;align-items:center;justify-content:space-between;padding:15px 18px 12px;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--bg2);z-index:2}
+.modal-title{font-size:14px;font-weight:600}
+.modal-close{background:var(--bg3);border:1px solid var(--border2);color:var(--text2);width:26px;height:26px;border-radius:50%;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;font-family:inherit;transition:all .15s}
+.modal-close:hover{background:var(--red-bg);color:var(--red);border-color:var(--red)}
+.modal-body{padding:15px 18px}
+.form-group{display:flex;flex-direction:column;gap:3px;margin-bottom:10px}
+.form-group label{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.08em}
+.form-group input,.form-group select,.form-group textarea{font-family:inherit;font-size:12px;padding:6px 10px;border-radius:6px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);transition:border-color .15s}
+.form-group input:focus,.form-group select:focus{outline:none;border-color:var(--blue)}
+.modal-actions{display:flex;justify-content:space-between;align-items:center;margin-top:14px;padding-top:12px;border-top:1px solid var(--border)}
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="header">
+  <div>
+    <div class="page-title">Practice Log</div>
+    <div class="page-sub">full swing · short game · putting · routines</div>
+  </div>
+  <div class="header-actions">
+    <a href="index.html" class="btn">← home</a>
+    <button class="btn btn-amber" onclick="openQuickLog()">Quick Log</button>
+    <button class="btn" onclick="toggleTheme()" id="theme-btn">◑ dark</button>
+  </div>
+</div>
+
+<!-- STATS -->
+<div class="pgrid">
+  <div class="met"><div class="met-label">Sessions</div><div class="met-val blue" id="st-sessions">0</div><div class="met-sub">all time</div></div>
+  <div class="met"><div class="met-label">FS Avg %</div><div class="met-val" id="st-fg">—</div><div class="met-sub">field goals</div></div>
+  <div class="met"><div class="met-label">Sinks Avg</div><div class="met-val green" id="st-sinks">—</div><div class="met-sub">per session</div></div>
+  <div class="met"><div class="met-label">Streak</div><div class="met-val amber" id="st-streak">0</div><div class="met-sub">days</div></div>
+  <div class="met"><div class="met-label">Last Session</div><div class="met-val" id="st-last" style="font-size:13px">—</div><div class="met-sub" id="st-last-sub"></div></div>
+</div>
+
+<!-- SESSION BAR -->
+<div class="session-bar">
+  <div>
+    <div style="font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:3px">Session Timer</div>
+    <div class="timer-display" id="timer">00:00</div>
+  </div>
+  <div class="session-meta">
+    <input id="s-date" type="date" title="Session date">
+    <input id="s-cond" type="text" placeholder="Conditions (e.g. Windy, 75°F, Range)" class="session-notes">
+  </div>
+  <div style="display:flex;gap:8px">
+    <button class="btn btn-green" id="timer-btn" onclick="toggleTimer()">Start</button>
+    <button class="btn btn-blue" onclick="logSession()">Log Session</button>
+  </div>
+</div>
+
+<!-- MAIN TABS -->
+<div class="main-tabs">
+  <button class="main-tab active-fs" id="tab-fs" onclick="switchTab('fs')">Full Swing</button>
+  <button class="main-tab" id="tab-sg" onclick="switchTab('sg')">Short Game</button>
+  <button class="main-tab" id="tab-pt" onclick="switchTab('pt')">Putting</button>
+  <button class="main-tab" id="tab-rt" onclick="switchTab('rt')">Routines</button>
+  <button class="main-tab" id="tab-hs" onclick="switchTab('hs')">History</button>
+</div>
+
+<div id="tab-content"></div>
+
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal-overlay" onclick="handleOverlayClick(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="modal-title"></span>
+      <button class="modal-close" onclick="closeModal()">×</button>
+    </div>
+    <div class="modal-body" id="modal-body"></div>
+  </div>
+</div>
+
+<script type="module">
+import { initShim, shimLocalStorage, signIn, signOutUser } from './firebase-shim.js';
+
+shimLocalStorage();
+initShim(function() {
+  // ── PAGE INIT (runs after auth + data loaded) ──────────────
+
+// ── DATA ──────────────────────────────────────────────────
+const DEFAULT_FS = {
+  driver: [
+    {id:'fs-d1',name:'Driver Field Goals',cue:'Target: 7/10 through the field goal',balls:0,made:0},
+  ],
+  woods: [
+    {id:'fs-w1',name:'3-Wood Field Goals',cue:'Target: 7/10',balls:0,made:0},
+  ],
+  irons: [
+    {id:'fs-i1',name:'Long Iron Field Goals (4-6i)',cue:'Target: 7/10',balls:0,made:0},
+    {id:'fs-i2',name:'Mid Iron Field Goals (7-9i)',cue:'Target: 7/10',balls:0,made:0},
+  ],
+};
+const DEFAULT_SG = {
+  wedges: [
+    {id:'sg-w1',name:'75-120y Wedge Sinks',cue:'10 sinks from various distances',sinks:0,target:10},
+  ],
+  bunkers: [
+    {id:'sg-b1',name:'Bunker Escape + Sink',cue:'10 sinks from greenside bunker',sinks:0,target:10},
+  ],
+  chips: [
+    {id:'sg-c1',name:'Chip Sinks',cue:'10 sinks from rough/fringe inside 20y',sinks:0,target:10},
+  ],
+  pitches: [
+    {id:'sg-p1',name:'Pitch Sinks',cue:'10 sinks from 20-40y',sinks:0,target:10},
+  ],
+};
+const DEFAULT_PT = [
+  {id:'pt-1',name:'Gate Drill',cue:'3 consecutive putts through gate without touching — 6ft, 10ft, 15ft',done:null},
+  {id:'pt-2',name:'Clock Drill',cue:'Hole out from 3ft at 12/3/6/9 o\'clock positions',done:null},
+  {id:'pt-3',name:'Lag Putt Circles',cue:'5 putts from 30ft — finish inside 3ft circle',done:null},
+  {id:'pt-4',name:'3-2-1 Drill',cue:'Make 3 from 3ft, 2 from 6ft, 1 from 10ft consecutively',done:null},
+];
+
+let state = JSON.parse(localStorage.getItem('practice_state') || 'null');
+if(!state){
+  state = {
+    fs: JSON.parse(JSON.stringify(DEFAULT_FS)),
+    sg: JSON.parse(JSON.stringify(DEFAULT_SG)),
+    pt: JSON.parse(JSON.stringify(DEFAULT_PT)),
+    routines: [
+      {id:'rt-1',name:'Pre-Round Warmup',drillIds:['fs-d1','sg-c1','pt-1']},
+      {id:'rt-2',name:'Full Session',drillIds:['fs-d1','fs-i1','fs-i2','sg-w1','sg-b1','sg-c1','pt-1','pt-2']},
+      {id:'rt-3',name:'Short Session',drillIds:['sg-c1','pt-1','pt-3']},
+    ],
+  };
+}
+let sessions = JSON.parse(localStorage.getItem('practice_sessions') || '[]');
+let idC = parseInt(localStorage.getItem('practice_id') || '100', 10);
+let activeTab = 'fs';
+let timerInterval = null, timerSeconds = 0, timerRunning = false;
+// Track drag source
+let dragDrillId = null, dragDrillName = null;
+
+function save(){
+  localStorage.setItem('practice_state', JSON.stringify(state));
+  localStorage.setItem('practice_sessions', JSON.stringify(sessions));
+  localStorage.setItem('practice_id', idC);
+}
+function g(id){ return document.getElementById(id); }
+function esc(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+// ── TIMER ─────────────────────────────────────────────────
+function toggleTimer(){
+  if(timerRunning){
+    clearInterval(timerInterval);timerRunning=false;
+    g('timer-btn').textContent='Resume';g('timer-btn').className='btn btn-amber';
+  } else {
+    timerRunning=true;
+    g('timer-btn').textContent='Pause';g('timer-btn').className='btn btn-red';
+    timerInterval=setInterval(()=>{
+      timerSeconds++;
+      const m=Math.floor(timerSeconds/60),s=timerSeconds%60;
+      g('timer').textContent=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+    },1000);
+  }
+}
+function resetTimer(){ clearInterval(timerInterval);timerRunning=false;timerSeconds=0;g('timer').textContent='00:00';g('timer-btn').textContent='Start';g('timer-btn').className='btn btn-green'; }
+
+// ── STATS ─────────────────────────────────────────────────
+function calcStats(){
+  g('st-sessions').textContent = sessions.length;
+  // FG avg
+  const fgSessions = sessions.filter(s=>s.fgPct!=null);
+  if(fgSessions.length>0){
+    const avg = fgSessions.reduce((a,s)=>a+s.fgPct,0)/fgSessions.length;
+    const el = g('st-fg');
+    el.textContent = avg.toFixed(0)+'%';
+    el.className = 'met-val '+(avg>=70?'green':avg>=50?'amber':'red');
+  }
+  // Sinks avg
+  const sinkSessions = sessions.filter(s=>s.totalSinks!=null);
+  if(sinkSessions.length>0){
+    const avg = sinkSessions.reduce((a,s)=>a+s.totalSinks,0)/sinkSessions.length;
+    g('st-sinks').textContent = avg.toFixed(1);
+  }
+  // Streak
+  if(sessions.length>0){
+    const sorted=[...sessions].sort((a,b)=>new Date(b.date)-new Date(a.date));
+    let streak=0;
+    let checkDate=new Date();checkDate.setHours(0,0,0,0);
+    for(const s of sorted){
+      const d=new Date(s.date);d.setHours(0,0,0,0);
+      const diff=Math.round((checkDate-d)/86400000);
+      if(diff<=1){streak++;checkDate=d;}else break;
+    }
+    g('st-streak').textContent=streak;
+  }
+  // Last session
+  if(sessions.length>0){
+    const last=sessions[0];
+    g('st-last').textContent=new Date(last.date).toLocaleDateString('en-US',{month:'short',day:'numeric'});
+    g('st-last-sub').textContent=last.condition||last.routineName||'';
+  }
+}
+
+// ── TAB SWITCH ────────────────────────────────────────────
+const TAB_IDS=['fs','sg','pt','rt','hs'];
+const TAB_ACTIVE={'fs':'active-fs','sg':'active-sg','pt':'active-pt','rt':'active-rt','hs':'active-hs'};
+function switchTab(tab){
+  activeTab=tab;
+  TAB_IDS.forEach(t=>{
+    const el=g('tab-'+t);
+    el.className='main-tab'+(t===tab?' '+TAB_ACTIVE[t]:'');
+  });
+  renderTabContent();
+}
+
+function renderTabContent(){
+  const el=g('tab-content');
+  if(activeTab==='fs') el.innerHTML=renderFullSwing();
+  else if(activeTab==='sg') el.innerHTML=renderShortGame();
+  else if(activeTab==='pt') el.innerHTML=renderPutting();
+  else if(activeTab==='rt') el.innerHTML=renderRoutines();
+  else if(activeTab==='hs') el.innerHTML=renderHistory();
+  if(activeTab==='rt') initDragDrop();
+}
+
+// ── FULL SWING ────────────────────────────────────────────
+function renderFullSwing(){
+  const cats=[{key:'driver',label:'Driver'},{key:'woods',label:'Fairway Woods'},{key:'irons',label:'Irons'}];
+  // Overall FG avg
+  let totalBalls=0,totalMade=0;
+  cats.forEach(c=>(state.fs[c.key]||[]).forEach(d=>{totalBalls+=d.balls||0;totalMade+=d.made||0;}));
+  const grandPct = totalBalls>0?(totalMade/totalBalls*100):null;
+  let html = `<div style="margin-bottom:1rem">
+    <div style="display:flex;align-items:center;gap:12px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:10px 14px">
+      <div style="font-size:11px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:.08em">Session Field Goal Average</div>
+      <div style="font-size:22px;font-weight:700;color:${grandPct==null?'var(--text4)':grandPct>=70?'var(--green)':grandPct>=50?'var(--amber)':'var(--red)'}">${grandPct!=null?grandPct.toFixed(1)+'%':'—'}</div>
+      <span class="pill ${grandPct==null?'':grandPct>=70?'pill-g':'pill-r'}">${grandPct==null?'no data':grandPct>=70?'On track':'Below 70%'}</span>
+    </div>
+  </div>`;
+  cats.forEach(c=>{
+    html+=`<div class="sec-header">
+      <span class="sec-label">${c.label}</span>
+      <div class="sec-actions"><button class="btn" style="font-size:10px;padding:3px 10px" onclick="addDrill('fs','${c.key}')">+ Drill</button></div>
+    </div><div class="drill-grid">`;
+    (state.fs[c.key]||[]).forEach(d=>{
+      const pct=d.balls>0?(d.made/d.balls*100):null;
+      const barW=pct!=null?Math.min(100,pct):0;
+      const barColor=pct==null?'var(--text4)':pct>=70?'var(--green)':pct>=50?'var(--amber)':'var(--red)';
+      html+=`<div class="drill-card">
+        <div class="dc-header">
+          <div style="flex:1">
+            <div class="dc-name"><input value="${esc(d.name)}" onchange="updateDrillField('fs','${c.key}','${d.id}','name',this.value)"></div>
+            <div class="dc-cue"><input value="${esc(d.cue)}" placeholder="Cue / note..." onchange="updateDrillField('fs','${c.key}','${d.id}','cue',this.value)"></div>
+          </div>
+          <button class="dc-del" onclick="removeDrill('fs','${c.key}','${d.id}')">✕</button>
+        </div>
+        <div class="fg-row">
+          <span class="fg-label">Balls hit</span>
+          <input class="fg-input" type="number" value="${d.balls||''}" placeholder="0" min="0"
+            oninput="updateDrillNum('fs','${c.key}','${d.id}','balls',+this.value)">
+          <span class="fg-label">In FG</span>
+          <input class="fg-input" type="number" value="${d.made||''}" placeholder="0" min="0"
+            oninput="updateDrillNum('fs','${c.key}','${d.id}','made',+this.value)">
+          <div class="fg-bar-wrap"><div class="fg-bar" style="width:${barW}%;background:${barColor}"></div></div>
+          <span class="fg-result ${pct==null?'fg-none':pct>=70?'fg-pass':'fg-fail'}">${pct!=null?pct.toFixed(0)+'%':'—'}</span>
+        </div>
+      </div>`;
+    });
+    html+=`</div>`;
+  });
+  return html;
+}
+
+// ── SHORT GAME ────────────────────────────────────────────
+function renderShortGame(){
+  const cats=[{key:'wedges',label:'Wedges (75-120y)'},{key:'bunkers',label:'Bunkers'},{key:'chips',label:'Chips'},{key:'pitches',label:'Pitches'}];
+  let totalSinks=0,totalTarget=0;
+  cats.forEach(c=>(state.sg[c.key]||[]).forEach(d=>{totalSinks+=d.sinks||0;totalTarget+=d.target||10;}));
+  let html=`<div style="margin-bottom:1rem">
+    <div style="display:flex;align-items:center;gap:12px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:10px 14px">
+      <div style="font-size:11px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:.08em">Session Total Sinks</div>
+      <div style="font-size:22px;font-weight:700;color:${totalSinks>=10?'var(--green)':'var(--text)'}">${totalSinks}</div>
+      <div style="font-size:12px;color:var(--text3)">target: 10/day</div>
+      <span class="pill ${totalSinks>=10?'pill-g':'pill-a'}">${totalSinks>=10?'Target met':'In progress'}</span>
+    </div>
+  </div>`;
+  cats.forEach(c=>{
+    html+=`<div class="sec-header">
+      <span class="sec-label">${c.label}</span>
+      <div class="sec-actions"><button class="btn" style="font-size:10px;padding:3px 10px" onclick="addDrill('sg','${c.key}')">+ Drill</button></div>
+    </div><div class="drill-grid">`;
+    (state.sg[c.key]||[]).forEach(d=>{
+      const pass=d.sinks>=(d.target||10);
+      html+=`<div class="drill-card">
+        <div class="dc-header">
+          <div style="flex:1">
+            <div class="dc-name"><input value="${esc(d.name)}" onchange="updateDrillField('sg','${c.key}','${d.id}','name',this.value)"></div>
+            <div class="dc-cue"><input value="${esc(d.cue)}" placeholder="Cue / note..." onchange="updateDrillField('sg','${c.key}','${d.id}','cue',this.value)"></div>
+          </div>
+          <button class="dc-del" onclick="removeDrill('sg','${c.key}','${d.id}')">✕</button>
+        </div>
+        <div class="sinks-row">
+          <div class="sinks-counter">
+            <button class="sink-btn" onclick="adjustSinks('${c.key}','${d.id}',-1)">−</button>
+            <span class="sinks-val">${d.sinks||0}</span>
+            <button class="sink-btn" onclick="adjustSinks('${c.key}','${d.id}',1)">+</button>
+          </div>
+          <span class="sinks-target">/ ${d.target||10} target</span>
+          <span class="${pass?'sinks-pass':'sinks-fail'}">${pass?'Target met':'Needs more'}</span>
+        </div>
+      </div>`;
+    });
+    html+=`</div>`;
+  });
+  return html;
+}
+
+// ── PUTTING ───────────────────────────────────────────────
+function renderPutting(){
+  let html=`<div class="sec-header"><span class="sec-label">Putting Drills</span><div class="sec-actions"><button class="btn" style="font-size:10px;padding:3px 10px" onclick="addDrill('pt',null)">+ Drill</button></div></div><div class="drill-grid">`;
+  (state.pt||[]).forEach(d=>{
+    html+=`<div class="drill-card">
+      <div class="dc-header">
+        <div style="flex:1">
+          <div class="dc-name"><input value="${esc(d.name)}" onchange="updatePuttDrill('${d.id}','name',this.value)"></div>
+          <div class="dc-cue"><input value="${esc(d.cue)}" placeholder="Drill description..." onchange="updatePuttDrill('${d.id}','cue',this.value)"></div>
+        </div>
+        <button class="dc-del" onclick="removeDrill('pt',null,'${d.id}')">✕</button>
+      </div>
+      <div class="putting-row">
+        <button class="put-status-btn${d.done===true?' done':''}" onclick="setPutt('${d.id}',true)">Pass</button>
+        <button class="put-status-btn${d.done===false?' fail':''}" onclick="setPutt('${d.id}',false)">Fail</button>
+        ${d.done!==null&&d.done!==undefined?`<span class="put-last">${d.done?'Completed':'Not completed'} this session</span>`:'<span class="put-last">Not attempted</span>'}
+      </div>
+    </div>`;
+  });
+  html+=`</div>`;
+  return html;
+}
+
+// ── ROUTINES ──────────────────────────────────────────────
+function getAllDrills(){
+  const all=[];
+  ['driver','woods','irons'].forEach(cat=>(state.fs[cat]||[]).forEach(d=>all.push({...d,section:'Full Swing',cat})));
+  ['wedges','bunkers','chips','pitches'].forEach(cat=>(state.sg[cat]||[]).forEach(d=>all.push({...d,section:'Short Game',cat})));
+  (state.pt||[]).forEach(d=>all.push({...d,section:'Putting',cat:'putting'}));
+  return all;
+}
+
+function renderRoutines(){
+  const allDrills=getAllDrills();
+  // Source area
+  let html=`<div style="margin-bottom:1rem">
+    <div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px">Drag drills into a routine below</div>
+    <div class="drag-source-area">`;
+  const bySection={};
+  allDrills.forEach(d=>{if(!bySection[d.section])bySection[d.section]=[];bySection[d.section].push(d);});
+  Object.entries(bySection).forEach(([sec,drills])=>{
+    html+=`<span class="drag-source-label">${sec}</span>`;
+    drills.forEach(d=>{
+      html+=`<div class="drill-bubble-source" draggable="true" data-id="${d.id}" data-name="${esc(d.name)}">${esc(d.name)}</div>`;
+    });
+  });
+  html+=`</div></div>`;
+  // Routines
+  (state.routines||[]).forEach(r=>{
+    const rDrills=r.drillIds.map(id=>allDrills.find(d=>d.id===id)).filter(Boolean);
+    html+=`<div class="routine-card">
+      <div class="rc-header">
+        <div class="rc-name"><input value="${esc(r.name)}" placeholder="Routine name" onchange="updateRoutineName('${r.id}',this.value)"></div>
+        <button class="dc-del" onclick="deleteRoutine('${r.id}')">✕</button>
+      </div>
+      <div class="rc-body">
+        <div class="routine-drill-list" data-routine-id="${r.id}" id="rdl-${r.id}">
+          ${rDrills.length===0?'<span class="drag-hint">Drop drills here...</span>':rDrills.map(d=>`
+            <div class="routine-pill">
+              <span>${esc(d.name)}</span>
+              <button class="rp-del" onclick="removeFromRoutine('${r.id}','${d.id}')">✕</button>
+            </div>`).join('')}
+        </div>
+      </div>
+    </div>`;
+  });
+  html+=`<button class="btn btn-amber" style="width:100%;justify-content:center;margin-top:4px" onclick="addRoutine()">+ Add Routine</button>`;
+  return html;
+}
+
+function initDragDrop(){
+  // Source bubbles
+  document.querySelectorAll('.drill-bubble-source').forEach(el=>{
+    el.addEventListener('dragstart',e=>{
+      dragDrillId=el.dataset.id;
+      dragDrillName=el.dataset.name;
+      e.dataTransfer.effectAllowed='copy';
+    });
+  });
+  // Drop zones
+  document.querySelectorAll('.routine-drill-list').forEach(zone=>{
+    zone.addEventListener('dragover',e=>{e.preventDefault();zone.classList.add('dragover');});
+    zone.addEventListener('dragleave',()=>zone.classList.remove('dragover'));
+    zone.addEventListener('drop',e=>{
+      e.preventDefault();zone.classList.remove('dragover');
+      if(!dragDrillId) return;
+      const rid=zone.dataset.routineId;
+      const r=state.routines.find(x=>x.id===rid);
+      if(r&&!r.drillIds.includes(dragDrillId)){r.drillIds.push(dragDrillId);save();switchTab('rt');}
+      dragDrillId=null;
+    });
+  });
+}
+
+// ── HISTORY ───────────────────────────────────────────────
+function renderHistory(){
+  if(sessions.length===0) return '<div class="empty-state">No sessions logged yet.</div>';
+  return sessions.map(s=>{
+    const d=new Date(s.date).toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric',year:'numeric'});
+    return `<div class="hist-item">
+      <div class="hi-top">
+        <span class="hi-date">${d}</span>
+        <div style="display:flex;align-items:center;gap:8px">
+          ${s.duration?`<span style="font-size:11px;color:var(--text3)">${s.duration}</span>`:''}
+          <button class="hi-del" onclick="deleteSession(${s.id})">✕</button>
+        </div>
+      </div>
+      <div class="hi-meta">${s.condition||''}${s.notes?' · '+s.notes:''}</div>
+      <div class="hi-pills">
+        ${s.fgPct!=null?`<span class="hi-pill ${s.fgPct>=70?'pass':'fail'}">FS: ${s.fgPct.toFixed(0)}%</span>`:''}
+        ${s.totalSinks!=null?`<span class="hi-pill ${s.totalSinks>=10?'pass':'fail'}">Sinks: ${s.totalSinks}</span>`:''}
+        ${s.puttPassed!=null?`<span class="hi-pill ${s.puttPassed?'pass':'fail'}">Putting: ${s.puttPassed?'Pass':'Fail'}</span>`:''}
+      </div>
+    </div>`;
+  }).join('');
+}
+function deleteSession(id){
+  sessions=sessions.filter(s=>s.id!==id);save();if(activeTab==='hs') renderTabContent();calcStats();
+}
+
+// ── LOG SESSION ───────────────────────────────────────────
+function logSession(){
+  // Calculate summary stats
+  let totalBalls=0,totalMade=0;
+  ['driver','woods','irons'].forEach(cat=>(state.fs[cat]||[]).forEach(d=>{totalBalls+=d.balls||0;totalMade+=d.made||0;}));
+  const fgPct=totalBalls>0?(totalMade/totalBalls*100):null;
+  let totalSinks=0;
+  ['wedges','bunkers','chips','pitches'].forEach(cat=>(state.sg[cat]||[]).forEach(d=>{totalSinks+=d.sinks||0;}));
+  const puttAttempted=(state.pt||[]).filter(d=>d.done!==null&&d.done!==undefined);
+  const puttPassed=puttAttempted.length>0?puttAttempted.every(d=>d.done):null;
+  const m=Math.floor(timerSeconds/60),s=timerSeconds%60;
+  const duration=timerSeconds>0?(String(m).padStart(2,'0')+':'+String(s).padStart(2,'0')):null;
+  sessions.unshift({
+    id:idC++,
+    date:g('s-date').value?new Date(g('s-date').value+'T12:00:00').toISOString():new Date().toISOString(),
+    condition:g('s-cond').value.trim(),
+    duration,fgPct,totalSinks,puttPassed,
+    fsSnapshot:JSON.parse(JSON.stringify(state.fs)),
+    sgSnapshot:JSON.parse(JSON.stringify(state.sg)),
+  });
+  // Reset live state
+  ['driver','woods','irons'].forEach(cat=>(state.fs[cat]||[]).forEach(d=>{d.balls=0;d.made=0;}));
+  ['wedges','bunkers','chips','pitches'].forEach(cat=>(state.sg[cat]||[]).forEach(d=>{d.sinks=0;}));
+  (state.pt||[]).forEach(d=>{d.done=null;});
+  g('s-cond').value='';
+  resetTimer();
+  save();calcStats();renderTabContent();
+  alert('Session logged!');
+}
+
+// ── QUICK LOG ─────────────────────────────────────────────
+function openQuickLog(){
+  const today=new Date();
+  const todayStr=`${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
+  g('modal-title').textContent='Quick Log';
+  g('modal-body').innerHTML=`
+    <div class="form-group"><label>Date</label><input id="ql-date" type="date" value="${todayStr}"></div>
+    <div class="form-group"><label>Conditions</label><input id="ql-cond" placeholder="e.g. Range, Windy, 70°F"></div>
+    <div class="form-group"><label>Duration</label><input id="ql-dur" placeholder="e.g. 45:00"></div>
+    <div class="ql-grid">
+      <div class="form-group"><label>Balls Hit (FS)</label><input id="ql-balls" type="number" placeholder="0" min="0"></div>
+      <div class="form-group"><label>Field Goals Made</label><input id="ql-made" type="number" placeholder="0" min="0"></div>
+      <div class="form-group"><label>Total Sinks</label><input id="ql-sinks" type="number" placeholder="0" min="0"></div>
+      <div class="form-group"><label>Putting</label>
+        <select id="ql-putt">
+          <option value="">Not tracked</option>
+          <option value="pass">Passed</option>
+          <option value="fail">Failed</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group"><label>Notes</label><input id="ql-notes" placeholder="What you worked on..."></div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-green" onclick="saveQuickLog()">Log Session</button>
+    </div>`;
+  g('modal-overlay').classList.add('open');
+}
+function saveQuickLog(){
+  const balls=parseFloat(g('ql-balls').value)||0;
+  const made=parseFloat(g('ql-made').value)||0;
+  const sinks=parseFloat(g('ql-sinks').value)||null;
+  const puttVal=g('ql-putt').value;
+  const dateVal=g('ql-date').value;
+  sessions.unshift({
+    id:idC++,
+    date:dateVal?new Date(dateVal+'T12:00:00').toISOString():new Date().toISOString(),
+    condition:g('ql-cond').value.trim(),
+    duration:g('ql-dur').value.trim()||null,
+    fgPct:balls>0?(made/balls*100):null,
+    totalSinks:sinks,
+    puttPassed:puttVal==='pass'?true:puttVal==='fail'?false:null,
+    notes:g('ql-notes').value.trim(),
+    quickLog:true,
+  });
+  save();closeModal();calcStats();if(activeTab==='hs') renderTabContent();
+  alert('Quick session logged!');
+}
+
+// ── DRILL MANAGEMENT ──────────────────────────────────────
+function addDrill(section, cat){
+  const id=section+'-'+idC++;
+  if(section==='fs'){
+    if(!state.fs[cat]) state.fs[cat]=[];
+    state.fs[cat].push({id,name:'New Drill',cue:'',balls:0,made:0});
+  } else if(section==='sg'){
+    if(!state.sg[cat]) state.sg[cat]=[];
+    state.sg[cat].push({id,name:'New Drill',cue:'',sinks:0,target:10});
+  } else if(section==='pt'){
+    state.pt.push({id,name:'New Putting Drill',cue:'',done:null});
+  }
+  save();renderTabContent();
+}
+function removeDrill(section, cat, id){
+  if(section==='fs') state.fs[cat]=state.fs[cat].filter(d=>d.id!==id);
+  else if(section==='sg') state.sg[cat]=state.sg[cat].filter(d=>d.id!==id);
+  else if(section==='pt') state.pt=state.pt.filter(d=>d.id!==id);
+  // Remove from routines too
+  state.routines.forEach(r=>{r.drillIds=r.drillIds.filter(x=>x!==id);});
+  save();renderTabContent();
+}
+function updateDrillField(section, cat, id, field, val){
+  const arr=section==='fs'?state.fs[cat]:state.sg[cat];
+  const d=arr.find(x=>x.id===id);if(d){d[field]=val;save();}
+}
+function updateDrillNum(section, cat, id, field, val){
+  const d=state.fs[cat].find(x=>x.id===id);
+  if(d){d[field]=val||0;save();
+    // Re-render just the bar without full re-render
+    renderTabContent();
+  }
+}
+function updatePuttDrill(id, field, val){
+  const d=state.pt.find(x=>x.id===id);if(d){d[field]=val;save();}
+}
+function setPutt(id, val){
+  const d=state.pt.find(x=>x.id===id);
+  if(d){d.done=d.done===val?null:val;save();renderTabContent();}
+}
+function adjustSinks(cat, id, delta){
+  const d=state.sg[cat].find(x=>x.id===id);
+  if(d){d.sinks=Math.max(0,(d.sinks||0)+delta);save();renderTabContent();}
+}
+
+// ── ROUTINES ──────────────────────────────────────────────
+function addRoutine(){
+  state.routines.push({id:'rt-'+idC++,name:'New Routine',drillIds:[]});
+  save();renderTabContent();
+}
+function deleteRoutine(id){
+  state.routines=state.routines.filter(r=>r.id!==id);save();renderTabContent();
+}
+function updateRoutineName(id, val){
+  const r=state.routines.find(x=>x.id===id);if(r){r.name=val;save();}
+}
+function removeFromRoutine(rid, did){
+  const r=state.routines.find(x=>x.id===rid);
+  if(r){r.drillIds=r.drillIds.filter(x=>x!==did);save();renderTabContent();}
+}
+
+// ── MODAL ─────────────────────────────────────────────────
+function closeModal(){g('modal-overlay').classList.remove('open');}
+function handleOverlayClick(e){if(e.target===g('modal-overlay'))closeModal();}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
+
+// ── THEME ─────────────────────────────────────────────────
+function toggleTheme(){
+  const dark=document.body.classList.toggle('dark');
+  g('theme-btn').textContent=dark?'◑ light':'◑ dark';
+  localStorage.setItem('global_theme',dark?'dark':'light');
+}
+
+// ── INIT ──────────────────────────────────────────────────
+const savedTheme=localStorage.getItem('global_theme');
+if(savedTheme==='dark'){document.body.classList.add('dark');g('theme-btn').textContent='◑ light';}
+const today=new Date();
+g('s-date').value=`${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
+calcStats();
+renderTabContent();
+
+}); // end initShim
+</script>
+</body>
+</html>

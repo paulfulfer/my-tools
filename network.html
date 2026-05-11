@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Network</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f5f5f3;--bg2:#ffffff;--bg3:#efefed;--bg4:#e4e4e2;
+  --border:#dddddb;--border2:#c8c8c6;
+  --text:#1a1a1a;--text2:#555;--text3:#999;--text4:#bbb;
+  --green:#0e9e70;--green-bg:#e0f5ec;--green-txt:#0e9e70;
+  --amber:#c27d08;--amber-bg:#fdf0d5;--amber-txt:#c27d08;
+  --blue:#2a7de1;--blue-bg:#deeafa;--blue-txt:#2a7de1;
+  --red:#d03030;--red-bg:#fce8e8;--red-txt:#d03030;
+  --purple:#6c5bbf;--purple-bg:#eae8fa;
+  --r:8px;--rl:12px;
+}
+.dark{
+  --bg:#1e1e1e;--bg2:#272727;--bg3:#2f2f2f;--bg4:#383838;
+  --border:#3a3a3a;--border2:#484848;
+  --text:#e2e2e2;--text2:#a0a0a0;--text3:#666;--text4:#444;
+  --green:#1fbd8a;--green-bg:#0d2e22;--green-txt:#1fbd8a;
+  --amber:#e6a020;--amber-bg:#2c1f06;--amber-txt:#e6a020;
+  --blue:#4a9eff;--blue-bg:#0a1e35;--blue-txt:#4a9eff;
+  --red:#f05050;--red-bg:#2a0f0f;--red-txt:#f05050;
+  --purple:#9b87f5;--purple-bg:#1a1530;
+}
+body{background:var(--bg);color:var(--text);font-family:'SF Mono','Fira Code','Cascadia Code',monospace;font-size:13px;line-height:1.6;padding:1.5rem 1rem;transition:background .2s,color .2s;min-height:100vh}
+.container{max-width:900px;margin:0 auto}
+.header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1.75rem}
+.page-title{font-size:17px;font-weight:600;letter-spacing:.02em;margin-bottom:2px}
+.page-sub{font-size:11px;color:var(--text3)}
+.header-actions{display:flex;gap:8px;align-items:center;flex-shrink:0}
+.btn{font-family:inherit;font-size:11px;font-weight:600;padding:5px 13px;border-radius:20px;border:1px solid var(--border2);background:var(--bg3);color:var(--text2);cursor:pointer;letter-spacing:.04em;text-transform:uppercase;transition:all .15s;text-decoration:none;display:inline-block}
+.btn:hover{background:var(--bg4);color:var(--text)}
+.btn-blue{background:var(--blue-bg);color:var(--blue-txt);border-color:var(--blue)}
+.btn-blue:hover{opacity:.85}
+/* Filter bar */
+.filter-bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1.2rem;align-items:center}
+.filter-input{flex:1;min-width:160px;font-family:inherit;font-size:12px;padding:6px 12px;border-radius:20px;border:1px solid var(--border2);background:var(--bg2);color:var(--text);outline:none;transition:border-color .15s}
+.filter-input:focus{border-color:var(--blue)}
+.filter-tag{font-family:inherit;font-size:11px;font-weight:600;padding:4px 12px;border-radius:20px;border:1px solid var(--border2);background:var(--bg3);color:var(--text3);cursor:pointer;transition:all .15s;text-transform:uppercase;letter-spacing:.05em}
+.filter-tag.active-mentor{background:var(--purple-bg);color:var(--purple);border-color:var(--purple)}
+.filter-tag.active-peer{background:var(--blue-bg);color:var(--blue-txt);border-color:var(--blue)}
+.filter-tag.active-professor{background:var(--green-bg);color:var(--green-txt);border-color:var(--green)}
+.filter-tag.active-industry{background:var(--amber-bg);color:var(--amber-txt);border-color:var(--amber)}
+.filter-tag.active-recruiter{background:var(--red-bg);color:var(--red-txt);border-color:var(--red)}
+.filter-tag.active-other{background:var(--bg4);color:var(--text2);border-color:var(--border2)}
+/* Metrics */
+.pgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:8px;margin-bottom:1.2rem}
+.met{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:10px 13px}
+.met-label{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:2px}
+.met-val{font-size:18px;font-weight:600;color:var(--text)}
+.met-val.blue{color:var(--blue-txt)}.met-val.green{color:var(--green)}.met-val.amber{color:var(--amber)}.met-val.red{color:var(--red)}.met-val.purple{color:var(--purple)}
+.met-sub{font-size:10px;color:var(--text3);margin-top:1px}
+/* BUBBLE GRID */
+.bubble-grid{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:1rem}
+.contact-bubble{
+  background:var(--bg2);border:1.5px solid var(--border);
+  border-radius:50px;padding:9px 16px;
+  cursor:pointer;display:flex;align-items:center;gap:10px;
+  transition:all .18s;user-select:none;max-width:280px;
+}
+.contact-bubble:hover{border-color:var(--border2);background:var(--bg3);transform:translateY(-1px);box-shadow:0 3px 10px rgba(0,0,0,.07)}
+.cb-avatar{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;border:1.5px solid}
+.cb-inner{min-width:0}
+.cb-name{font-size:12px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:170px}
+.cb-sub{font-size:10px;color:var(--text3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:170px}
+.follow-up-dot{width:7px;height:7px;border-radius:50%;background:var(--amber);flex-shrink:0}
+.add-bubble{background:transparent;border:1.5px dashed var(--border2);border-radius:50px;padding:9px 16px;cursor:pointer;display:flex;align-items:center;gap:6px;color:var(--text3);font-size:12px;font-family:inherit;transition:all .15s}
+.add-bubble:hover{border-color:var(--blue-txt);color:var(--blue-txt)}
+/* Section label */
+.sec-label{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.12em;margin-bottom:.6rem;padding-bottom:5px;border-bottom:1px solid var(--border);display:block}
+/* Tag colors */
+.tag-mentor{color:var(--purple)}.tag-peer{color:var(--blue-txt)}.tag-professor{color:var(--green)}.tag-industry{color:var(--amber)}.tag-recruiter{color:var(--red)}.tag-other{color:var(--text3)}
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;z-index:1000;opacity:0;pointer-events:none;transition:opacity .2s;padding:1rem;overflow-y:auto}
+.modal-overlay.open{opacity:1;pointer-events:all}
+.modal{background:var(--bg2);border:1px solid var(--border2);border-radius:16px;width:100%;max-width:500px;max-height:90vh;overflow-y:auto;transform:scale(.92) translateY(12px);transition:transform .22s cubic-bezier(.34,1.4,.64,1),opacity .2s;opacity:0;box-shadow:0 20px 60px rgba(0,0,0,.18)}
+.modal-overlay.open .modal{transform:scale(1) translateY(0);opacity:1}
+.modal-header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px 12px;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--bg2);z-index:2}
+.modal-title{font-size:15px;font-weight:600;color:var(--text)}
+.modal-close{background:var(--bg3);border:1px solid var(--border2);color:var(--text2);width:26px;height:26px;border-radius:50%;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:all .15s;font-family:inherit}
+.modal-close:hover{background:var(--red-bg);color:var(--red);border-color:var(--red)}
+.modal-body{padding:16px 20px}
+.form-group{display:flex;flex-direction:column;gap:3px;margin-bottom:10px}
+.form-group label{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.08em}
+.form-group input,.form-group select,.form-group textarea{font-family:inherit;font-size:12px;padding:6px 10px;border-radius:6px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);transition:border-color .15s}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{outline:none;border-color:var(--blue)}
+.form-group textarea{resize:vertical;min-height:60px;line-height:1.5}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+@media(max-width:480px){.form-grid{grid-template-columns:1fr}}
+.modal-actions{display:flex;justify-content:space-between;align-items:center;margin-top:14px;padding-top:12px;border-top:1px solid var(--border)}
+/* Strength indicators */
+.strength-row{display:flex;gap:6px;margin-top:4px}
+.strength-btn{flex:1;padding:5px;border-radius:6px;border:1.5px solid var(--border2);background:transparent;color:var(--text3);font-family:inherit;font-size:10px;font-weight:600;cursor:pointer;transition:all .15s;text-transform:uppercase;letter-spacing:.05em;text-align:center}
+.strength-btn.sel-close{background:var(--green-bg);color:var(--green-txt);border-color:var(--green)}
+.strength-btn.sel-familiar{background:var(--blue-bg);color:var(--blue-txt);border-color:var(--blue)}
+.strength-btn.sel-acquaintance{background:var(--bg4);color:var(--text2);border-color:var(--border2)}
+/* Detail view */
+.detail-field{margin-bottom:8px}
+.df-label{font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:var(--text3);margin-bottom:2px}
+.df-val{font-size:12px;color:var(--text)}
+.df-val.empty{color:var(--text4);font-style:italic}
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+@media(max-width:480px){.detail-grid{grid-template-columns:1fr}}
+.detail-block{background:var(--bg3);border-radius:var(--r);padding:9px 12px}
+.pill{display:inline-block;font-size:10px;font-weight:600;padding:2px 9px;border-radius:20px;letter-spacing:.04em;text-transform:uppercase}
+/* Follow-up alert */
+.followup-alert{background:var(--amber-bg);border:1px solid var(--amber);border-radius:var(--r);padding:7px 12px;font-size:11px;color:var(--amber-txt);margin-bottom:10px;font-weight:600}
+.empty-state{text-align:center;padding:2rem;color:var(--text3);font-size:12px;border:1px dashed var(--border2);border-radius:var(--r)}
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="header">
+  <div>
+    <div class="page-title">Paul's Network</div>
+    <div class="page-sub">contacts · connections · people worth knowing</div>
+  </div>
+  <div class="header-actions">
+    <a href="index.html" class="btn">← home</a>
+    <button class="btn" onclick="toggleTheme()" id="theme-btn">◑ dark</button>
+  </div>
+</div>
+
+<!-- METRICS -->
+<div class="pgrid">
+  <div class="met"><div class="met-label">Total</div><div class="met-val blue" id="met-total">0</div><div class="met-sub">contacts</div></div>
+  <div class="met"><div class="met-label">Follow Up</div><div class="met-val amber" id="met-followup">0</div><div class="met-sub">pending</div></div>
+  <div class="met"><div class="met-label">Close</div><div class="met-val green" id="met-close">0</div><div class="met-sub">connections</div></div>
+  <div class="met"><div class="met-label">Industry</div><div class="met-val purple" id="met-industry">0</div><div class="met-sub">contacts</div></div>
+</div>
+
+<!-- SEARCH & FILTER -->
+<div class="filter-bar">
+  <input class="filter-input" id="search-input" placeholder="Search by name, company, notes..." oninput="renderContacts()">
+  <button class="filter-tag" id="ft-mentor"   onclick="toggleFilter('mentor')">Mentor</button>
+  <button class="filter-tag" id="ft-peer"     onclick="toggleFilter('peer')">Peer</button>
+  <button class="filter-tag" id="ft-professor" onclick="toggleFilter('professor')">Professor</button>
+  <button class="filter-tag" id="ft-industry" onclick="toggleFilter('industry')">Industry</button>
+  <button class="filter-tag" id="ft-recruiter" onclick="toggleFilter('recruiter')">Recruiter</button>
+</div>
+
+<!-- CONTACTS -->
+<div class="bubble-grid" id="contact-bubbles"></div>
+<button class="add-bubble" onclick="openAdd()"><span style="font-size:15px;font-weight:300">+</span> Add Contact</button>
+
+<!-- FOLLOW-UPS DUE -->
+<div id="followup-section" style="margin-top:1.6rem"></div>
+
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal-overlay" onclick="handleOverlayClick(event)">
+  <div class="modal" id="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="modal-title">Add Contact</span>
+      <button class="modal-close" onclick="closeModal()">×</button>
+    </div>
+    <div class="modal-body" id="modal-body"></div>
+  </div>
+</div>
+
+<script type="module">
+import { initShim, shimLocalStorage, signIn, signOutUser } from './firebase-shim.js';
+
+shimLocalStorage();
+initShim(function() {
+  // ── PAGE INIT (runs after auth + data loaded) ──────────────
+
+const TAGS = ['mentor','peer','professor','industry','recruiter','other'];
+const TAG_COLORS = {mentor:'#6c5bbf',peer:'#2a7de1',professor:'#0e9e70',industry:'#c27d08',recruiter:'#d03030',other:'#888'};
+const TAG_BG     = {mentor:'var(--purple-bg)',peer:'var(--blue-bg)',professor:'var(--green-bg)',industry:'var(--amber-bg)',recruiter:'var(--red-bg)',other:'var(--bg4)'};
+const TAG_TXT    = {mentor:'var(--purple)',peer:'var(--blue-txt)',professor:'var(--green-txt)',industry:'var(--amber-txt)',recruiter:'var(--red-txt)',other:'var(--text3)'};
+
+let contacts = JSON.parse(localStorage.getItem('network_contacts') || '[]');
+let idC = parseInt(localStorage.getItem('network_id') || '1', 10);
+let activeFilter = null;
+
+function save(){
+  localStorage.setItem('network_contacts', JSON.stringify(contacts));
+  localStorage.setItem('network_id', idC);
+}
+
+// ── METRICS ────────────────────────────────────────────
+function calcMetrics(){
+  document.getElementById('met-total').textContent     = contacts.length;
+  document.getElementById('met-followup').textContent  = contacts.filter(c=>c.followUpDate&&new Date(c.followUpDate+'T00:00:00')<=new Date()).length;
+  document.getElementById('met-close').textContent     = contacts.filter(c=>c.strength==='close').length;
+  document.getElementById('met-industry').textContent  = contacts.filter(c=>c.tag==='industry'||c.tag==='recruiter').length;
+}
+
+// ── FILTER ─────────────────────────────────────────────
+function toggleFilter(tag){
+  activeFilter = activeFilter===tag ? null : tag;
+  TAGS.forEach(t=>{
+    const el = document.getElementById('ft-'+t);
+    if(!el) return;
+    el.className = 'filter-tag' + (activeFilter===t ? ' active-'+t : '');
+  });
+  renderContacts();
+}
+
+// ── AVATAR ─────────────────────────────────────────────
+function initials(name){ const p=name.trim().split(' '); return p.length>=2?(p[0][0]+p[p.length-1][0]).toUpperCase():name.slice(0,2).toUpperCase(); }
+
+// ── RENDER CONTACTS ────────────────────────────────────
+function renderContacts(){
+  const query = document.getElementById('search-input').value.toLowerCase();
+  let filtered = contacts;
+  if(activeFilter) filtered = filtered.filter(c=>c.tag===activeFilter);
+  if(query) filtered = filtered.filter(c=>[c.name,c.company,c.notes,c.tag,c.howMet].join(' ').toLowerCase().includes(query));
+
+  const grid = document.getElementById('contact-bubbles');
+  grid.innerHTML = '';
+  if(filtered.length===0){
+    grid.innerHTML = '<div class="empty-state">No contacts yet. Click + to add your first.</div>';
+    return;
+  }
+  // Sort: follow-up due first, then by name
+  filtered.sort((a,b)=>{
+    const aOver = a.followUpDate&&new Date(a.followUpDate+'T00:00:00')<=new Date();
+    const bOver = b.followUpDate&&new Date(b.followUpDate+'T00:00:00')<=new Date();
+    if(aOver&&!bOver) return -1; if(!aOver&&bOver) return 1;
+    return (a.name||'').localeCompare(b.name||'');
+  });
+  filtered.forEach(c=>{
+    const color = TAG_COLORS[c.tag||'other'];
+    const followUpDue = c.followUpDate && new Date(c.followUpDate+'T00:00:00') <= new Date();
+    const div = document.createElement('div');
+    div.className = 'contact-bubble';
+    div.onclick = () => openDetail(c.id);
+    div.innerHTML = `
+      <div class="cb-avatar" style="background:${TAG_BG[c.tag||'other']};color:${color};border-color:${color}">${initials(c.name||'?')}</div>
+      <div class="cb-inner">
+        <div class="cb-name">${c.name||'Unnamed'}</div>
+        <div class="cb-sub">${c.company||c.tag||''}</div>
+      </div>
+      ${followUpDue?'<div class="follow-up-dot" title="Follow-up due"></div>':''}
+    `;
+    grid.appendChild(div);
+  });
+
+  // Follow-up section
+  const due = contacts.filter(c=>c.followUpDate&&new Date(c.followUpDate+'T00:00:00')<=new Date());
+  const sec = document.getElementById('followup-section');
+  if(due.length>0){
+    sec.innerHTML = `<span class="sec-label">Follow-ups Due</span>`
+      + due.map(c=>`
+        <div class="contact-bubble" onclick="openDetail(${c.id})" style="margin-bottom:6px;max-width:100%;border-color:var(--amber)">
+          <div class="cb-avatar" style="background:var(--amber-bg);color:var(--amber-txt);border-color:var(--amber)">${initials(c.name||'?')}</div>
+          <div class="cb-inner">
+            <div class="cb-name">${c.name}</div>
+            <div class="cb-sub">Follow-up: ${new Date(c.followUpDate+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'})}</div>
+          </div>
+        </div>`).join('');
+  } else {
+    sec.innerHTML='';
+  }
+}
+
+function renderAll(){ calcMetrics(); renderContacts(); }
+
+// ── MODAL ─────────────────────────────────────────────
+function openModal(title,body){
+  document.getElementById('modal-title').textContent=title;
+  document.getElementById('modal-body').innerHTML=body;
+  document.getElementById('modal-overlay').classList.add('open');
+}
+function closeModal(){ document.getElementById('modal-overlay').classList.remove('open'); }
+function handleOverlayClick(e){ if(e.target===document.getElementById('modal-overlay')) closeModal(); }
+document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeModal(); });
+
+// ── ADD / EDIT FORM ────────────────────────────────────
+let formStrength = 'acquaintance';
+function openAdd(){ formStrength='acquaintance'; openModal('Add Contact', buildForm({})); }
+function openEdit(id){
+  const c=contacts.find(x=>x.id===id);
+  if(!c) return;
+  formStrength=c.strength||'acquaintance';
+  openModal('Edit Contact', buildForm(c));
+}
+
+function buildForm(c={}){
+  const tagOpts = TAGS.map(t=>`<option value="${t}" ${(c.tag||'other')===t?'selected':''}>${t.charAt(0).toUpperCase()+t.slice(1)}</option>`).join('');
+  const strButtons = ['close','familiar','acquaintance'].map(s=>`
+    <button type="button" class="strength-btn${formStrength===s?' sel-'+s:''}" onclick="setStrength('${s}')">${s}</button>`).join('');
+  return `
+    <div class="form-grid">
+      <div class="form-group"><label>Name *</label><input id="f-name" value="${esc(c.name||'')}" placeholder="Full Name"></div>
+      <div class="form-group"><label>Tag</label><select id="f-tag">${tagOpts}</select></div>
+      <div class="form-group"><label>Company / Org</label><input id="f-company" value="${esc(c.company||'')}" placeholder="Hershey Entertainment..."></div>
+      <div class="form-group"><label>Title / Role</label><input id="f-title" value="${esc(c.title||'')}" placeholder="Manager, Professor..."></div>
+      <div class="form-group"><label>Email</label><input id="f-email" value="${esc(c.email||'')}" placeholder="email@example.com"></div>
+      <div class="form-group"><label>Phone</label><input id="f-phone" value="${esc(c.phone||'')}" placeholder="(555) 000-0000"></div>
+      <div class="form-group"><label>LinkedIn</label><input id="f-linkedin" value="${esc(c.linkedin||'')}" placeholder="linkedin.com/in/..."></div>
+      <div class="form-group"><label>How We Met</label><input id="f-how" value="${esc(c.howMet||'')}" placeholder="Class, internship, event..."></div>
+      <div class="form-group"><label>Last Contacted</label><input id="f-last" type="date" value="${c.lastContacted||''}"></div>
+      <div class="form-group"><label>Follow-up Date</label><input id="f-followup" type="date" value="${c.followUpDate||''}"></div>
+    </div>
+    <div class="form-group"><label>Relationship Strength</label><div class="strength-row" id="strength-row">${strButtons}</div></div>
+    <div class="form-group"><label>Notes / Description</label><textarea id="f-notes" placeholder="How you know them, what they do, anything worth remembering...">${esc(c.notes||'')}</textarea></div>
+    <div class="modal-actions">
+      ${c.id?`<button class="btn" style="background:var(--red-bg);color:var(--red-txt);border-color:var(--red)" onclick="deleteContact(${c.id})">Delete</button>`:'<span></span>'}
+      <button class="btn btn-blue" onclick="saveContact(${c.id||'null'})">Save</button>
+    </div>`;
+}
+
+function setStrength(s){
+  formStrength=s;
+  document.getElementById('strength-row').innerHTML=['close','familiar','acquaintance'].map(x=>`
+    <button type="button" class="strength-btn${formStrength===x?' sel-'+x:''}" onclick="setStrength('${x}')">${x}</button>`).join('');
+}
+
+function saveContact(existingId){
+  const name=document.getElementById('f-name').value.trim();
+  if(!name){alert('Name is required.');return;}
+  const c={
+    name,tag:document.getElementById('f-tag').value,
+    company:document.getElementById('f-company').value.trim(),
+    title:document.getElementById('f-title').value.trim(),
+    email:document.getElementById('f-email').value.trim(),
+    phone:document.getElementById('f-phone').value.trim(),
+    linkedin:document.getElementById('f-linkedin').value.trim(),
+    howMet:document.getElementById('f-how').value.trim(),
+    lastContacted:document.getElementById('f-last').value,
+    followUpDate:document.getElementById('f-followup').value,
+    strength:formStrength,
+    notes:document.getElementById('f-notes').value.trim(),
+  };
+  if(existingId){
+    const idx=contacts.findIndex(x=>x.id===existingId);
+    if(idx>-1) contacts[idx]={...c,id:existingId};
+  } else {
+    c.id=idC++;contacts.push(c);
+  }
+  save();renderAll();closeModal();
+}
+
+function deleteContact(id){
+  if(!confirm('Remove this contact?')) return;
+  contacts=contacts.filter(x=>x.id!==id);
+  save();renderAll();closeModal();
+}
+
+// ── DETAIL VIEW ─────────────────────────────────────────
+function openDetail(id){
+  const c=contacts.find(x=>x.id===id);
+  if(!c) return;
+  const color=TAG_COLORS[c.tag||'other'];
+  const followUpDue=c.followUpDate&&new Date(c.followUpDate+'T00:00:00')<=new Date();
+  const fmtLast=c.lastContacted?new Date(c.lastContacted+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}):'—';
+  const fmtFollowUp=c.followUpDate?new Date(c.followUpDate+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}):'—';
+  const body=`
+    ${followUpDue?`<div class="followup-alert">Follow-up due: ${fmtFollowUp}</div>`:''}
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+      <div class="cb-avatar" style="width:44px;height:44px;font-size:16px;background:${TAG_BG[c.tag||'other']};color:${color};border-color:${color}">${initials(c.name||'?')}</div>
+      <div>
+        <div style="font-size:15px;font-weight:600;color:var(--text)">${c.name}</div>
+        <div style="font-size:11px;color:var(--text3)">${[c.title,c.company].filter(Boolean).join(' · ')||'—'}</div>
+        <span class="pill" style="background:${TAG_BG[c.tag||'other']};color:${TAG_TXT[c.tag||'other']};margin-top:3px">${c.tag||'other'}</span>
+        <span class="pill" style="background:var(--bg4);color:var(--text3);margin-left:4px">${c.strength||'acquaintance'}</span>
+      </div>
+    </div>
+    <div class="detail-grid">
+      <div class="detail-block"><div class="df-label">Email</div><div class="df-val ${!c.email?'empty':''}">${c.email||'—'}</div></div>
+      <div class="detail-block"><div class="df-label">Phone</div><div class="df-val ${!c.phone?'empty':''}">${c.phone||'—'}</div></div>
+      <div class="detail-block"><div class="df-label">LinkedIn</div><div class="df-val ${!c.linkedin?'empty':''}">${c.linkedin?`<a href="https://${c.linkedin.replace(/^https?:\/\//,'')}" target="_blank" style="color:var(--blue-txt)">${c.linkedin}</a>`:'—'}</div></div>
+      <div class="detail-block"><div class="df-label">How We Met</div><div class="df-val ${!c.howMet?'empty':''}">${c.howMet||'—'}</div></div>
+      <div class="detail-block"><div class="df-label">Last Contacted</div><div class="df-val">${fmtLast}</div></div>
+      <div class="detail-block"><div class="df-label">Follow-up</div><div class="df-val ${followUpDue?'':'empty'}">${fmtFollowUp}</div></div>
+    </div>
+    ${c.notes?`<div class="detail-block" style="margin-bottom:14px"><div class="df-label">Notes</div><div class="df-val" style="line-height:1.65">${c.notes}</div></div>`:''}
+    <div class="modal-actions">
+      <button class="btn" onclick="markContacted(${c.id})">Mark Contacted Today</button>
+      <button class="btn btn-blue" onclick="openEdit(${c.id})">Edit</button>
+    </div>`;
+  openModal(c.name, body);
+}
+
+function markContacted(id){
+  const c=contacts.find(x=>x.id===id);
+  if(!c) return;
+  const today=new Date();
+  c.lastContacted=`${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
+  c.followUpDate='';
+  save();renderAll();openDetail(id);
+}
+
+function esc(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+function toggleTheme(){
+  const dark=document.body.classList.toggle('dark');
+  document.getElementById('theme-btn').textContent=dark?'◑ light':'◑ dark';
+  localStorage.setItem('global_theme',dark?'dark':'light');
+}
+const savedTheme=localStorage.getItem('global_theme');
+if(savedTheme==='dark'){document.body.classList.add('dark');document.getElementById('theme-btn').textContent='◑ light';}
+
+renderAll();
+
+}); // end initShim
+</script>
+</body>
+</html>

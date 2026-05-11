@@ -231,7 +231,13 @@ hr{border:none;border-top:1px solid var(--border);margin:1.4rem 0}
   </div>
 </div>
 
-<script>
+<script type="module">
+import { initShim, shimLocalStorage, signIn, signOutUser } from './firebase-shim.js';
+
+shimLocalStorage();
+initShim(function() {
+  // ── PAGE INIT (runs after auth + data loaded) ──────────────
+
 let rounds = JSON.parse(localStorage.getItem('golf_rounds') || '[]');
 let idCounter = parseInt(localStorage.getItem('golf_rounds_id') || '1', 10);
 let shownCount = 9;
@@ -648,12 +654,14 @@ function toggleSec(id){
 function toggleTheme(){
   const dark=document.body.classList.toggle('dark');
   document.getElementById('theme-btn').textContent=dark?'◑ light':'◑ dark';
-  localStorage.setItem('golf_rounds_theme',dark?'dark':'light');
+  localStorage.setItem('global_theme',dark?'dark':'light');
 }
-const savedTheme=localStorage.getItem('golf_rounds_theme');
+const savedTheme=localStorage.getItem('global_theme');
 if(savedTheme==='dark'){document.body.classList.add('dark');document.getElementById('theme-btn').textContent='◑ light';}
 
 renderAll();
+
+}); // end initShim
 </script>
 </body>
 </html>

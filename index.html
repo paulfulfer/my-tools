@@ -121,6 +121,13 @@ hr{border:none;border-top:1px solid var(--border);margin:1.6rem 0}
       <div class="tc-desc">Track carry and total averages per club by session. Syncs from equipment page.</div>
       <div class="tc-footer"><span><span class="dot dot-green"></span>active</span><span class="tc-arrow">→</span></div>
     </a>
+    <a href="practice_log.html" class="tool-card">
+      <div class="tc-accent" style="background:var(--green)"></div>
+      <div class="tc-tag tag-teal">Golf</div>
+      <div class="tc-title">Practice Log</div>
+      <div class="tc-desc">Full swing field goals, short game sinks, putting drills, and custom routines.</div>
+      <div class="tc-footer"><span><span class="dot dot-green"></span>active</span><span class="tc-arrow">→</span></div>
+    </a>
   </div>
 
   <div class="sec-label">Life</div>
@@ -136,20 +143,42 @@ hr{border:none;border-top:1px solid var(--border);margin:1.6rem 0}
       <div class="tc-accent" style="background:var(--purple)"></div>
       <div class="tc-tag tag-purple">Career</div>
       <div class="tc-title">Resume</div>
-      <div class="tc-desc">LinkedIn-style resume builder with inline editing and black-and-white PDF export.</div>
+      <div class="tc-desc">LinkedIn-style resume builder with inline editing and PDF export.</div>
+      <div class="tc-footer"><span><span class="dot dot-green"></span>active</span><span class="tc-arrow">→</span></div>
+    </a>
+    <a href="network.html" class="tool-card">
+      <div class="tc-accent" style="background:var(--blue)"></div>
+      <div class="tc-tag tag-blue">Career</div>
+      <div class="tc-title">Network</div>
+      <div class="tc-desc">Personal CRM — track contacts, relationship strength, follow-ups, and notes.</div>
+      <div class="tc-footer"><span><span class="dot dot-green"></span>active</span><span class="tc-arrow">→</span></div>
+    </a>
+    <a href="workout.html" class="tool-card">
+      <div class="tc-accent" style="background:var(--red)"></div>
+      <div class="tc-tag tag-red">Fitness</div>
+      <div class="tc-title">Workout Tracker</div>
+      <div class="tc-desc">Program cards with day/week tabs, log weights against prescribed sets, PR tracker.</div>
       <div class="tc-footer"><span><span class="dot dot-green"></span>active</span><span class="tc-arrow">→</span></div>
     </a>
   </div>
 </div>
 
-<script>
+<script type="module">
+import { initShim, shimLocalStorage, signIn, signOutUser } from './firebase-shim.js';
+
+shimLocalStorage();
+initShim(function() {
+  // ── PAGE INIT (runs after auth + data loaded) ──────────────
+
 function toggleTheme(){
   const dark=document.body.classList.toggle('dark');
   document.getElementById('theme-btn').textContent=dark?'◑ light':'◑ dark';
-  localStorage.setItem('index_theme',dark?'dark':'light');
+  localStorage.setItem('global_theme',dark?'dark':'light');
 }
-const savedTheme=localStorage.getItem('index_theme');
+const savedTheme=localStorage.getItem('global_theme');
 if(savedTheme==='dark'){document.body.classList.add('dark');document.getElementById('theme-btn').textContent='◑ light';}
+
+}); // end initShim
 </script>
 </body>
 </html>

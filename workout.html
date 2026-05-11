@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Workout Tracker</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f5f5f3;--bg2:#ffffff;--bg3:#efefed;--bg4:#e4e4e2;
+  --border:#dddddb;--border2:#c8c8c6;
+  --text:#1a1a1a;--text2:#555;--text3:#999;--text4:#bbb;
+  --green:#0e9e70;--green-bg:#e0f5ec;--green-txt:#0e9e70;
+  --amber:#c27d08;--amber-bg:#fdf0d5;--amber-txt:#c27d08;
+  --blue:#2a7de1;--blue-bg:#deeafa;--blue-txt:#2a7de1;
+  --red:#d03030;--red-bg:#fce8e8;--red-txt:#d03030;
+  --purple:#6c5bbf;--purple-bg:#eae8fa;
+  --r:8px;--rl:12px;
+}
+.dark{
+  --bg:#1e1e1e;--bg2:#272727;--bg3:#2f2f2f;--bg4:#383838;
+  --border:#3a3a3a;--border2:#484848;
+  --text:#e2e2e2;--text2:#a0a0a0;--text3:#666;--text4:#444;
+  --green:#1fbd8a;--green-bg:#0d2e22;--green-txt:#1fbd8a;
+  --amber:#e6a020;--amber-bg:#2c1f06;--amber-txt:#e6a020;
+  --blue:#4a9eff;--blue-bg:#0a1e35;--blue-txt:#4a9eff;
+  --red:#f05050;--red-bg:#2a0f0f;--red-txt:#f05050;
+  --purple:#9b87f5;--purple-bg:#1a1530;
+}
+body{background:var(--bg);color:var(--text);font-family:'SF Mono','Fira Code','Cascadia Code',monospace;font-size:13px;line-height:1.6;padding:1.5rem 1rem;transition:background .2s,color .2s;min-height:100vh}
+.container{max-width:900px;margin:0 auto}
+.header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1.5rem;gap:10px}
+.page-title{font-size:17px;font-weight:600;letter-spacing:.02em;margin-bottom:2px}
+.page-sub{font-size:11px;color:var(--text3)}
+.header-actions{display:flex;gap:8px;align-items:center;flex-shrink:0;flex-wrap:wrap}
+.btn{font-family:inherit;font-size:11px;font-weight:600;padding:5px 13px;border-radius:20px;border:1px solid var(--border2);background:var(--bg3);color:var(--text2);cursor:pointer;letter-spacing:.04em;text-transform:uppercase;transition:all .15s;text-decoration:none;display:inline-block}
+.btn:hover{background:var(--bg4);color:var(--text)}
+.btn-green{background:var(--green-bg);color:var(--green-txt);border-color:var(--green)}
+.btn-green:hover{opacity:.85}
+.btn-blue{background:var(--blue-bg);color:var(--blue-txt);border-color:var(--blue)}
+.btn-blue:hover{opacity:.85}
+.btn-red{background:var(--red-bg);color:var(--red-txt);border-color:var(--red)}
+
+/* PR Tracker */
+.pr-bar{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:1.2rem}
+.pr-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--rl);padding:13px 15px;text-align:center}
+.pr-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:var(--text3);margin-bottom:5px}
+.pr-val{font-size:22px;font-weight:700;color:var(--green);letter-spacing:-.01em;margin-bottom:4px}
+.pr-input{font-family:inherit;font-size:18px;font-weight:700;color:var(--green);background:transparent;border:none;border-bottom:1px solid transparent;outline:none;width:90px;text-align:center;transition:border-color .15s}
+.pr-input:focus{border-bottom-color:var(--green)}
+.pr-unit{font-size:10px;color:var(--text3)}
+
+/* Program tabs (cards) */
+.card-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:1rem;align-items:center}
+.card-tab{font-family:inherit;font-size:11px;font-weight:600;padding:5px 14px;border-radius:20px;border:1.5px solid var(--border2);background:var(--bg3);color:var(--text3);cursor:pointer;transition:all .15s;text-transform:uppercase;letter-spacing:.05em}
+.card-tab.active{background:var(--blue-bg);color:var(--blue-txt);border-color:var(--blue)}
+.card-tab:hover:not(.active){background:var(--bg4);color:var(--text)}
+.add-card-btn{font-family:inherit;font-size:11px;font-weight:600;padding:5px 12px;border-radius:20px;border:1.5px dashed var(--border2);background:transparent;color:var(--text3);cursor:pointer;transition:all .15s}
+.add-card-btn:hover{border-color:var(--blue-txt);color:var(--blue-txt)}
+
+/* Day + Week selectors */
+.day-week-bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:1.2rem}
+.day-tabs{display:flex;gap:4px}
+.day-tab{font-family:inherit;font-size:11px;font-weight:600;padding:4px 12px;border-radius:16px;border:1.5px solid var(--border2);background:var(--bg3);color:var(--text3);cursor:pointer;transition:all .15s}
+.day-tab.active{background:var(--purple-bg);color:var(--purple);border-color:var(--purple)}
+.week-tabs{display:flex;gap:4px;margin-left:auto}
+.week-tab{font-family:inherit;font-size:11px;font-weight:600;padding:4px 10px;border-radius:16px;border:1.5px solid var(--border2);background:var(--bg3);color:var(--text3);cursor:pointer;transition:all .15s}
+.week-tab.active{background:var(--amber-bg);color:var(--amber-txt);border-color:var(--amber)}
+
+/* Section label */
+.section-block{margin-bottom:1.2rem}
+.section-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--text3);padding:5px 10px;background:var(--bg3);border-radius:var(--r);margin-bottom:8px;display:inline-block}
+
+/* Tri-set */
+.triset{background:var(--bg2);border:1px solid var(--border);border-radius:var(--rl);margin-bottom:8px;overflow:hidden}
+.triset-header{padding:8px 14px;background:var(--bg3);border-bottom:1px solid var(--border);font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.1em}
+.exercise-block{padding:10px 14px;border-bottom:1px solid var(--border)}
+.exercise-block:last-child{border-bottom:none}
+.ex-name{font-size:12px;font-weight:700;color:var(--text);margin-bottom:2px}
+.ex-cue{font-size:10px;color:var(--text3);margin-bottom:6px;line-height:1.4;font-style:italic}
+.ex-sets{display:flex;flex-direction:column;gap:4px}
+.set-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.set-prescribed{font-size:11px;color:var(--text2);min-width:100px;font-weight:600}
+.set-tempo{font-size:10px;color:var(--text4);min-width:48px}
+.set-weight-input{width:72px;font-family:inherit;font-size:12px;font-weight:600;padding:3px 8px;border-radius:6px;border:1px solid var(--border2);background:var(--bg3);color:var(--green);text-align:right;transition:border-color .15s}
+.set-weight-input:focus{outline:none;border-color:var(--green)}
+.set-last{font-size:10px;color:var(--text4);font-style:italic}
+.set-label{font-size:10px;color:var(--text3);font-weight:600}
+
+/* RPE row */
+.rpe-row{display:flex;align-items:center;gap:10px;padding:10px 14px;border-top:1px solid var(--border);background:var(--bg3);flex-wrap:wrap}
+.rpe-label{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.08em}
+.rpe-input{width:55px;font-family:inherit;font-size:12px;font-weight:600;padding:3px 7px;border-radius:6px;border:1px solid var(--border2);background:var(--bg2);color:var(--amber-txt);text-align:center;transition:border-color .15s}
+.rpe-input:focus{outline:none;border-color:var(--amber)}
+.rpe-scale{font-size:10px;color:var(--text4);flex:1}
+
+/* Session log button */
+.session-actions{display:flex;gap:8px;align-items:center;margin:1.2rem 0}
+.notes-input{flex:1;font-family:inherit;font-size:12px;padding:7px 12px;border-radius:var(--r);border:1px solid var(--border2);background:var(--bg2);color:var(--text);outline:none;transition:border-color .15s}
+.notes-input:focus{border-color:var(--green)}
+
+/* Session history */
+.history-list{display:flex;flex-direction:column;gap:6px;margin-top:.5rem}
+.history-item{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:10px 14px;cursor:pointer;transition:border-color .15s}
+.history-item:hover{border-color:var(--border2);background:var(--bg3)}
+.hi-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
+.hi-date{font-size:12px;font-weight:600;color:var(--text)}
+.hi-meta{font-size:10px;color:var(--text3)}
+.hi-del{background:none;border:none;color:var(--text4);cursor:pointer;font-size:14px;padding:0;font-family:inherit;transition:color .15s}
+.hi-del:hover{color:var(--red)}
+.hi-pills{display:flex;gap:5px;flex-wrap:wrap}
+.hi-pill{font-size:10px;padding:1px 8px;border-radius:10px;background:var(--bg4);color:var(--text3)}
+
+/* Sec header */
+.sec-header{display:flex;align-items:center;justify-content:space-between;margin:1.4rem 0 .6rem;padding-bottom:5px;border-bottom:1px solid var(--border);cursor:pointer;user-select:none}
+.sec-label-sm{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.12em}
+.sec-toggle{font-size:14px;color:var(--text3);transition:transform .2s}
+.sec-toggle.open{transform:rotate(180deg)}
+.sec-body.collapsed{display:none}
+
+/* Empty */
+.empty-state{text-align:center;padding:2rem;color:var(--text3);font-size:12px;border:1px dashed var(--border2);border-radius:var(--r)}
+
+/* Modal */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;z-index:1000;opacity:0;pointer-events:none;transition:opacity .2s;padding:1rem}
+.modal-overlay.open{opacity:1;pointer-events:all}
+.modal{background:var(--bg2);border:1px solid var(--border2);border-radius:16px;width:100%;max-width:440px;max-height:88vh;overflow-y:auto;transform:scale(.92) translateY(12px);transition:transform .22s cubic-bezier(.34,1.4,.64,1),opacity .2s;opacity:0;box-shadow:0 20px 60px rgba(0,0,0,.18)}
+.modal-overlay.open .modal{transform:scale(1) translateY(0);opacity:1}
+.modal-header{display:flex;align-items:center;justify-content:space-between;padding:15px 18px 12px;border-bottom:1px solid var(--border)}
+.modal-title{font-size:14px;font-weight:600}
+.modal-close{background:var(--bg3);border:1px solid var(--border2);color:var(--text2);width:26px;height:26px;border-radius:50%;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;font-family:inherit;transition:all .15s}
+.modal-close:hover{background:var(--red-bg);color:var(--red);border-color:var(--red)}
+.modal-body{padding:15px 18px}
+.form-group{display:flex;flex-direction:column;gap:3px;margin-bottom:10px}
+.form-group label{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.08em}
+.form-group input,.form-group select,.form-group textarea{font-family:inherit;font-size:12px;padding:6px 10px;border-radius:6px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);transition:border-color .15s}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{outline:none;border-color:var(--blue)}
+.modal-actions{display:flex;justify-content:space-between;align-items:center;margin-top:14px;padding-top:12px;border-top:1px solid var(--border)}
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="header">
+  <div>
+    <div class="page-title">Workout Tracker</div>
+    <div class="page-sub">Etown Golf · program cards · session log</div>
+  </div>
+  <div class="header-actions">
+    <a href="index.html" class="btn">← home</a>
+    <button class="btn" onclick="toggleTheme()" id="theme-btn">◑ dark</button>
+  </div>
+</div>
+
+<!-- PR TRACKER -->
+<div class="pr-bar">
+  <div class="pr-card">
+    <div class="pr-label">Squat PR</div>
+    <input class="pr-input" id="pr-squat" type="number" placeholder="0" oninput="savePRs()"> <span class="pr-unit">lbs</span>
+  </div>
+  <div class="pr-card">
+    <div class="pr-label">Bench PR</div>
+    <input class="pr-input" id="pr-bench" type="number" placeholder="0" oninput="savePRs()"> <span class="pr-unit">lbs</span>
+  </div>
+  <div class="pr-card">
+    <div class="pr-label">Deadlift PR</div>
+    <input class="pr-input" id="pr-dead" type="number" placeholder="0" oninput="savePRs()"> <span class="pr-unit">lbs</span>
+  </div>
+</div>
+
+<!-- CARD TABS -->
+<div class="card-tabs" id="card-tabs"></div>
+
+<!-- PROGRAM VIEW -->
+<div id="program-view"></div>
+
+<!-- SESSION HISTORY -->
+<div class="sec-header" onclick="toggleSec('history')">
+  <span class="sec-label-sm">Session History</span>
+  <span class="sec-toggle" id="toggle-history">▼</span>
+</div>
+<div class="sec-body collapsed" id="sec-history">
+  <div class="history-list" id="history-list"></div>
+</div>
+
+</div>
+
+<!-- MODAL (add card) -->
+<div class="modal-overlay" id="modal-overlay" onclick="handleOverlayClick(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="modal-title">Add Program Card</span>
+      <button class="modal-close" onclick="closeModal()">×</button>
+    </div>
+    <div class="modal-body" id="modal-body"></div>
+  </div>
+</div>
+
+<script type="module">
+import { initShim, shimLocalStorage, signIn, signOutUser } from './firebase-shim.js';
+
+shimLocalStorage();
+initShim(function() {
+  // ── PAGE INIT (runs after auth + data loaded) ──────────────
+
+// ── DATA MODEL ────────────────────────────────────────────
+// programs: [{id, name, days: [{label, sections: [{title, trisets:[{header, exercises:[{name,cue,sets:[{prescribed,tempo}]}]}]}]}]}]
+// sessions: [{id, programId, dayLabel, week, date, notes, rpe, sets:{exKey: [weight, ...]}}]
+// prs: {squat, bench, dead}
+
+let programs = JSON.parse(localStorage.getItem('workout_programs') || '[]');
+let sessions = JSON.parse(localStorage.getItem('workout_sessions') || '[]');
+let prs      = JSON.parse(localStorage.getItem('workout_prs') || '{"squat":"","bench":"","dead":""}');
+let idC      = parseInt(localStorage.getItem('workout_id') || '1', 10);
+
+let activeProg = programs.length > 0 ? programs[0].id : null;
+let activeDay  = 0;
+let activeWeek = 0;
+
+// Live session weights — keyed by "exIdx-setIdx"
+let liveWeights = {};
+let liveRPE     = '';
+let liveNotes   = '';
+
+function save(){
+  localStorage.setItem('workout_programs', JSON.stringify(programs));
+  localStorage.setItem('workout_sessions', JSON.stringify(sessions));
+  localStorage.setItem('workout_id', idC);
+}
+function savePRs(){
+  prs.squat = document.getElementById('pr-squat').value;
+  prs.bench = document.getElementById('pr-bench').value;
+  prs.dead  = document.getElementById('pr-dead').value;
+  localStorage.setItem('workout_prs', JSON.stringify(prs));
+}
+
+// ── HELPERS ───────────────────────────────────────────────
+function g(id){ return document.getElementById(id); }
+function esc(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+// Last weight used for a given exercise in this program/day combo
+function lastWeight(progId, dayLabel, exKey){
+  const prev = sessions.filter(s=>s.programId===progId&&s.dayLabel===dayLabel)
+    .sort((a,b)=>new Date(b.date)-new Date(a.date));
+  for(const s of prev){
+    if(s.sets&&s.sets[exKey]){
+      const w = s.sets[exKey].filter(x=>x).join(', ');
+      if(w) return w;
+    }
+  }
+  return null;
+}
+
+// ── RENDER TABS ───────────────────────────────────────────
+function renderCardTabs(){
+  const el = g('card-tabs');
+  el.innerHTML = programs.map(p=>`
+    <button class="card-tab${p.id===activeProg?' active':''}" onclick="selectCard(${p.id})">${esc(p.name)}</button>
+  `).join('') + `<button class="add-card-btn" onclick="openAddCard()">+ Card</button>`;
+}
+
+function selectCard(id){
+  activeProg = id; activeDay = 0; activeWeek = 0;
+  liveWeights = {}; liveRPE = ''; liveNotes = '';
+  renderCardTabs(); renderProgram();
+}
+
+// ── RENDER PROGRAM ────────────────────────────────────────
+function renderProgram(){
+  const pv = g('program-view');
+  if(!activeProg || programs.length===0){
+    pv.innerHTML = `<div class="empty-state">No program cards yet. Click "+ Card" to add your first program.</div>`;
+    return;
+  }
+  const prog = programs.find(p=>p.id===activeProg);
+  if(!prog){ pv.innerHTML=''; return; }
+
+  const days = prog.days || [];
+  const day  = days[activeDay];
+
+  // Day selector
+  let html = `<div class="day-week-bar">
+    <div class="day-tabs">`;
+  days.forEach((d,i)=>{
+    html += `<button class="day-tab${i===activeDay?' active':''}" onclick="selectDay(${i})">${esc(d.label)}</button>`;
+  });
+  html += `</div><div class="week-tabs">`;
+  ['Wk 1','Wk 2','Wk 3','Wk 4'].forEach((w,i)=>{
+    html += `<button class="week-tab${i===activeWeek?' active':''}" onclick="selectWeek(${i})">${w}</button>`;
+  });
+  html += `</div></div>`;
+
+  if(!day){
+    html += `<div class="empty-state">No days configured for this card.</div>`;
+    pv.innerHTML = html; return;
+  }
+
+  // Sections
+  let exGlobalIdx = 0;
+  (day.sections||[]).forEach(sec=>{
+    html += `<div class="section-block"><span class="section-title">${esc(sec.title)}</span>`;
+    (sec.trisets||[]).forEach(ts=>{
+      html += `<div class="triset"><div class="triset-header">${esc(ts.header)}</div>`;
+      (ts.exercises||[]).forEach(ex=>{
+        const exKey = `${activeProg}-${activeDay}-${exGlobalIdx}`;
+        const last  = lastWeight(activeProg, day.label, exKey);
+        const sets  = ex.sets || [];
+        // Use week-specific sets if available (each set can have weeks array)
+        html += `<div class="exercise-block">
+          <div class="ex-name">${esc(ex.name)}</div>
+          ${ex.cue?`<div class="ex-cue">${esc(ex.cue)}</div>`:''}
+          <div class="ex-sets">`;
+        sets.forEach((set,si)=>{
+          const prescribed = Array.isArray(set.reps) ? (set.reps[activeWeek]||set.reps[set.reps.length-1]) : (set.reps||'');
+          const tempo = set.tempo||'';
+          const wKey = `${exGlobalIdx}-${si}`;
+          const storedW = liveWeights[wKey]||'';
+          html += `<div class="set-row">
+            <span class="set-label">Set ${si+1}</span>
+            <span class="set-prescribed">${esc(String(prescribed))}</span>
+            <span class="set-tempo">${tempo?tempo:''}</span>
+            <input class="set-weight-input" type="number" placeholder="lbs" value="${storedW}"
+              oninput="liveWeights['${wKey}']=this.value" title="Weight used">
+            ${last&&si===0?`<span class="set-last">last: ${last}</span>`:''}
+          </div>`;
+        });
+        html += `</div></div>`;
+        exGlobalIdx++;
+      });
+      html += `</div>`;
+    });
+    html += `</div>`;
+  });
+
+  // RPE + log button
+  html += `<div class="triset" style="margin-top:.5rem">
+    <div class="rpe-row">
+      <span class="rpe-label">RPE</span>
+      <input class="rpe-input" type="number" min="1" max="10" placeholder="1-10"
+        value="${liveRPE}" oninput="liveRPE=this.value">
+      <span class="rpe-scale">1-2 easy · 3-4 moderate · 5-7 hard · 8-9 really hard · 10 maximal</span>
+    </div>
+  </div>
+  <div class="session-actions">
+    <input class="notes-input" type="text" placeholder="Session notes..." value="${esc(liveNotes)}" oninput="liveNotes=this.value">
+    <button class="btn btn-green" onclick="logSession()">Log Session</button>
+    ${programs.find(p=>p.id===activeProg) ? `<button class="btn btn-red" onclick="deleteCard(${activeProg})" style="opacity:.6">Delete Card</button>` : ''}
+  </div>`;
+
+  pv.innerHTML = html;
+}
+
+function selectDay(i){ activeDay=i; liveWeights={}; liveRPE=''; liveNotes=''; renderProgram(); }
+function selectWeek(i){ activeWeek=i; renderProgram(); }
+
+// ── LOG SESSION ───────────────────────────────────────────
+function logSession(){
+  const prog = programs.find(p=>p.id===activeProg);
+  if(!prog) return;
+  const day = (prog.days||[])[activeDay];
+  const session = {
+    id: idC++, programId: activeProg, cardName: prog.name,
+    dayLabel: day?day.label:'Day '+(activeDay+1),
+    week: activeWeek+1, date: new Date().toISOString(),
+    rpe: liveRPE, notes: liveNotes,
+    sets: {...liveWeights},
+  };
+  sessions.unshift(session);
+  save();
+  liveWeights={}; liveRPE=''; liveNotes='';
+  renderProgram(); renderHistory();
+  alert('Session logged!');
+}
+
+// ── HISTORY ───────────────────────────────────────────────
+function renderHistory(){
+  const el = g('history-list');
+  if(sessions.length===0){
+    el.innerHTML='<div class="empty-state">No sessions logged yet.</div>';return;
+  }
+  el.innerHTML = sessions.slice(0,30).map(s=>{
+    const d = new Date(s.date).toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric',year:'numeric'});
+    const weights = Object.values(s.sets||{}).filter(Boolean);
+    return `<div class="history-item">
+      <div class="hi-top">
+        <span class="hi-date">${s.cardName||''} — ${s.dayLabel} Week ${s.week}</span>
+        <div style="display:flex;align-items:center;gap:8px">
+          ${s.rpe?`<span style="font-size:11px;color:var(--amber-txt);font-weight:600">RPE ${s.rpe}</span>`:''}
+          <button class="hi-del" onclick="deleteSession(${s.id})">✕</button>
+        </div>
+      </div>
+      <div class="hi-meta">${d}${s.notes?' · '+s.notes:''}</div>
+    </div>`;
+  }).join('');
+}
+
+function deleteSession(id){
+  if(!confirm('Delete this session?')) return;
+  sessions = sessions.filter(s=>s.id!==id);
+  save(); renderHistory();
+}
+
+// ── ADD CARD ──────────────────────────────────────────────
+function openAddCard(){
+  g('modal-title').textContent = 'Add Program Card';
+  g('modal-body').innerHTML = `
+    <div class="form-group"><label>Card Name</label><input id="nc-name" placeholder="e.g. Fall 1, Off-Season 3"></div>
+    <div class="form-group"><label>Number of Days per Card</label>
+      <select id="nc-days">
+        <option value="2">2 days (Day 1, Day 2)</option>
+        <option value="3" selected>3 days (Day 1, Day 2, Day 3)</option>
+      </select>
+    </div>
+    <p style="font-size:11px;color:var(--text3);margin-bottom:10px;line-height:1.55">
+      After creating the card, use the exercise editor to add exercises per day.
+    </p>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-blue" onclick="createCard()">Create Card</button>
+    </div>`;
+  g('modal-overlay').classList.add('open');
+}
+
+function createCard(){
+  const name = g('nc-name').value.trim();
+  if(!name){ alert('Please enter a card name.'); return; }
+  const numDays = parseInt(g('nc-days').value)||3;
+  const days = Array.from({length:numDays},(_,i)=>({
+    label:'Day '+(i+1),
+    sections: buildDefaultSections(),
+  }));
+  const card = { id: idC++, name, days };
+  programs.push(card);
+  activeProg = card.id; activeDay = 0; activeWeek = 0;
+  save(); closeModal(); renderCardTabs(); renderProgram();
+}
+
+function buildDefaultSections(){
+  return [
+    { title:'Power + Corrective', trisets:[
+      { header:'Power Exercise', exercises:[
+        {name:'Power Exercise (e.g. DB Jump / KB Swing)',cue:'Edit exercise name and cue above',sets:[{reps:['5','6','6','5'],tempo:'x'},{reps:['5','6','6','5'],tempo:''},{reps:['5','6','6','5'],tempo:''},{reps:['5','6','6',''],tempo:''}]},
+      ]},
+      { header:'Corrective', exercises:[
+        {name:'Corrective (e.g. Hip Flexor Stretch)',cue:'',sets:[{reps:['2x5E','2x5E','2x5E','2x5E'],tempo:'1-1-1'}]},
+      ]},
+    ]},
+    { title:'Strength 1 — No Rest Btw Exercises, 90s Btw Tri-Set', trisets:[
+      { header:'1A / 1B Tri-Set', exercises:[
+        {name:'1A: Exercise (e.g. Squat)',cue:'Form cue',sets:[{reps:['8','8','8','8'],tempo:'2-1-1'},{reps:['8','8','8','8'],tempo:''},{reps:['8','6','6','8'],tempo:''},{reps:['8','6','6',''],tempo:''}]},
+        {name:'1B: Exercise (e.g. Lat Pull Down)',cue:'Form cue',sets:[{reps:['10E','8E','8E','8E'],tempo:'1-1-1'},{reps:['10E','8E','8E','8E'],tempo:''},{reps:['10E','8E','8E','8E'],tempo:''}]},
+      ]},
+    ]},
+    { title:'Strength 2 / Core — No Rest Btw Exercises, 60s Btw Tri-Set', trisets:[
+      { header:'2A / 2B / 2C Tri-Set', exercises:[
+        {name:'2A: Exercise',cue:'Form cue',sets:[{reps:['10','12','15','12'],tempo:'2-1-1'},{reps:['10','12','15','12'],tempo:''},{reps:['10','12','15','12'],tempo:''}]},
+        {name:'2B: Exercise',cue:'Form cue',sets:[{reps:['8E','10E','10E','10E'],tempo:'1-1-1'},{reps:['8E','10E','10E','10E'],tempo:''},{reps:['8E','10E','10E','10E'],tempo:''}]},
+        {name:'2C: Exercise (Plank / Core)',cue:'Form cue',sets:[{reps:['30s','35s','40s','45s'],tempo:'TIME'},{reps:['30s','35s','40s','45s'],tempo:''},{reps:['30s','35s','40s','45s'],tempo:''}]},
+      ]},
+    ]},
+  ];
+}
+
+function deleteCard(id){
+  if(!confirm('Delete this program card and all its sessions?')) return;
+  programs = programs.filter(p=>p.id!==id);
+  sessions = sessions.filter(s=>s.programId!==id);
+  activeProg = programs.length>0 ? programs[0].id : null;
+  activeDay=0; activeWeek=0;
+  save(); renderCardTabs(); renderProgram(); renderHistory();
+}
+
+// ── MODAL ─────────────────────────────────────────────────
+function closeModal(){ g('modal-overlay').classList.remove('open'); }
+function handleOverlayClick(e){ if(e.target===g('modal-overlay')) closeModal(); }
+document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeModal(); });
+
+// ── UTILS ─────────────────────────────────────────────────
+function toggleSec(id){
+  g('sec-'+id).classList.toggle('collapsed');
+  g('toggle-'+id).classList.toggle('open');
+}
+function toggleTheme(){
+  const dark=document.body.classList.toggle('dark');
+  g('theme-btn').textContent=dark?'◑ light':'◑ dark';
+  localStorage.setItem('global_theme',dark?'dark':'light');
+}
+
+// ── INIT ──────────────────────────────────────────────────
+const savedTheme=localStorage.getItem('global_theme');
+if(savedTheme==='dark'){document.body.classList.add('dark');g('theme-btn').textContent='◑ light';}
+g('pr-squat').value=prs.squat||'';
+g('pr-bench').value=prs.bench||'';
+g('pr-dead').value=prs.dead||'';
+
+// Seed Fall 1 card from the photo if no programs exist
+if(programs.length===0){
+  const fall1 = {
+    id: idC++, name: 'Fall 1',
+    days: [
+      { label:'Day 1', sections:[
+        { title:'Power', trisets:[
+          { header:'Med Ball Circuit', exercises:[
+            {name:'Med Ball Circuit',cue:'2-3 Rounds per week (see card)',sets:[
+              {reps:['x15','x15','x15','x15'],tempo:''},{reps:['x10 EA','x10 EA','x10 EA','x10 EA'],tempo:''},{reps:['x10 EA','x10 EA','x10 EA','x10 EA'],tempo:''},
+            ]},
+          ]},
+          { header:'Half Kneeling Band T-Spine Rotations', exercises:[
+            {name:'Half Kneeling Band T-Spine Rotations',cue:'',sets:[{reps:['3x6E','3x6E','3x6E','3x5E'],tempo:'X'}]},
+          ]},
+          { header:'Kratos Belt Squat', exercises:[
+            {name:'Kratos Belt Squat',cue:'FLY',sets:[{reps:['3x10','3x12','3x15','3x10'],tempo:'FLY'}]},
+          ]},
+        ]},
+        { title:'Strength 1 — No Rest Btw Exercises, 90s Btw Tri-Set', trisets:[
+          { header:'1A / 1B Tri-Set', exercises:[
+            {name:'1A: BB RDL',cue:'',sets:[{reps:['8','8','8','8'],tempo:'2-1-1'},{reps:['8','8','8','8'],tempo:''},{reps:['8','6','6','8'],tempo:''},{reps:['8','6','',''],tempo:''}]},
+            {name:'1B: DB Flat Bench',cue:'',sets:[{reps:['15','15','12','8'],tempo:'1-1-2'},{reps:['15','15','12','8'],tempo:''},{reps:['15','10','10','8'],tempo:''},{reps:['','10','8',''],tempo:''}]},
+          ]},
+        ]},
+        { title:'Strength 2 — No Rest Btw Exercises, 60s Btw Tri-Set', trisets:[
+          { header:'2A / 2B / 2C Tri-Set', exercises:[
+            {name:'2A: TRX Squats + Press',cue:'',sets:[{reps:['8','10','10','8'],tempo:'1-1-1'},{reps:['8','10','10','8'],tempo:''},{reps:['8','10','10','8'],tempo:''}]},
+            {name:'2B: 1-Arm DB Neutral Grip Row',cue:'',sets:[{reps:['8E','8E','8E','6E'],tempo:'1-1-1'},{reps:['8E','8E','8E','6E'],tempo:''},{reps:['8E','8E','8E','6E'],tempo:''}]},
+            {name:'2C: Tall Kneeling Plate Chops',cue:'',sets:[{reps:['10E','10E','10E','8E'],tempo:'1-1-2'},{reps:['10E','10E','10E','8E'],tempo:''},{reps:['10E','10E','10E','8E'],tempo:''}]},
+          ]},
+        ]},
+      ]},
+      { label:'Day 2', sections:[
+        { title:'Power', trisets:[
+          { header:'Box Jump or KB Swing', exercises:[
+            {name:'Box Jump or KB Swing',cue:'',sets:[{reps:['5/8','4/8','3/8',''],tempo:''},{reps:['5/8','4/8','3/8',''],tempo:''},{reps:['5/8 x','4/8 x','3/8 x','3/8 x'],tempo:''},{reps:['0/8','4/8','3/8',''],tempo:''}]},
+          ]},
+          { header:'KB Windmills', exercises:[
+            {name:'KB Windmills',cue:'',sets:[{reps:['3x5E','3x5E','3x5E','3x4E'],tempo:'slow'}]},
+          ]},
+        ]},
+        { title:'Strength 1 — No Rest Btw Exercises, 90s Btw Tri-Set', trisets:[
+          { header:'1A / 1B Tri-Set', exercises:[
+            {name:'1A: Safety Bar Back Squat',cue:'.75 M/S → .7 M/S progression',sets:[{reps:['8','8','6','8'],tempo:'2-1-1'},{reps:['8','8','8','8'],tempo:''},{reps:['8','6','6','8'],tempo:''},{reps:['8','6','6',''],tempo:''}]},
+            {name:'1B: Kratos 1/2 Kneeling Lat Pull Down',cue:'Or Lat Pull Down Machine',sets:[{reps:['12','10','10','8'],tempo:'1-1-2'},{reps:['12','10','10','8'],tempo:''},{reps:['12','10','8','8'],tempo:'FLY'},{reps:['','10','8','8'],tempo:'FLY'}]},
+          ]},
+        ]},
+        { title:'Strength 2 — No Rest Btw Exercises, 60s Btw Tri-Set', trisets:[
+          { header:'2A / 2B / 2C Tri-Set', exercises:[
+            {name:'2A: MB Groin Squeeze + Straight Arm Band Rotations',cue:'',sets:[{reps:['10E','10E','10E','10E'],tempo:'1-1-1'},{reps:['10F','10E','10E','10E'],tempo:''},{reps:['10E','10E','10E','10E'],tempo:'1-1-1'},{reps:['10E','10E','10E','10E'],tempo:''}]},
+            {name:'2B: Tricep Extension',cue:'',sets:[{reps:['12','12','15','15'],tempo:'1-1-1'},{reps:['12','12','15','15'],tempo:'1-1-1'},{reps:['12','15','15','15'],tempo:'1-1-1'},{reps:['','10','15','15'],tempo:'1-1-1'}]},
+            {name:'2C: Half Plank',cue:'',sets:[{reps:['25s','30s','40s','50s'],tempo:'TIME'},{reps:['25s','30s','40s','50s'],tempo:''},{reps:['25s','30s','40s','50s'],tempo:''}]},
+          ]},
+        ]},
+      ]},
+    ],
+  };
+  programs.push(fall1);
+  activeProg = fall1.id;
+  save();
+}
+
+renderCardTabs();
+renderProgram();
+renderHistory();
+
+}); // end initShim
+</script>
+</body>
+</html>
