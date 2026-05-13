@@ -2,7 +2,7 @@
   "name": "Paul's Life",
   "short_name": "Life",
   "description": "Life tracking \u2014 academics, resume, network, workout",
-  "start_url": "/life.html",
+  "start_url": "./life.html",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#0d1117",
@@ -24,5 +24,7 @@
   "categories": [
     "productivity",
     "education"
-  ]
+  ],
+  "scope": "./",
+  "id": "./life.html"
 }

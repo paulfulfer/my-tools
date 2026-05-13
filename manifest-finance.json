@@ -2,7 +2,7 @@
   "name": "Paul's Finance",
   "short_name": "Finance",
   "description": "Personal finance tracking \u2014 planner, shifts, expenses, IRA",
-  "start_url": "/finance.html",
+  "start_url": "./finance.html",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#0d1117",
@@ -24,5 +24,7 @@
   "categories": [
     "finance",
     "productivity"
-  ]
+  ],
+  "scope": "./",
+  "id": "./finance.html"
 }

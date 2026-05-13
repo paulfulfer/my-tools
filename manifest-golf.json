@@ -2,7 +2,7 @@
   "name": "Paul's Golf",
   "short_name": "Golf",
   "description": "Golf tracking \u2014 rounds, practice, equipment, distances",
-  "start_url": "/golf.html",
+  "start_url": "./golf.html",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#0d1117",
@@ -24,5 +24,7 @@
   "categories": [
     "sports",
     "health"
-  ]
+  ],
+  "scope": "./",
+  "id": "./golf.html"
 }
