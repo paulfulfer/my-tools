@@ -1,0 +1,28 @@
+{
+  "name": "Paul's Life",
+  "short_name": "Life",
+  "description": "Life tracking \u2014 academics, resume, network, workout",
+  "start_url": "/life.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0d1117",
+  "theme_color": "#7c3aed",
+  "icons": [
+    {
+      "src": "icon-life-192.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-life-512.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": [
+    "productivity",
+    "education"
+  ]
+}

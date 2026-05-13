@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#7c3aed">
+<title>Life — Paul's Tools</title>
+<link rel="manifest" href="./manifest-life.json">
+<script>(function(){try{var t=localStorage.getItem('global_theme');if(t==='dark')document.documentElement.setAttribute('data-theme','dark');}catch(e){}})();</script>
+<link rel="stylesheet" href="./global_theme.css">
+<style>
+body{padding:0;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Segoe UI',sans-serif}
+.app-shell{min-height:100vh;min-height:100dvh;display:flex;flex-direction:column}
+.app-header{padding:env(safe-area-inset-top,16px) 20px 16px;padding-top:calc(env(safe-area-inset-top,0px) + 20px);background:var(--bg-glass);backdrop-filter:var(--blur);border-bottom:1px solid var(--border-subtle);position:sticky;top:0;z-index:10}
+.app-header-row{display:flex;align-items:center;justify-content:space-between}
+.app-name{font-size:20px;font-weight:700;letter-spacing:-.02em;background:linear-gradient(135deg,var(--purple),var(--blue));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.app-content{flex:1;padding:20px 16px 100px;max-width:600px;margin:0 auto;width:100%;position:relative;z-index:1}
+.nav-grid{display:flex;flex-direction:column;gap:10px}
+.nav-card{background:var(--bg-card);backdrop-filter:var(--blur);border:1px solid var(--border-glass);border-radius:var(--r);padding:16px 18px;text-decoration:none;display:flex;align-items:center;gap:14px;box-shadow:var(--shadow-card);transition:transform .18s cubic-bezier(.34,1.4,.64,1),box-shadow .18s}
+.nav-card:hover,.nav-card:active{transform:scale(0.98);box-shadow:none}
+.nav-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.nav-info{flex:1;min-width:0}
+.nav-title{font-size:15px;font-weight:600;color:var(--text-primary);margin-bottom:2px}
+.nav-desc{font-size:12px;color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nav-arrow{font-size:16px;color:var(--text-muted);flex-shrink:0}
+.sec-label{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted);margin:20px 0 8px 2px}
+.bottom-bar{position:fixed;bottom:0;left:0;right:0;padding:10px 20px;padding-bottom:calc(env(safe-area-inset-bottom,0px) + 10px);background:var(--bg-glass);backdrop-filter:var(--blur);border-top:1px solid var(--border-subtle);display:flex;justify-content:space-between;align-items:center;z-index:20}
+.back-link{font-size:12px;font-weight:600;color:var(--purple);text-decoration:none;letter-spacing:.04em;text-transform:uppercase}
+.theme-btn{background:none;border:none;cursor:pointer;font-size:18px;padding:4px;color:var(--text-muted)}
+</style>
+</head>
+<body>
+<div class="bg-orbs" aria-hidden="true"><div class="orb orb-1" style="background:radial-gradient(circle,#e9d5ff,transparent)"></div><div class="orb orb-2" style="background:radial-gradient(circle,#bfdbfe,transparent)"></div></div>
+<div class="app-shell">
+  <div class="app-header">
+    <div class="app-header-row">
+      <div class="app-name">Life</div>
+      <button class="theme-btn" onclick="toggleTheme()" id="theme-btn">☀️</button>
+    </div>
+  </div>
+  <div class="app-content">
+    <div class="sec-label">Academics</div>
+    <div class="nav-grid">
+      <a href="./academic_planner.html" class="nav-card">
+        <div class="nav-icon" style="background:rgba(37,99,235,0.12)">🎓</div>
+        <div class="nav-info"><div class="nav-title">Academic Planner</div><div class="nav-desc">Courses, assignments, grades, GPA</div></div>
+        <div class="nav-arrow">›</div>
+      </a>
+    </div>
+    <div class="sec-label">Career</div>
+    <div class="nav-grid">
+      <a href="./resume.html" class="nav-card">
+        <div class="nav-icon" style="background:rgba(124,58,237,0.12)">📄</div>
+        <div class="nav-info"><div class="nav-title">Resume</div><div class="nav-desc">Inline editing, PDF export</div></div>
+        <div class="nav-arrow">›</div>
+      </a>
+      <a href="./network.html" class="nav-card">
+        <div class="nav-icon" style="background:rgba(37,99,235,0.12)">🤝</div>
+        <div class="nav-info"><div class="nav-title">Network</div><div class="nav-desc">Contacts, follow-ups, relationship strength</div></div>
+        <div class="nav-arrow">›</div>
+      </a>
+    </div>
+    <div class="sec-label">Fitness</div>
+    <div class="nav-grid">
+      <a href="./workout.html" class="nav-card">
+        <div class="nav-icon" style="background:rgba(220,38,38,0.12)">💪</div>
+        <div class="nav-info"><div class="nav-title">Workout Tracker</div><div class="nav-desc">Program cards, weights, PRs</div></div>
+        <div class="nav-arrow">›</div>
+      </a>
+    </div>
+  </div>
+  <div class="bottom-bar">
+    <a href="./index.html" class="back-link">← All Tools</a>
+    <span style="font-size:11px;color:var(--text-muted)">Life</span>
+  </div>
+</div>
+<script type="module">
+if('serviceWorker' in navigator){ navigator.serviceWorker.register('./sw.js'); }
+function toggleTheme(){
+  const isDark=document.documentElement.getAttribute('data-theme')==='dark';
+  document.documentElement.setAttribute('data-theme',isDark?'light':'dark');
+  document.getElementById('theme-btn').textContent=isDark?'☀️':'🌙';
+  localStorage.setItem('global_theme',isDark?'light':'dark');
+}
+window.toggleTheme=toggleTheme;
+const t=localStorage.getItem('global_theme');
+document.getElementById('theme-btn').textContent=t==='dark'?'🌙':'☀️';
+</script>
+</body>
+</html>

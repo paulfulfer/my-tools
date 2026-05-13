@@ -1,0 +1,28 @@
+{
+  "name": "Paul's Finance",
+  "short_name": "Finance",
+  "description": "Personal finance tracking \u2014 planner, shifts, expenses, IRA",
+  "start_url": "/finance.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0d1117",
+  "theme_color": "#00b37e",
+  "icons": [
+    {
+      "src": "icon-finance-192.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-finance-512.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": [
+    "finance",
+    "productivity"
+  ]
+}

@@ -11,6 +11,9 @@
 })();
 </script>
 <link rel="stylesheet" href="./global_theme.css">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Paul — Resume</title>
 <style>
@@ -364,6 +367,11 @@ window.toggleTheme = toggleTheme;
 window.updateBullet = updateBullet;
 window.updateEntry = updateEntry;
 }); // end initShim
+
+// Register service worker for PWA
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('./sw.js').catch(()=>{});
+}
 </script>
 </body>
 </html>
