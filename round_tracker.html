@@ -2,33 +2,21 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<script>
+(function(){
+  try{
+    var t=localStorage.getItem('global_theme');
+    if(t==='dark') document.documentElement.setAttribute('data-theme','dark');
+  }catch(e){}
+})();
+</script>
+<link rel="stylesheet" href="./global_theme.css">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Round Tracker</title>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --bg:#f5f5f3;--bg2:#ffffff;--bg3:#efefed;--bg4:#e4e4e2;
-  --border:#dddddb;--border2:#c8c8c6;
-  --text:#1a1a1a;--text2:#555;--text3:#999;--text4:#bbb;
-  --green:#0e9e70;--green-bg:#e0f5ec;--green-txt:#0e9e70;
-  --amber:#c27d08;--amber-bg:#fdf0d5;--amber-txt:#c27d08;
-  --blue:#2a7de1;--blue-bg:#deeafa;--blue-txt:#2a7de1;
-  --red:#d03030;--red-bg:#fce8e8;--red-txt:#d03030;
-  --purple:#6c5bbf;--purple-bg:#eae8fa;
-  --teal:#0e8a8a;--teal-bg:#e0f5f5;
-  --r:8px;--rl:12px;
-}
-.dark{
-  --bg:#1e1e1e;--bg2:#272727;--bg3:#2f2f2f;--bg4:#383838;
-  --border:#3a3a3a;--border2:#484848;
-  --text:#e2e2e2;--text2:#a0a0a0;--text3:#666;--text4:#444;
-  --green:#1fbd8a;--green-bg:#0d2e22;--green-txt:#1fbd8a;
-  --amber:#e6a020;--amber-bg:#2c1f06;--amber-txt:#e6a020;
-  --blue:#4a9eff;--blue-bg:#0a1e35;--blue-txt:#4a9eff;
-  --red:#f05050;--red-bg:#2a0f0f;--red-txt:#f05050;
-  --purple:#9b87f5;--purple-bg:#1a1530;
-  --teal:#1fbd9a;--teal-bg:#0d2e2e;
-}
+
+
 body{background:var(--bg);color:var(--text);font-family:'SF Mono','Fira Code','Cascadia Code',monospace;font-size:13px;line-height:1.6;padding:1.5rem 1rem;transition:background .2s,color .2s;min-height:100vh}
 .container{max-width:900px;margin:0 auto}
 
@@ -148,23 +136,10 @@ hr{border:none;border-top:1px solid var(--border);margin:1.4rem 0}
 .trend-bar{border-radius:2px 2px 0 0;min-width:8px;flex:1;transition:opacity .15s}
 .trend-bar:hover{opacity:.75}
 </style>
-<script>
-// Prevent dark mode flash — apply theme before first paint
-(function(){
-  try{
-    if(localStorage.getItem('global_theme')==='dark'){
-      document.documentElement.style.setProperty('--flash-bg','#1e1e1e');
-      document.documentElement.classList.add('pre-dark');
-    }
-  }catch(e){}
-})();
-</script>
-<style>
-/* Applied instantly before JS loads to prevent flash */
-html.pre-dark body{background:#1e1e1e !important;color:#e2e2e2 !important}
-</style>
+
 </head>
 <body>
+<div class="bg-orbs" aria-hidden="true"><div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div></div>
 <div class="container">
 
 <div class="header">
@@ -667,15 +642,12 @@ function toggleSec(id){
   document.getElementById('toggle-'+id).classList.toggle('open');
 }
 function toggleTheme(){
-  const dark=document.body.classList.toggle('dark');document.documentElement.classList.remove('pre-dark');
-  document.getElementById('theme-btn').textContent=dark?'◑ light':'◑ dark';
-  localStorage.setItem('global_theme',dark?'dark':'light');
+  const isDark = document.documentElement.getAttribute('data-theme')==='dark';
+  document.documentElement.setAttribute('data-theme', isDark ? 'light' : 'dark');
+  const btn = document.getElementById('theme-btn');
+  if(btn) btn.textContent = isDark ? '◑ dark' : '◑ light';
+  try{ localStorage.setItem('global_theme', isDark ? 'light' : 'dark'); }catch(e){}
 }
-const savedTheme=localStorage.getItem('global_theme');
-if(savedTheme==='dark'){document.body.classList.add('dark');document.getElementById('theme-btn').textContent='◑ light';}
-
-renderAll();
-
 
 // ── EXPOSE TO GLOBAL SCOPE (required for inline onclick handlers in ES modules) ──
 window.addPar3 = addPar3;

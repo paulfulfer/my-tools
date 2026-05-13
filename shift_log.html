@@ -2,29 +2,21 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<script>
+(function(){
+  try{
+    var t=localStorage.getItem('global_theme');
+    if(t==='dark') document.documentElement.setAttribute('data-theme','dark');
+  }catch(e){}
+})();
+</script>
+<link rel="stylesheet" href="./global_theme.css">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Shift Log</title>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --bg:#f5f5f3;--bg2:#ffffff;--bg3:#efefed;--bg4:#e4e4e2;
-  --border:#dddddb;--border2:#c8c8c6;
-  --text:#1a1a1a;--text2:#555;--text3:#999;--text4:#bbb;
-  --green:#0e9e70;--green-bg:#e0f5ec;--green-txt:#0e9e70;
-  --amber:#c27d08;--amber-bg:#fdf0d5;--amber-txt:#c27d08;
-  --blue:#2a7de1;--blue-bg:#deeafa;--blue-txt:#2a7de1;
-  --red:#d03030;--red-bg:#fce8e8;--red-txt:#d03030;
-  --r:8px;--rl:12px;
-}
-.dark{
-  --bg:#1e1e1e;--bg2:#272727;--bg3:#2f2f2f;--bg4:#383838;
-  --border:#3a3a3a;--border2:#484848;
-  --text:#e2e2e2;--text2:#a0a0a0;--text3:#666;--text4:#444;
-  --green:#1fbd8a;--green-bg:#0d2e22;--green-txt:#1fbd8a;
-  --amber:#e6a020;--amber-bg:#2c1f06;--amber-txt:#e6a020;
-  --blue:#4a9eff;--blue-bg:#0a1e35;--blue-txt:#4a9eff;
-  --red:#f05050;--red-bg:#2a0f0f;--red-txt:#f05050;
-}
+
+
 body{background:var(--bg);color:var(--text);font-family:'SF Mono','Fira Code','Cascadia Code',monospace;font-size:13px;line-height:1.6;padding:1.5rem 1rem;transition:background .2s,color .2s;min-height:100vh}
 .container{max-width:820px;margin:0 auto}
 .header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1.75rem}
@@ -90,23 +82,10 @@ hr{border:none;border-top:1px solid var(--border);margin:1.4rem 0}
 .saving-indicator.show{opacity:1}
 #auth-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:9999;align-items:center;justify-content:center}
 </style>
-<script>
-// Prevent dark mode flash — apply theme before first paint
-(function(){
-  try{
-    if(localStorage.getItem('global_theme')==='dark'){
-      document.documentElement.style.setProperty('--flash-bg','#1e1e1e');
-      document.documentElement.classList.add('pre-dark');
-    }
-  }catch(e){}
-})();
-</script>
-<style>
-/* Applied instantly before JS loads to prevent flash */
-html.pre-dark body{background:#1e1e1e !important;color:#e2e2e2 !important}
-</style>
+
 </head>
 <body>
+<div class="bg-orbs" aria-hidden="true"><div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div></div>
 <div id="auth-overlay">
   <div style="background:var(--bg2);border:1px solid var(--border2);border-radius:16px;padding:32px 36px;text-align:center;max-width:360px;width:90%">
     <div style="font-size:17px;font-weight:600;margin-bottom:6px;color:var(--text)">Paul's Tools</div>
@@ -146,10 +125,21 @@ html.pre-dark body{background:#1e1e1e !important;color:#e2e2e2 !important}
   <div class="sec-body" id="sec-entry">
     <div class="entry-card">
       <div class="form-row">
-        <div class="form-group"><label>Job</label><select id="f-job"></select></div>
+        <div class="form-group"><label>Job</label><select id="f-job" onchange="updateShiftFormForJob()"></select></div>
         <div class="form-group"><label>Date</label><input type="date" id="f-date"></div>
-        <div class="form-group" style="max-width:100px"><label>Clock In</label><input type="time" id="f-in"></div>
-        <div class="form-group" style="max-width:100px"><label>Clock Out</label><input type="time" id="f-out"></div>
+      </div>
+      <div id="time-fields" class="form-row">
+        <div class="form-group" style="max-width:110px"><label>Clock In</label><input type="time" id="f-in"></div>
+        <div class="form-group" style="max-width:110px"><label>Clock Out</label><input type="time" id="f-out"></div>
+      </div>
+      <div id="stipend-fields" class="form-row" style="display:none">
+        <div class="form-group">
+          <label>Stipend Shift</label>
+          <div style="display:flex;align-items:center;gap:10px;padding:7px 11px;background:var(--bg-input);border:1px solid var(--border2);border-radius:8px">
+            <input type="checkbox" id="f-stipend" style="width:auto;border:none;box-shadow:none" checked>
+            <span style="font-size:12px;color:var(--text-secondary)" id="stipend-rate-label">1 night shift</span>
+          </div>
+        </div>
       </div>
       <div class="form-row"><div class="form-group"><label>Note (optional)</label><textarea id="f-note" placeholder="e.g. desk coverage, event setup..."></textarea></div></div>
       <div class="form-actions"><button class="btn btn-green" onclick="logShift()">+ Log Shift</button></div>
@@ -248,11 +238,23 @@ function renderJobsList(){
   renderJobSelect();
 }
 
+window.updateShiftFormForJob = function(){
+  const jobId = document.getElementById('f-job').value;
+  const job = jobs.find(j=>j.id===jobId);
+  const isNights = job?.unit === 'nights';
+  document.getElementById('time-fields').style.display = isNights ? 'none' : 'flex';
+  document.getElementById('stipend-fields').style.display = isNights ? 'flex' : 'none';
+  if(isNights && job){
+    document.getElementById('stipend-rate-label').textContent = `1 ${job.unit} @ $${job.wage.toFixed(2)} = $${job.wage.toFixed(2)}`;
+  }
+};
+
 function renderJobSelect(){
   const sel = document.getElementById('f-job');
   const current = sel.value;
   sel.innerHTML = jobs.map(j=>`<option value="${esc(j.id)}">${esc(j.title)}</option>`).join('');
   if(jobs.find(j=>j.id===current)) sel.value = current;
+  updateShiftFormForJob();
 }
 
 window.addJob = function(){
@@ -286,13 +288,21 @@ window.logShift = async function(){
   const jobId = document.getElementById('f-job').value;
   const job   = jobs.find(j=>j.id===jobId);
   const date  = document.getElementById('f-date').value;
-  const inT   = document.getElementById('f-in').value;
-  const outT  = document.getElementById('f-out').value;
   const note  = document.getElementById('f-note').value.trim();
-  if(!date||!inT||!outT){ alert('Please fill in date, clock-in, and clock-out.'); return; }
-  const hours = parseHours(inT, outT);
-  if(hours<=0){ alert('Clock-out must be after clock-in.'); return; }
-  const shift = {jobId, jobTitle: job?.title||'Unknown', date, inT, outT, note, hours};
+  const isStipend = job?.unit === 'nights';
+  if(!date){ alert('Please enter a date.'); return; }
+  let hours, inT = '', outT = '';
+  if(isStipend){
+    // Stipend shift: 1 unit = 1 night, gross = wage directly
+    hours = 1;
+  } else {
+    inT  = document.getElementById('f-in').value;
+    outT = document.getElementById('f-out').value;
+    if(!inT||!outT){ alert('Please fill in clock-in and clock-out.'); return; }
+    hours = parseHours(inT, outT);
+    if(hours<=0){ alert('Clock-out must be after clock-in.'); return; }
+  }
+  const shift = {jobId, jobTitle: job?.title||'Unknown', date, inT, outT, note, hours, isStipend: isStipend||false};
   const id = await addToCollection('shifts', shift);
   shifts.unshift({...shift, id});
   document.getElementById('f-note').value='';
@@ -347,12 +357,12 @@ function renderAll(){
     const div=document.createElement('div'); div.className='shift-item';
     div.innerHTML=`
       <div class="si-left">
-        <div class="si-top"><span class="si-job" style="color:var(--blue)">${esc(s.jobTitle||s.jobId)}</span><span class="si-date">${fmtDate}</span></div>
-        <div class="si-times">${s.inT} → ${s.outT}</div>
+        <div class="si-top"><span class="si-job" style="color:var(--blue)">${esc(s.jobTitle||s.jobId)}</span><span class="si-date">${fmtDate}</span>${s.isStipend?'<span class="pill pill-a">Stipend</span>':''}</div>
+        <div class="si-times">${s.isStipend ? '1 night shift' : s.inT+' → '+s.outT}</div>
         ${s.note?`<div class="si-note">${esc(s.note)}</div>`:''}
       </div>
       <div class="si-right">
-        <span class="si-hours">${s.hours.toFixed(1)}h</span>
+        <span class="si-hours">${s.isStipend ? '1 night' : s.hours.toFixed(1)+'h'}</span>
         <span class="si-gross">${fmt$(gross)}</span>
         <button class="si-del" onclick="deleteShift('${s.id}')">✕</button>
       </div>`;
@@ -362,11 +372,22 @@ function renderAll(){
 
 function esc(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 window.toggleSec = function(n){ document.getElementById('sec-'+n).classList.toggle('collapsed'); document.getElementById('toggle-'+n).classList.toggle('open'); };
-window.toggleTheme = function(){ const dark=document.body.classList.toggle('dark');document.documentElement.classList.remove('pre-dark'); document.getElementById('theme-btn').textContent=dark?'◑ light':'◑ dark'; localStorage.setItem('global_theme',dark?'dark':'light'); };
+window.toggleTheme = function(){
+  const isDark = document.documentElement.getAttribute('data-theme')==='dark';
+  document.documentElement.setAttribute('data-theme', isDark ? 'light' : 'dark');
+  const btn = document.getElementById('theme-btn');
+  if(btn) btn.textContent = isDark ? '◑ dark' : '◑ light';
+  try{ localStorage.setItem('global_theme', isDark ? 'light' : 'dark'); }catch(e){}
+};
 
 // Init theme
-const savedTheme=localStorage.getItem('global_theme');
-if(savedTheme==='dark'){ document.body.classList.add('dark'); document.getElementById('theme-btn').textContent='◑ light'; }
+// Apply theme
+(function(){
+  const t = localStorage.getItem('global_theme');
+  document.documentElement.setAttribute('data-theme', t==='dark' ? 'dark' : 'light');
+  const btn = document.getElementById('theme-btn');
+  if(btn) btn.textContent = t==='dark' ? '◑ light' : '◑ dark';
+})();
 const today=new Date();
 document.getElementById('f-date').value=`${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
 </script>

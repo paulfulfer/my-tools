@@ -2,31 +2,21 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<script>
+(function(){
+  try{
+    var t=localStorage.getItem('global_theme');
+    if(t==='dark') document.documentElement.setAttribute('data-theme','dark');
+  }catch(e){}
+})();
+</script>
+<link rel="stylesheet" href="./global_theme.css">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Paul — Resume</title>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --bg:#f5f5f3;--bg2:#ffffff;--bg3:#efefed;--bg4:#e4e4e2;
-  --border:#dddddb;--border2:#c8c8c6;
-  --text:#1a1a1a;--text2:#555;--text3:#999;--text4:#bbb;
-  --blue:#2a7de1;--blue-bg:#deeafa;--blue-dim:#deeafa;--blue-txt:#2a7de1;
-  --green:#0e9e70;--green-bg:#e0f5ec;--green-txt:#0e9e70;
-  --amber:#c27d08;--amber-bg:#fdf0d5;
-  --red:#d03030;--red-bg:#fce8e8;--red-txt:#d03030;
-  --purple:#6c5bbf;--purple-bg:#eae8fa;
-  --r:8px;--rl:12px;
-}
-.dark{
-  --bg:#1e1e1e;--bg2:#272727;--bg3:#2f2f2f;--bg4:#383838;
-  --border:#3a3a3a;--border2:#484848;
-  --text:#e2e2e2;--text2:#a0a0a0;--text3:#666;--text4:#444;
-  --blue:#4a9eff;--blue-bg:#0a1e35;--blue-dim:#1a3a5c;--blue-txt:#4a9eff;
-  --green:#1fbd8a;--green-bg:#0d2e22;--green-txt:#1fbd8a;
-  --amber:#e6a020;--amber-bg:#2c1f06;
-  --red:#f05050;--red-bg:#2a0f0f;--red-txt:#f05050;
-  --purple:#9b87f5;--purple-bg:#1a1530;
-}
+
+
 body{background:var(--bg);color:var(--text);font-family:'SF Mono','Fira Code','Cascadia Code',monospace;font-size:13px;line-height:1.6;padding:1.5rem 1rem;min-height:100vh;transition:background .2s,color .2s}
 .container{max-width:860px;margin:0 auto}
 .page-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:2rem;gap:12px}
@@ -117,23 +107,10 @@ body{background:var(--bg);color:var(--text);font-family:'SF Mono','Fira Code','C
   textarea,input{pointer-events:none}
 }
 </style>
-<script>
-// Prevent dark mode flash — apply theme before first paint
-(function(){
-  try{
-    if(localStorage.getItem('global_theme')==='dark'){
-      document.documentElement.style.setProperty('--flash-bg','#1e1e1e');
-      document.documentElement.classList.add('pre-dark');
-    }
-  }catch(e){}
-})();
-</script>
-<style>
-/* Applied instantly before JS loads to prevent flash */
-html.pre-dark body{background:#1e1e1e !important;color:#e2e2e2 !important}
-</style>
+
 </head>
 <body>
+<div class="bg-orbs" aria-hidden="true"><div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div></div>
 <div class="container">
 
 <div class="page-header">
@@ -340,15 +317,22 @@ function renderSkills(){
 
 // ── THEME ─────────────────────────────────────────────
 function toggleTheme(){
-  const dark=document.body.classList.toggle('dark');document.documentElement.classList.remove('pre-dark');
-  g('theme-btn').textContent=dark?'◑ light':'◑ dark';
-  localStorage.setItem('global_theme',dark?'dark':'light');
+  const isDark = document.documentElement.getAttribute('data-theme')==='dark';
+  document.documentElement.setAttribute('data-theme', isDark ? 'light' : 'dark');
+  const btn = document.getElementById('theme-btn');
+  if(btn) btn.textContent = isDark ? '◑ dark' : '◑ light';
+  try{ localStorage.setItem('global_theme', isDark ? 'light' : 'dark'); }catch(e){}
 }
 
 // ── INIT ──────────────────────────────────────────────
 load();
-const savedTheme=localStorage.getItem('global_theme');
-if(savedTheme==='dark'){document.body.classList.add('dark');g('theme-btn').textContent='◑ light';}
+// Apply theme
+(function(){
+  const t = localStorage.getItem('global_theme');
+  document.documentElement.setAttribute('data-theme', t==='dark' ? 'dark' : 'light');
+  const btn = document.getElementById('theme-btn');
+  if(btn) btn.textContent = t==='dark' ? '◑ light' : '◑ dark';
+})();
 initProfile();renderAll();
 
 // Pre-fill if empty
