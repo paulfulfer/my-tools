@@ -2,470 +2,561 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<script>
-(function(){
-  try{
-    var t=localStorage.getItem('global_theme');
-    if(t==='dark') document.documentElement.setAttribute('data-theme','dark');
-  }catch(e){}
-})();
-</script>
+<script>(function(){try{var t=localStorage.getItem('global_theme');if(t==='dark')document.documentElement.setAttribute('data-theme','dark');}catch(e){}})();</script>
 <link rel="stylesheet" href="./global_theme.css">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Roth IRA Tracker</title>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-
-
-body{background:var(--bg);color:var(--text);font-family:'SF Mono','Fira Code','Cascadia Code',monospace;font-size:13px;line-height:1.6;padding:1.5rem 1rem;transition:background .2s,color .2s;min-height:100vh}
-.container{max-width:820px;margin:0 auto}
-.header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1.75rem}
+body{background:var(--bg-base);color:var(--text-primary);font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Segoe UI',monospace;font-size:13px;line-height:1.6;padding:1.5rem 1rem;min-height:100vh}
+.container{max-width:860px;margin:0 auto;position:relative;z-index:1}
+.header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1.75rem;gap:12px}
 .page-title{font-size:17px;font-weight:600;letter-spacing:.02em;margin-bottom:2px}
-.page-sub{font-size:11px;color:var(--text3);letter-spacing:.03em}
+.page-sub{font-size:11px;color:var(--text-muted)}
 .header-actions{display:flex;gap:8px;align-items:center;flex-shrink:0}
-.btn{font-family:inherit;font-size:11px;font-weight:600;padding:5px 13px;border-radius:20px;border:1px solid var(--border2);background:var(--bg3);color:var(--text2);cursor:pointer;letter-spacing:.04em;text-transform:uppercase;transition:all .15s;text-decoration:none;display:inline-block}
-.btn:hover{background:var(--bg4);color:var(--text)}
-.btn-green{background:var(--green-bg);color:var(--green-txt);border-color:var(--green)}
-.btn-green:hover{opacity:.85}
-hr{border:none;border-top:1px solid var(--border);margin:1.4rem 0}
-.sec-header{display:flex;align-items:center;justify-content:space-between;margin:1.6rem 0 .55rem;padding-bottom:5px;border-bottom:1px solid var(--border);cursor:pointer;user-select:none}
-.sec-label{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.12em}
-.sec-toggle{font-size:14px;color:var(--text3);transition:transform .2s;line-height:1}
+hr{border:none;border-top:1px solid var(--border-subtle);margin:1.4rem 0}
+.sec-header{display:flex;align-items:center;justify-content:space-between;margin:1.5rem 0 .6rem;padding-bottom:6px;border-bottom:1px solid var(--border-subtle);cursor:pointer;user-select:none}
+.sec-label{font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.12em}
+.sec-toggle{font-size:14px;color:var(--text-muted);transition:transform .2s;line-height:1}
 .sec-toggle.open{transform:rotate(180deg)}
 .sec-body.collapsed{display:none}
-.pgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(118px,1fr));gap:8px;margin:.5rem 0 1rem}
-.met{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:11px 13px}
-.met-label{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:3px}
-.met-val{font-size:19px;font-weight:600;color:var(--text);letter-spacing:-.01em}
+
+/* Metrics */
+.pgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin:.5rem 0 1rem}
+.met{background:var(--bg-card);backdrop-filter:var(--blur);border:1px solid var(--border-glass);border-radius:var(--r);padding:12px 14px;box-shadow:var(--shadow-card)}
+.met-label{font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:3px}
+.met-val{font-size:19px;font-weight:700;color:var(--text-primary);letter-spacing:-.01em}
 .met-val.green{color:var(--green)}.met-val.blue{color:var(--blue)}.met-val.amber{color:var(--amber)}.met-val.red{color:var(--red)}.met-val.purple{color:var(--purple)}
-.met-sub{font-size:10px;color:var(--text3);margin-top:2px}
-.progress-hero{background:var(--bg2);border:1px solid var(--border);border-radius:var(--rl);padding:20px 22px;margin-bottom:1rem}
-.ph-top{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:6px}
-.ph-contributed{font-size:28px;font-weight:600;color:var(--green);letter-spacing:-.02em}
-.ph-limit{font-size:13px;color:var(--text3)}
-.ph-track{height:10px;background:var(--bg4);border-radius:5px;overflow:hidden;margin-bottom:8px;border:1px solid var(--border)}
-.ph-fill{height:100%;border-radius:5px;background:linear-gradient(90deg,var(--green),#34d399);transition:width .4s ease}
-.ph-bottom{display:flex;justify-content:space-between;align-items:center}
-.ph-pct{font-size:12px;font-weight:600;color:var(--green)}
-.ph-remaining{font-size:12px;color:var(--text3)}
-.entry-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--rl);padding:16px 18px;margin-bottom:1rem}
+.met-sub{font-size:10px;color:var(--text-muted);margin-top:2px}
+
+/* Year cards */
+.year-grid{display:flex;flex-direction:column;gap:10px;margin-bottom:1rem}
+.year-card{background:var(--bg-card);backdrop-filter:var(--blur);border:1px solid var(--border-glass);border-radius:var(--rl);padding:16px 18px;box-shadow:var(--shadow-card);position:relative;overflow:hidden}
+.year-card.maxed{border-color:var(--green)}
+.year-card.maxed::before{content:'MAXED';position:absolute;top:10px;right:12px;font-size:9px;font-weight:700;letter-spacing:.1em;color:var(--green);background:var(--green-bg);padding:2px 8px;border-radius:10px}
+.yc-top{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:8px}
+.yc-year{font-size:18px;font-weight:700;color:var(--text-primary)}
+.yc-amounts{font-size:13px;color:var(--text-muted)}
+.yc-amounts strong{color:var(--green);font-size:15px}
+.yc-track{height:8px;background:var(--bg-card2);border-radius:4px;overflow:hidden;margin-bottom:6px;border:1px solid var(--border-subtle)}
+.yc-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--green),#34d399);transition:width .4s ease}
+.yc-fill.maxed{background:linear-gradient(90deg,var(--green),#34d399)}
+.yc-fill.behind{background:linear-gradient(90deg,var(--amber),#fbbf24)}
+.yc-bottom{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px}
+.yc-pct{font-size:11px;font-weight:600;color:var(--text-muted)}
+.yc-deposits-count{font-size:10px;color:var(--text-muted)}
+
+/* Returns card */
+.returns-card{background:var(--bg-card);backdrop-filter:var(--blur);border:1px solid var(--border-glass);border-radius:var(--rl);padding:16px 18px;margin-bottom:1rem;box-shadow:var(--shadow-card)}
+.returns-split{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px}
+.rs-block{background:var(--bg-card2);border-radius:var(--r);padding:12px 14px;border:1px solid var(--border-subtle)}
+.rs-label{font-size:10px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px}
+.rs-val{font-size:21px;font-weight:700;letter-spacing:-.01em;color:var(--text-primary)}
+.rs-val.green{color:var(--green)}.rs-val.red{color:var(--red)}.rs-val.blue{color:var(--blue)}
+.rs-sub{font-size:11px;color:var(--text-muted);margin-top:3px}
+
+/* Balance input */
+.balance-card{background:var(--bg-card);backdrop-filter:var(--blur);border:1px solid var(--border-glass);border-radius:var(--rl);padding:16px 18px;margin-bottom:.5rem;box-shadow:var(--shadow-card)}
+.bal-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.bal-field{display:flex;flex-direction:column;gap:3px;flex:1;min-width:160px}
+.bal-field label{font-size:10px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.08em}
+.bal-field input{font-family:inherit;font-size:16px;font-weight:700;padding:7px 11px;border-radius:8px;border:1px solid var(--border2);background:var(--bg-input);color:var(--green);transition:border-color .15s;width:100%}
+.bal-field input:focus{outline:none;border-color:var(--green);box-shadow:0 0 0 3px var(--green-bg)}
+.bal-note{font-size:11px;color:var(--text-muted);margin-top:8px}
+
+/* Log form */
+.entry-card{background:var(--bg-card);backdrop-filter:var(--blur);border:1px solid var(--border-glass);border-radius:var(--rl);padding:16px 18px;margin-bottom:.5rem;box-shadow:var(--shadow-card)}
 .form-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px;align-items:flex-end}
 .form-group{display:flex;flex-direction:column;gap:3px;flex:1;min-width:120px}
-.form-group label{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.08em}
-.form-group input,.form-group select{font-family:inherit;font-size:12px;padding:5px 9px;border-radius:6px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);transition:border-color .15s}
-.form-group input:focus,.form-group select:focus{outline:none;border-color:var(--green)}
+.form-group label{font-size:10px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.08em}
+.form-group input,.form-group select{font-family:inherit;font-size:12px;padding:6px 10px;border-radius:8px;border:1px solid var(--border2);background:var(--bg-input);color:var(--text-primary);transition:border-color .15s}
+.form-group input:focus,.form-group select:focus{outline:none;border-color:var(--green);box-shadow:0 0 0 3px var(--green-bg)}
 .form-actions{display:flex;justify-content:flex-end}
+
+/* Deposit list */
 .deposit-list{display:flex;flex-direction:column;gap:5px}
-.deposit-item{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:8px 12px;display:flex;align-items:center;justify-content:space-between}
+.deposit-item{background:var(--bg-card);border:1px solid var(--border-glass);border-radius:var(--r);padding:8px 13px;display:flex;align-items:center;justify-content:space-between;box-shadow:var(--shadow-card)}
 .deposit-item:hover{border-color:var(--border2)}
-.di-left{display:flex;flex-direction:column;gap:1px}
-.di-label{font-size:12px;color:var(--text)}
-.di-date{font-size:11px;color:var(--text3)}
-.di-right{display:flex;align-items:center;gap:12px}
-.di-amt{font-size:13px;font-weight:600;color:var(--green)}
-.di-del{background:none;border:none;color:var(--text4);cursor:pointer;font-size:14px;padding:0;font-family:inherit;transition:color .15s}
+.di-left{display:flex;flex-direction:column;gap:1px;flex:1}
+.di-label{font-size:12px;color:var(--text-primary);font-weight:500}
+.di-date{font-size:10px;color:var(--text-muted)}
+.di-right{display:flex;align-items:center;gap:10px;flex-shrink:0}
+.di-amt{font-size:13px;font-weight:700;color:var(--green)}
+.di-year{font-size:10px;font-weight:600;padding:1px 7px;border-radius:10px;background:var(--blue-bg);color:var(--blue-txt)}
+.di-del{background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:14px;padding:0;font-family:inherit;transition:color .15s}
 .di-del:hover{color:var(--red)}
-.empty-state{text-align:center;padding:2rem;color:var(--text3);font-size:12px;border:1px dashed var(--border2);border-radius:var(--r)}
+
+/* Pace bars */
+.pace-row{display:flex;align-items:center;gap:10px;margin:.4rem 0;flex-wrap:wrap}
+.pace-label{font-size:11px;color:var(--text-secondary);min-width:110px}
+.pace-track{flex:1;height:6px;background:var(--bg-card2);border-radius:3px;overflow:hidden;border:1px solid var(--border-subtle);min-width:80px}
+.pace-fill{height:100%;border-radius:3px;transition:width .3s}
+.pace-pct{font-size:11px;font-weight:600;color:var(--text-primary);min-width:36px;text-align:right}
+
+/* Projection */
+.proj-card{background:var(--bg-card);backdrop-filter:var(--blur);border:1px solid var(--border-glass);border-radius:var(--rl);padding:16px 18px;margin-bottom:1rem;box-shadow:var(--shadow-card)}
+.proj-number{font-size:32px;font-weight:700;color:var(--green);letter-spacing:-.02em;margin-bottom:4px}
+.proj-note{font-size:11px;color:var(--text-muted);line-height:1.6;margin-top:8px}
+.proj-inputs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.proj-field{display:flex;flex-direction:column;gap:3px;flex:1;min-width:100px}
+.proj-field label{font-size:10px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.08em}
+.proj-field input{font-family:inherit;font-size:12px;padding:5px 9px;border-radius:8px;border:1px solid var(--border2);background:var(--bg-input);color:var(--text-primary)}
+.proj-field input:focus{outline:none;border-color:var(--green)}
+
+/* Maxout history */
+.maxout-list{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:.5rem}
+.maxout-badge{background:var(--green-bg);border:1px solid var(--green);border-radius:var(--r);padding:8px 14px;text-align:center}
+.mb-year{font-size:11px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+.mb-amt{font-size:12px;font-weight:600;color:var(--text-primary);margin-top:2px}
+.mb-check{font-size:16px;color:var(--green);margin-top:2px}
+
+.empty-state{text-align:center;padding:1.5rem;color:var(--text-muted);font-size:12px;border:1px dashed var(--border2);border-radius:var(--r)}
 .pill{display:inline-block;font-size:10px;font-weight:600;padding:2px 9px;border-radius:20px;letter-spacing:.04em;text-transform:uppercase}
 .pill-g{background:var(--green-bg);color:var(--green-txt)}.pill-a{background:var(--amber-bg);color:var(--amber-txt)}.pill-r{background:var(--red-bg);color:var(--red-txt)}.pill-b{background:var(--blue-bg);color:var(--blue-txt)}
-.pace-row{display:flex;align-items:center;gap:10px;margin:.5rem 0}
-.pace-label{font-size:11px;color:var(--text3);min-width:100px}
-.pace-track{flex:1;height:7px;background:var(--bg3);border-radius:3px;overflow:hidden;border:1px solid var(--border)}
-.pace-fill{height:100%;border-radius:3px;transition:width .3s}
-.pace-pct{font-size:11px;font-weight:600;color:var(--text);min-width:36px;text-align:right}
-/* Balance editor */
-.balance-editor{background:var(--bg2);border:1px solid var(--border);border-radius:var(--rl);padding:16px 18px;margin-bottom:1rem}
-.be-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
-.be-field{display:flex;flex-direction:column;gap:3px;flex:1;min-width:140px}
-.be-field label{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.08em}
-.be-field input{font-family:inherit;font-size:15px;font-weight:600;padding:6px 10px;border-radius:6px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);transition:border-color .15s;width:100%}
-.be-field input:focus{outline:none;border-color:var(--blue)}
-.be-note{font-size:11px;color:var(--text3);margin-top:8px}
-/* Returns section */
-.returns-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--rl);padding:16px 18px;margin-bottom:1rem}
-.returns-split{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-@media(max-width:480px){.returns-split{grid-template-columns:1fr}}
-.rs-block{background:var(--bg3);border-radius:var(--r);padding:12px 14px}
-.rs-label{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px}
-.rs-val{font-size:21px;font-weight:600;letter-spacing:-.01em}
-.rs-sub{font-size:11px;color:var(--text3);margin-top:3px}
 </style>
-
 </head>
 <body>
-<div class="bg-orbs" aria-hidden="true"><div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div></div>
+<div class="bg-orbs" aria-hidden="true"><div class="orb orb-1"></div><div class="orb orb-2"></div></div>
 <div class="container">
 
-  <div class="header">
-    <div>
-      <div class="page-title">Paul's 2026 Roth IRA</div>
-      <div class="page-sub">contribution tracker · $7,500 annual limit</div>
-    </div>
-    <div class="header-actions">
-      <a href="index.html" class="btn">← home</a>
-      <button class="btn" onclick="toggleTheme()" id="theme-btn">◑ dark</button>
-    </div>
+<div class="header">
+  <div>
+    <div class="page-title">Roth IRA Tracker</div>
+    <div class="page-sub">lifetime contributions · year-by-year progress · returns</div>
   </div>
+  <div class="header-actions">
+    <a href="index.html" class="btn">← home</a>
+    <button class="btn" onclick="toggleTheme()" id="theme-btn">◑ dark</button>
+  </div>
+</div>
 
-  <!-- Balance editor -->
-  <div class="sec-header" onclick="toggleSec('balance')">
-    <span class="sec-label">Account Balance</span>
-    <span class="sec-toggle open" id="toggle-balance">▼</span>
-  </div>
-  <div class="sec-body" id="sec-balance">
-    <div class="balance-editor">
-      <div class="be-row">
-        <div class="be-field">
-          <label>Current Account Balance ($)</label>
-          <input type="number" id="current-balance" step="0.01" min="0" placeholder="0.00" oninput="saveBalance();renderAll()">
-        </div>
-        <div class="be-field">
-          <label>Beginning Balance (Jan 1, 2026) ($)</label>
-          <input type="number" id="beginning-balance" step="0.01" min="0" placeholder="0.00" oninput="saveBalance();renderAll()">
-        </div>
+<!-- LIFETIME DASHBOARD -->
+<div class="pgrid">
+  <div class="met"><div class="met-label">Lifetime Contributed</div><div class="met-val green" id="lt-total">$0</div><div class="met-sub">all years</div></div>
+  <div class="met"><div class="met-label">Current Balance</div><div class="met-val blue" id="lt-balance">—</div><div class="met-sub">account value</div></div>
+  <div class="met"><div class="met-label">Total Returns</div><div class="met-val" id="lt-returns">—</div><div class="met-sub" id="lt-returns-sub">gains vs deposits</div></div>
+  <div class="met"><div class="met-label">Years Maxed</div><div class="met-val green" id="lt-maxed">0</div><div class="met-sub">of <span id="lt-years-count">0</span> years</div></div>
+  <div class="met"><div class="met-label">Deposits</div><div class="met-val" id="lt-deposits">0</div><div class="met-sub">all time</div></div>
+  <div class="met"><div class="met-label">Projected at 65</div><div class="met-val purple" id="lt-proj">—</div><div class="met-sub">@ 7% avg return</div></div>
+</div>
+
+<!-- CURRENT BALANCE -->
+<div class="sec-header" onclick="toggleSec('balance')">
+  <span class="sec-label">Current Balance</span>
+  <span class="sec-toggle open" id="toggle-balance">▼</span>
+</div>
+<div class="sec-body" id="sec-balance">
+  <div class="balance-card">
+    <div class="bal-row">
+      <div class="bal-field">
+        <label>Current Account Balance ($)</label>
+        <input type="number" id="current-balance" step="0.01" min="0" placeholder="0.00" oninput="saveBalance()">
       </div>
-      <div class="be-note">Update current balance manually after checking your account. Beginning balance is used to calculate returns.</div>
-    </div>
-  </div>
-
-  <!-- 2026 Contribution progress -->
-  <div class="progress-hero">
-    <div class="ph-top">
-      <span class="ph-contributed" id="hero-contributed">$0.00</span>
-      <span class="ph-limit">deposited toward $7,500 limit</span>
-    </div>
-    <div class="ph-track"><div class="ph-fill" id="hero-fill" style="width:0%"></div></div>
-    <div class="ph-bottom">
-      <span class="ph-pct" id="hero-pct">0.0% complete</span>
-      <span class="ph-remaining" id="hero-remaining">$7,500.00 remaining</span>
-    </div>
-  </div>
-
-  <!-- Metrics -->
-  <div class="pgrid">
-    <div class="met"><div class="met-label">Deposited (2026)</div><div class="met-val green" id="met-contributed">$0.00</div><div class="met-sub">year to date</div></div>
-    <div class="met"><div class="met-label">Limit Remaining</div><div class="met-val blue" id="met-remaining">$7,500.00</div><div class="met-sub">to hit limit</div></div>
-    <div class="met"><div class="met-label">On Track</div><div class="met-val" id="met-status">—</div><div class="met-sub" id="met-status-sub"></div></div>
-    <div class="met"><div class="met-label">Proj. Finish</div><div class="met-val" id="met-proj" style="font-size:14px">—</div><div class="met-sub" id="met-proj-sub"></div></div>
-  </div>
-
-  <!-- Returns section -->
-  <div class="sec-header" onclick="toggleSec('returns')">
-    <span class="sec-label">Balance & Returns</span>
-    <span class="sec-toggle open" id="toggle-returns">▼</span>
-  </div>
-  <div class="sec-body" id="sec-returns">
-    <div class="returns-card">
-      <div class="returns-split">
-        <div class="rs-block">
-          <div class="rs-label">Deposited Total</div>
-          <div class="rs-val green" id="ret-deposited">$0.00</div>
-          <div class="rs-sub">sum of all logged deposits</div>
-        </div>
-        <div class="rs-block">
-          <div class="rs-label">Current Balance</div>
-          <div class="rs-val blue" id="ret-balance">$0.00</div>
-          <div class="rs-sub">as entered above</div>
-        </div>
-        <div class="rs-block">
-          <div class="rs-label">Est. Returns</div>
-          <div class="rs-val" id="ret-returns">$0.00</div>
-          <div class="rs-sub" id="ret-returns-sub">current balance − deposits</div>
-        </div>
-        <div class="rs-block">
-          <div class="rs-label">Return Since Jan 1</div>
-          <div class="rs-val" id="ret-since-start">$0.00</div>
-          <div class="rs-sub" id="ret-since-start-sub">current balance − beginning balance</div>
-        </div>
-      </div>
-      <div style="font-size:11px;color:var(--text3);margin-top:12px;line-height:1.6">Returns are estimated from current balance minus deposited total. Set your beginning balance to track growth since Jan 1.</div>
-    </div>
-  </div>
-
-  <!-- Pace -->
-  <div class="sec-header" onclick="toggleSec('pace')">
-    <span class="sec-label">Year Pace</span>
-    <span class="sec-toggle open" id="toggle-pace">▼</span>
-  </div>
-  <div class="sec-body" id="sec-pace">
-    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;margin-bottom:.5rem">
-      <div class="pace-row">
-        <span class="pace-label">Contributed</span>
-        <div class="pace-track"><div class="pace-fill" id="pace-contributed" style="width:0%;background:var(--green)"></div></div>
-        <span class="pace-pct" id="pace-contributed-pct">0%</span>
-      </div>
-      <div class="pace-row">
-        <span class="pace-label">Year elapsed</span>
-        <div class="pace-track"><div class="pace-fill" id="pace-year" style="width:0%;background:var(--blue)"></div></div>
-        <span class="pace-pct" id="pace-year-pct">0%</span>
+      <div style="flex:1;min-width:200px">
+        <div class="returns-split" id="returns-split"></div>
       </div>
     </div>
-    <div style="font-size:11px;color:var(--text3);padding:0 2px" id="pace-note"></div>
+    <div class="bal-note">Update your current balance after checking your brokerage account. Returns are calculated automatically based on total deposits vs current balance.</div>
   </div>
+</div>
 
-  <!-- Projection -->
-  <div class="sec-header" onclick="toggleSec('projection')">
-    <span class="sec-label">Long-Term Projection</span>
-    <span class="sec-toggle open" id="toggle-projection">▼</span>
-  </div>
-  <div class="sec-body" id="sec-projection">
-    <div class="entry-card">
-      <div class="form-row">
-        <div class="form-group">
-          <label>Annual Return Rate (%)</label>
-          <input type="number" id="proj-rate" value="7" step=".5" min="0" max="30" oninput="renderProjection()">
-        </div>
-        <div class="form-group">
-          <label>Current Age</label>
-          <input type="number" id="proj-age" value="20" step="1" min="1" max="80" oninput="renderProjection()">
-        </div>
-        <div class="form-group">
-          <label>Target Age</label>
-          <input type="number" id="proj-target-age" value="65" step="1" min="1" max="100" oninput="renderProjection()">
-        </div>
-      </div>
-      <div class="pgrid" id="proj-metrics">
-        <div class="met"><div class="met-label">Years to grow</div><div class="met-val blue" id="proj-years">—</div></div>
-        <div class="met"><div class="met-label">Projected balance</div><div class="met-val green" id="proj-balance">—</div><div class="met-sub">at target age</div></div>
-        <div class="met"><div class="met-label">Total deposited</div><div class="met-val" id="proj-deposited">—</div></div>
-        <div class="met"><div class="met-label">Est. returns</div><div class="met-val purple" id="proj-returns">—</div><div class="met-sub">investment gains</div></div>
-      </div>
-      <div style="font-size:11px;color:var(--text3);margin-top:8px;line-height:1.6" id="proj-note"></div>
-    </div>
-  </div>
+<!-- YEAR BY YEAR PROGRESS -->
+<div class="sec-header" onclick="toggleSec('years')">
+  <span class="sec-label">Year-by-Year Progress</span>
+  <span class="sec-toggle open" id="toggle-years">▼</span>
+</div>
+<div class="sec-body" id="sec-years">
+  <div class="year-grid" id="year-grid"></div>
+</div>
 
-  <!-- Log deposit -->
-  <div class="sec-header" onclick="toggleSec('entry')">
-    <span class="sec-label">Log a Deposit</span>
-    <span class="sec-toggle open" id="toggle-entry">▼</span>
-  </div>
-  <div class="sec-body" id="sec-entry">
-    <div class="entry-card">
-      <div class="form-row">
-        <div class="form-group">
-          <label>Label</label>
-          <input type="text" id="f-label" placeholder="e.g. May contribution">
-        </div>
-        <div class="form-group" style="max-width:140px">
-          <label>Date</label>
-          <input type="date" id="f-date">
-        </div>
-        <div class="form-group" style="max-width:120px">
-          <label>Amount ($)</label>
-          <input type="number" id="f-amount" step="0.01" min="0.01" placeholder="0.00">
-        </div>
+<!-- MAXOUT HISTORY -->
+<div class="sec-header" onclick="toggleSec('maxout')">
+  <span class="sec-label">Maxout History</span>
+  <span class="sec-toggle" id="toggle-maxout">▼</span>
+</div>
+<div class="sec-body collapsed" id="sec-maxout">
+  <div class="maxout-list" id="maxout-list"></div>
+</div>
+
+<!-- LOG DEPOSIT -->
+<div class="sec-header" onclick="toggleSec('log')">
+  <span class="sec-label">Log a Contribution</span>
+  <span class="sec-toggle open" id="toggle-log">▼</span>
+</div>
+<div class="sec-body" id="sec-log">
+  <div class="entry-card">
+    <div class="form-row">
+      <div class="form-group">
+        <label>Label (optional)</label>
+        <input type="text" id="f-label" placeholder="e.g. Summer contribution">
       </div>
-      <div class="form-actions">
-        <button class="btn btn-green" onclick="logDeposit()">+ Add Deposit</button>
+      <div class="form-group" style="max-width:160px">
+        <label>Date</label>
+        <input type="date" id="f-date">
+      </div>
+      <div class="form-group" style="max-width:140px">
+        <label>Amount ($)</label>
+        <input type="number" id="f-amount" step="0.01" min="0.01" placeholder="0.00">
       </div>
     </div>
+    <div id="f-year-preview" style="font-size:11px;color:var(--text-muted);margin-bottom:8px"></div>
+    <div class="form-actions">
+      <button class="btn btn-green" onclick="logDeposit()">+ Log Contribution</button>
+    </div>
   </div>
+</div>
 
-  <!-- Deposit history -->
-  <div class="sec-header" onclick="toggleSec('history')">
-    <span class="sec-label">Deposit History</span>
-    <span class="sec-toggle open" id="toggle-history">▼</span>
+<!-- PACE (current year) -->
+<div class="sec-header" onclick="toggleSec('pace')">
+  <span class="sec-label">This Year's Pace</span>
+  <span class="sec-toggle open" id="toggle-pace">▼</span>
+</div>
+<div class="sec-body" id="sec-pace">
+  <div class="entry-card" style="padding:14px 16px">
+    <div class="pace-row"><span class="pace-label">Contributed</span><div class="pace-track"><div class="pace-fill" id="pace-contributed" style="width:0%;background:var(--green)"></div></div><span class="pace-pct" id="pace-contributed-pct">0%</span></div>
+    <div class="pace-row"><span class="pace-label">Year elapsed</span><div class="pace-track"><div class="pace-fill" id="pace-year" style="width:0%;background:var(--blue)"></div></div><span class="pace-pct" id="pace-year-pct">0%</span></div>
+    <div style="font-size:11px;color:var(--text-muted);margin-top:6px" id="pace-note"></div>
   </div>
-  <div class="sec-body" id="sec-history">
-    <div class="deposit-list" id="deposit-list"></div>
+</div>
+
+<!-- ALL DEPOSITS -->
+<div class="sec-header" onclick="toggleSec('deposits')">
+  <span class="sec-label">All Contributions</span>
+  <span class="sec-toggle open" id="toggle-deposits">▼</span>
+</div>
+<div class="sec-body" id="sec-deposits">
+  <div class="deposit-list" id="deposit-list"></div>
+</div>
+
+<!-- PROJECTION -->
+<div class="sec-header" onclick="toggleSec('proj')">
+  <span class="sec-label">Growth Projection</span>
+  <span class="sec-toggle" id="toggle-proj">▼</span>
+</div>
+<div class="sec-body collapsed" id="sec-proj">
+  <div class="proj-card">
+    <div class="proj-inputs">
+      <div class="proj-field"><label>Annual Return %</label><input type="number" id="proj-rate" value="7" min="1" max="20" step="0.5" oninput="renderProjection()"></div>
+      <div class="proj-field"><label>Your Age</label><input type="number" id="proj-age" value="20" min="18" max="64" oninput="renderProjection()"></div>
+      <div class="proj-field"><label>Target Age</label><input type="number" id="proj-target-age" value="65" min="30" max="80" oninput="renderProjection()"></div>
+    </div>
+    <div class="proj-number" id="proj-balance">—</div>
+    <div style="font-size:12px;color:var(--text-muted)">projected balance</div>
+    <div class="returns-split" style="margin-top:12px">
+      <div class="rs-block"><div class="rs-label">Starting Balance</div><div class="rs-val blue" id="proj-deposited">—</div></div>
+      <div class="rs-block"><div class="rs-label">Projected Returns</div><div class="rs-val green" id="proj-returns">—</div><div class="rs-sub" id="proj-years"></div></div>
+    </div>
+    <div class="proj-note" id="proj-note"></div>
   </div>
+</div>
 
 </div>
 <script type="module">
 import { initShim, shimLocalStorage, signIn, signOutUser } from './firebase-shim.js';
-
 shimLocalStorage();
 initShim(function() {
-  // ── PAGE INIT (runs after auth + data loaded) ──────────────
 
-const LIMIT = 7500;
-let deposits = JSON.parse(localStorage.getItem('ira_deposits') || '[]');
-let currentBalance  = parseFloat(localStorage.getItem('ira_current_balance')  || '0');
-let beginningBalance = parseFloat(localStorage.getItem('ira_beginning_balance') || '0');
+// ── LIMITS BY YEAR ─────────────────────────────────────────
+const LIMITS = {
+  2019:6000, 2020:6000, 2021:6000, 2022:6000,
+  2023:6500, 2024:7000, 2025:7000, 2026:7000,
+  2027:7000, 2028:7000, 2029:7000, 2030:7000,
+};
+function getLimit(year){ return LIMITS[year] || 7000; }
 
-function fmt$(n,signed=false){
-  const abs='$'+Math.abs(n).toFixed(2);
-  if(!signed) return abs;
-  return (n<0?'-':n>0?'+':'')+abs;
+// ── STATE ──────────────────────────────────────────────────
+let deposits       = JSON.parse(localStorage.getItem('ira_deposits')       || '[]');
+let currentBalance = parseFloat(localStorage.getItem('ira_current_balance')|| '0') || 0;
+
+function getYear(deposit){ return new Date(deposit.date+'T00:00:00').getFullYear(); }
+function getTotal(){ return deposits.reduce((s,d)=>s+d.amount, 0); }
+function getTotalForYear(year){ return deposits.filter(d=>getYear(d)===year).reduce((s,d)=>s+d.amount,0); }
+function getYears(){ return [...new Set(deposits.map(getYear))].sort(); }
+
+function fmt$(n, signed=false){
+  const abs='$'+Math.abs(parseFloat(n)||0).toFixed(2);
+  if(signed) return n<0?'-'+abs:(n>0?'+'+abs:abs);
+  return abs;
 }
 
 function saveBalance(){
-  currentBalance   = parseFloat(document.getElementById('current-balance').value)  || 0;
-  beginningBalance = parseFloat(document.getElementById('beginning-balance').value) || 0;
-  localStorage.setItem('ira_current_balance',   currentBalance);
-  localStorage.setItem('ira_beginning_balance', beginningBalance);
+  currentBalance = parseFloat(document.getElementById('current-balance').value)||0;
+  localStorage.setItem('ira_current_balance', currentBalance);
   renderAll();
-  renderProjection();
 }
+window.saveBalance=saveBalance;
 
-function getTotal(){ return deposits.reduce((s,d) => s + d.amount, 0); }
-
-function yearPct(){
-  const now=new Date(),start=new Date(now.getFullYear(),0,1),end=new Date(now.getFullYear(),11,31,23,59,59);
-  return (now-start)/(end-start);
-}
-
-function projFinish(total,pacePerDay){
-  if(pacePerDay<=0) return null;
-  const rem=LIMIT-total;
-  if(rem<=0) return 'Done';
-  const d=new Date();
-  d.setDate(d.getDate()+Math.ceil(rem/pacePerDay));
-  return d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
-}
-
+// ── RENDER ALL ─────────────────────────────────────────────
 function renderAll(){
-  const total    = getTotal();
-  const remaining= Math.max(0,LIMIT-total);
-  const pct      = Math.min(100,total/LIMIT*100);
-  const yPct     = yearPct()*100;
-  const ahead    = pct>=yPct;
-
-  document.getElementById('hero-contributed').textContent = fmt$(total);
-  document.getElementById('hero-fill').style.width        = pct.toFixed(2)+'%';
-  document.getElementById('hero-pct').textContent         = pct.toFixed(1)+'% complete';
-  document.getElementById('hero-remaining').textContent   = fmt$(remaining)+' remaining';
-
-  document.getElementById('met-contributed').textContent = fmt$(total);
-  document.getElementById('met-remaining').textContent   = fmt$(remaining);
-
-  const statusEl=document.getElementById('met-status'),statusSubEl=document.getElementById('met-status-sub');
-  if(total>=LIMIT){statusEl.innerHTML='<span class="pill pill-g">Maxed</span>';statusSubEl.textContent='limit reached';}
-  else if(ahead){statusEl.innerHTML='<span class="pill pill-g">Ahead</span>';statusSubEl.textContent=(pct-yPct).toFixed(1)+'% ahead of pace';}
-  else{statusEl.innerHTML='<span class="pill pill-a">Behind</span>';statusSubEl.textContent=(yPct-pct).toFixed(1)+'% behind pace';}
-
-  const projEl=document.getElementById('met-proj'),projSubEl=document.getElementById('met-proj-sub');
-  if(deposits.length>=2){
-    const sorted=[...deposits].sort((a,b)=>new Date(a.date)-new Date(b.date));
-    const daysSince=Math.max(1,(new Date()-new Date(sorted[0].date+'T00:00:00'))/86400000);
-    const finish=projFinish(total,total/daysSince);
-    projEl.textContent=finish||'—';projSubEl.textContent=finish==='Done'?'limit reached':'at current pace';
-  } else {projEl.textContent='—';projSubEl.textContent='log more deposits';}
-
-  // Pace bars
-  document.getElementById('pace-contributed').style.width=pct.toFixed(2)+'%';
-  document.getElementById('pace-contributed-pct').textContent=Math.round(pct)+'%';
-  document.getElementById('pace-year').style.width=yPct.toFixed(2)+'%';
-  document.getElementById('pace-year-pct').textContent=Math.round(yPct)+'%';
-  document.getElementById('pace-note').textContent=ahead?'You are ahead of a straight-line pace to max by Dec 31.':'You are behind a straight-line pace to max by Dec 31.';
-
-  // Returns
-  document.getElementById('ret-deposited').textContent = fmt$(total);
-  document.getElementById('ret-balance').textContent   = fmt$(currentBalance);
-  const returns = currentBalance - total;
-  const retEl   = document.getElementById('ret-returns');
-  retEl.textContent  = fmt$(returns, true);
-  retEl.className    = 'rs-val '+(returns>0?'green':returns<0?'red':'');
-  document.getElementById('ret-returns-sub').textContent = returns>=0?'investment gains so far':'loss vs deposits';
-  const sinceStart = currentBalance - beginningBalance;
-  const ssEl = document.getElementById('ret-since-start');
-  ssEl.textContent = fmt$(sinceStart, true);
-  ssEl.className   = 'rs-val '+(sinceStart>0?'green':sinceStart<0?'red':'');
-  document.getElementById('ret-since-start-sub').textContent = sinceStart>=0?'growth since Jan 1':'decline since Jan 1';
-
-  // Deposit list
-  const list=document.getElementById('deposit-list');
-  if(deposits.length===0){list.innerHTML='<div class="empty-state">No deposits logged yet.</div>';return;}
-  const sorted=[...deposits].sort((a,b)=>new Date(b.date)-new Date(a.date));
-  list.innerHTML='';
-  sorted.forEach(d=>{
-    const fmtDate=new Date(d.date+'T00:00:00').toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric',year:'numeric'});
-    const div=document.createElement('div');
-    div.className='deposit-item';
-    div.innerHTML=`
-      <div class="di-left"><span class="di-label">${d.label||'Deposit'}</span><span class="di-date">${fmtDate}</span></div>
-      <div class="di-right"><span class="di-amt">${fmt$(d.amount)}</span><button class="di-del" onclick="deleteDeposit(${d.id})" title="Remove">✕</button></div>
-    `;
-    list.appendChild(div);
-  });
+  renderLifetimeDashboard();
+  renderYearGrid();
+  renderMaxoutHistory();
+  renderPace();
+  renderDeposits();
+  renderProjection();
+  updateYearPreview();
 }
 
+// ── LIFETIME DASHBOARD ─────────────────────────────────────
+function renderLifetimeDashboard(){
+  const total = getTotal();
+  const years = getYears();
+  const maxedYears = years.filter(y=>getTotalForYear(y)>=getLimit(y));
+
+  document.getElementById('lt-total').textContent = fmt$(total);
+  document.getElementById('lt-deposits').textContent = deposits.length;
+  document.getElementById('lt-maxed').textContent = maxedYears.length;
+  document.getElementById('lt-years-count').textContent = years.length;
+
+  // Balance & returns
+  if(currentBalance>0){
+    document.getElementById('lt-balance').textContent = fmt$(currentBalance);
+    const returns = currentBalance - total;
+    const retEl = document.getElementById('lt-returns');
+    retEl.textContent = fmt$(returns, true);
+    retEl.className = 'met-val '+(returns>0?'green':returns<0?'red':'');
+    document.getElementById('lt-returns-sub').textContent = returns>=0?'investment gains':'loss vs deposits';
+  } else {
+    document.getElementById('lt-balance').textContent = '—';
+    document.getElementById('lt-returns').textContent = '—';
+    document.getElementById('lt-returns').className = 'met-val';
+  }
+
+  // Quick projection at 7% to 65
+  const bal = currentBalance > 0 ? currentBalance : total;
+  if(bal > 0){
+    const age = parseInt(document.getElementById('proj-age')?.value)||20;
+    const years2go = Math.max(0, 65 - age);
+    const proj = bal * Math.pow(1.07, years2go);
+    document.getElementById('lt-proj').textContent = '$'+Math.round(proj).toLocaleString();
+  } else {
+    document.getElementById('lt-proj').textContent = '—';
+  }
+
+  // Returns split in balance section
+  const split = document.getElementById('returns-split');
+  if(currentBalance>0&&total>0){
+    const returns = currentBalance - total;
+    split.innerHTML = `
+      <div class="rs-block"><div class="rs-label">Total Deposited</div><div class="rs-val blue">${fmt$(total)}</div></div>
+      <div class="rs-block"><div class="rs-label">Returns</div><div class="rs-val ${returns>=0?'green':'red'}">${fmt$(returns,true)}</div><div class="rs-sub">${returns>=0?'gains so far':'loss so far'}</div></div>
+    `;
+  } else {
+    split.innerHTML = `<div class="rs-block"><div class="rs-label">Total Deposited</div><div class="rs-val blue">${fmt$(total)}</div></div>`;
+  }
+}
+
+// ── YEAR GRID ──────────────────────────────────────────────
+function renderYearGrid(){
+  const el = document.getElementById('year-grid');
+  const years = getYears();
+  const currentYear = new Date().getFullYear();
+
+  // Always include current year even if no deposits yet
+  const allYears = [...new Set([...years, currentYear])].sort().reverse();
+
+  if(allYears.length===0){
+    el.innerHTML='<div class="empty-state">No contributions yet. Log your first contribution below.</div>';
+    return;
+  }
+
+  el.innerHTML = allYears.map(year=>{
+    const yearTotal = getTotalForYear(year);
+    const limit = getLimit(year);
+    const pct = Math.min(100, yearTotal/limit*100);
+    const maxed = yearTotal >= limit;
+    const isCurrentYear = year === currentYear;
+    const yearDeposits = deposits.filter(d=>getYear(d)===year);
+
+    // Pace check for current year
+    let paceNote = '';
+    if(isCurrentYear && yearTotal < limit){
+      const now = new Date();
+      const startOfYear = new Date(year, 0, 1);
+      const endOfYear   = new Date(year, 11, 31);
+      const yPct = (now - startOfYear) / (endOfYear - startOfYear) * 100;
+      const ahead = pct >= yPct;
+      paceNote = `<span style="font-size:10px;color:${ahead?'var(--green)':'var(--amber)'}">${ahead?'Ahead of pace':'Behind pace'}</span>`;
+    }
+
+    return `<div class="year-card${maxed?' maxed':''}">
+      <div class="yc-top">
+        <span class="yc-year">${year}${isCurrentYear?' <span style="font-size:11px;color:var(--text-muted)">(current)</span>':''}</span>
+        <span class="yc-amounts"><strong>${fmt$(yearTotal)}</strong> / ${fmt$(limit)}</span>
+      </div>
+      <div class="yc-track"><div class="yc-fill${maxed?' maxed':pct<50?' behind':''}" style="width:${pct.toFixed(2)}%"></div></div>
+      <div class="yc-bottom">
+        <span class="yc-pct">${pct.toFixed(1)}% of limit</span>
+        <span class="yc-deposits-count">${yearDeposits.length} contribution${yearDeposits.length!==1?'s':''}</span>
+        ${paceNote}
+        ${maxed?'<span class="pill pill-g">Maxed Out</span>':''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── MAXOUT HISTORY ─────────────────────────────────────────
+function renderMaxoutHistory(){
+  const el = document.getElementById('maxout-list');
+  const years = getYears();
+  const maxed = years.filter(y=>getTotalForYear(y)>=getLimit(y));
+
+  if(maxed.length===0){
+    el.innerHTML='<div class="empty-state">No years maxed out yet. Max out a year and it will appear here.</div>';
+    return;
+  }
+
+  el.innerHTML = maxed.sort().reverse().map(y=>`
+    <div class="maxout-badge">
+      <div class="mb-year">${y}</div>
+      <div class="mb-amt">${fmt$(getLimit(y))}</div>
+      <div class="mb-check">✓</div>
+    </div>`).join('');
+}
+
+// ── PACE (current year) ────────────────────────────────────
+function renderPace(){
+  const currentYear = new Date().getFullYear();
+  const yearTotal = getTotalForYear(currentYear);
+  const limit = getLimit(currentYear);
+  const pct = Math.min(100, yearTotal/limit*100);
+  const now = new Date();
+  const startOfYear = new Date(currentYear, 0, 1);
+  const endOfYear   = new Date(currentYear, 11, 31);
+  const yPct = Math.min(100, (now - startOfYear) / (endOfYear - startOfYear) * 100);
+  const ahead = pct >= yPct;
+
+  document.getElementById('pace-contributed').style.width = pct.toFixed(2)+'%';
+  document.getElementById('pace-contributed-pct').textContent = Math.round(pct)+'%';
+  document.getElementById('pace-year').style.width = yPct.toFixed(2)+'%';
+  document.getElementById('pace-year-pct').textContent = Math.round(yPct)+'%';
+  document.getElementById('pace-note').textContent = yearTotal>=limit
+    ? `${currentYear} is maxed out at ${fmt$(limit)}.`
+    : ahead
+    ? `You are ahead of a straight-line pace to max ${currentYear} by Dec 31. ${fmt$(limit-yearTotal)} remaining.`
+    : `You are behind pace to max ${currentYear} by Dec 31. ${fmt$(limit-yearTotal)} remaining.`;
+}
+
+// ── DEPOSIT FORM PREVIEW ───────────────────────────────────
+function updateYearPreview(){
+  const dateVal = document.getElementById('f-date')?.value;
+  const amt = parseFloat(document.getElementById('f-amount')?.value)||0;
+  const el = document.getElementById('f-year-preview');
+  if(!el) return;
+  if(!dateVal){ el.textContent=''; return; }
+  const year = new Date(dateVal+'T00:00:00').getFullYear();
+  const yearTotal = getTotalForYear(year);
+  const limit = getLimit(year);
+  const newTotal = yearTotal + amt;
+  el.textContent = `${year} contribution: ${fmt$(yearTotal)} → ${fmt$(newTotal)} / ${fmt$(limit)} limit`;
+  el.style.color = newTotal > limit ? 'var(--red)' : 'var(--text-muted)';
+}
+
+// ── LOG DEPOSIT ────────────────────────────────────────────
 function logDeposit(){
-  const label =document.getElementById('f-label').value.trim();
-  const date  =document.getElementById('f-date').value;
-  const amount=parseFloat(document.getElementById('f-amount').value);
-  if(!date||isNaN(amount)||amount<=0){alert('Please enter a valid date and amount.');return;}
-  const total=getTotal();
-  if(total+amount>LIMIT){ if(!confirm(`This deposit would bring your total to ${fmt$(total+amount)}, over the $7,500 limit. Add anyway?`)) return; }
-  deposits.push({id:Date.now(),label,date,amount});
-  localStorage.setItem('ira_deposits',JSON.stringify(deposits));
-  // shim handles sync
-  document.getElementById('f-label').value='';document.getElementById('f-amount').value='';
+  const label  = document.getElementById('f-label').value.trim();
+  const date   = document.getElementById('f-date').value;
+  const amount = parseFloat(document.getElementById('f-amount').value);
+  if(!date||isNaN(amount)||amount<=0){ alert('Please enter a valid date and amount.'); return; }
+  const year = new Date(date+'T00:00:00').getFullYear();
+  const yearTotal = getTotalForYear(year);
+  const limit = getLimit(year);
+  if(yearTotal+amount > limit){
+    if(!confirm(`This contribution would bring ${year} total to ${fmt$(yearTotal+amount)}, over the ${fmt$(limit)} limit. Add anyway?`)) return;
+  }
+  deposits.push({id:Date.now(), label, date, amount});
+  localStorage.setItem('ira_deposits', JSON.stringify(deposits));
+  document.getElementById('f-label').value='';
+  document.getElementById('f-amount').value='';
   renderAll();
 }
+window.logDeposit=logDeposit;
 
+// ── DELETE DEPOSIT ─────────────────────────────────────────
 function deleteDeposit(id){
   deposits=deposits.filter(d=>d.id!==id);
-  localStorage.setItem('ira_deposits',JSON.stringify(deposits));
-  // shim handles sync
+  localStorage.setItem('ira_deposits', JSON.stringify(deposits));
   renderAll();
 }
+window.deleteDeposit=deleteDeposit;
 
-function renderProjection(){
-  const rate  = parseFloat(document.getElementById('proj-rate').value)||7;
-  const age   = parseInt(document.getElementById('proj-age').value)||20;
-  const tAge  = parseInt(document.getElementById('proj-target-age').value)||65;
-  const years = Math.max(0, tAge - age);
-  const total = getTotal();
-  const bal   = currentBalance > 0 ? currentBalance : total;
-  const r     = rate / 100;
-  const projected = bal * Math.pow(1 + r, years);
-  const gains = projected - bal;
-  document.getElementById('proj-years').textContent     = years;
-  document.getElementById('proj-balance').textContent   = '$' + Math.round(projected).toLocaleString();
-  document.getElementById('proj-deposited').textContent = '$' + Math.round(bal).toLocaleString();
-  document.getElementById('proj-returns').textContent   = '$' + Math.round(gains).toLocaleString();
-  document.getElementById('proj-note').textContent      = `Starting from ${currentBalance>0?'your current balance':'deposited total'} of $${Math.round(bal).toLocaleString()}, at ${rate}% annual return over ${years} years, projected balance at age ${tAge} is $${Math.round(projected).toLocaleString()}. This is a simplified estimate — actual returns will vary.`;
+// ── DEPOSITS LIST ──────────────────────────────────────────
+function renderDeposits(){
+  const el = document.getElementById('deposit-list');
+  if(deposits.length===0){ el.innerHTML='<div class="empty-state">No contributions logged yet.</div>'; return; }
+  const sorted = [...deposits].sort((a,b)=>new Date(b.date)-new Date(a.date));
+  el.innerHTML = sorted.map(d=>{
+    const year = getYear(d);
+    const fmtDate = new Date(d.date+'T00:00:00').toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric',year:'numeric'});
+    return `<div class="deposit-item">
+      <div class="di-left">
+        <span class="di-label">${d.label||'Contribution'}</span>
+        <span class="di-date">${fmtDate}</span>
+      </div>
+      <div class="di-right">
+        <span class="di-year">${year}</span>
+        <span class="di-amt">${fmt$(d.amount)}</span>
+        <button class="di-del" onclick="deleteDeposit(${d.id})" title="Remove">✕</button>
+      </div>
+    </div>`;
+  }).join('');
 }
 
+// ── PROJECTION ─────────────────────────────────────────────
+function renderProjection(){
+  const rate    = parseFloat(document.getElementById('proj-rate')?.value)||7;
+  const age     = parseInt(document.getElementById('proj-age')?.value)||20;
+  const tAge    = parseInt(document.getElementById('proj-target-age')?.value)||65;
+  const years   = Math.max(0, tAge - age);
+  const total   = getTotal();
+  const bal     = currentBalance > 0 ? currentBalance : total;
+  if(bal<=0){ document.getElementById('proj-balance').textContent='—'; return; }
+  const projected = bal * Math.pow(1 + rate/100, years);
+  const gains = projected - bal;
+  document.getElementById('proj-balance').textContent   = '$'+Math.round(projected).toLocaleString();
+  document.getElementById('proj-deposited').textContent = '$'+Math.round(bal).toLocaleString();
+  document.getElementById('proj-returns').textContent   = '$'+Math.round(gains).toLocaleString();
+  document.getElementById('proj-years').textContent     = `over ${years} years`;
+  document.getElementById('proj-note').textContent      = `Starting from $${Math.round(bal).toLocaleString()} at ${rate}% annual return over ${years} years. This is a simplified estimate — actual returns will vary.`;
+  // Update lifetime quick proj
+  document.getElementById('lt-proj').textContent = '$'+Math.round(projected).toLocaleString();
+}
+window.renderProjection=renderProjection;
+
+// ── UTILS ──────────────────────────────────────────────────
 function toggleSec(name){
   document.getElementById('sec-'+name).classList.toggle('collapsed');
   document.getElementById('toggle-'+name).classList.toggle('open');
 }
+window.toggleSec=toggleSec;
 
 function toggleTheme(){
-  const isDark = document.documentElement.getAttribute('data-theme')==='dark';
-  document.documentElement.setAttribute('data-theme', isDark ? 'light' : 'dark');
-  const btn = document.getElementById('theme-btn');
-  if(btn) btn.textContent = isDark ? '◑ dark' : '◑ light';
-  try{ localStorage.setItem('global_theme', isDark ? 'light' : 'dark'); }catch(e){}
+  const isDark=document.documentElement.getAttribute('data-theme')==='dark';
+  document.documentElement.setAttribute('data-theme',isDark?'light':'dark');
+  const btn=document.getElementById('theme-btn');
+  if(btn) btn.textContent=isDark?'◑ dark':'◑ light';
+  try{localStorage.setItem('global_theme',isDark?'light':'dark');}catch(e){}
 }
+window.toggleTheme=toggleTheme;
 
-// Init
-// Apply theme
-(function(){
-  const t = localStorage.getItem('global_theme');
-  document.documentElement.setAttribute('data-theme', t==='dark' ? 'dark' : 'light');
-  const btn = document.getElementById('theme-btn');
-  if(btn) btn.textContent = t==='dark' ? '◑ light' : '◑ dark';
-})();
-
+// ── INIT ──────────────────────────────────────────────────
+const savedTheme=localStorage.getItem('global_theme');
+document.getElementById('theme-btn').textContent=savedTheme==='dark'?'◑ light':'◑ dark';
 const today=new Date();
 document.getElementById('f-date').value=`${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
-document.getElementById('current-balance').value   = currentBalance   || '';
-document.getElementById('beginning-balance').value = beginningBalance || '';
+document.getElementById('current-balance').value=currentBalance||'';
+
+// Wire up live year preview
+document.getElementById('f-date').addEventListener('input', updateYearPreview);
+document.getElementById('f-amount').addEventListener('input', updateYearPreview);
 
 renderAll();
-renderProjection();
 
-
-// ── EXPOSE TO GLOBAL SCOPE (required for inline onclick handlers in ES modules) ──
-window.deleteDeposit = deleteDeposit;
-window.renderAll = renderAll;
-window.logDeposit = logDeposit;
-window.renderProjection = renderProjection;
-window.saveBalance = saveBalance;
-window.toggleSec = toggleSec;
-window.toggleTheme = toggleTheme;
 }); // end initShim
 
-// Register service worker for PWA
-if('serviceWorker' in navigator){
-  navigator.serviceWorker.register('./sw.js').catch(()=>{});
-}
+if('serviceWorker' in navigator){ navigator.serviceWorker.register('./sw.js').catch(()=>{}); }
 </script>
 </body>
 </html>
